@@ -1,0 +1,68 @@
+//Dashboard 
+export const GET_DASHBOARD_DATA = '/api/admin/dashboard/getAllDashBoardData'
+export const GET_STOCKIN_LIST = '/api/transaction/stockin/list'
+export const GET_DISPATCH_TRANS_LIST = '/api/transaction/dispatch/list'
+
+//roles
+export const GET_ROLES_LIST = '/api/role/get/list'
+
+// Warehouse 
+export const CREATE_WAREHOUSE = '/api/warehouse/add'
+export const GET_WAREHOUSE_LIST = 'api/warehouse/get'
+export const UPDATE_WAREHOUSE = '/api/warehouse/edit'
+export const DELETE_WAREHOUSE = '/api/warehouse/delete'
+export const SEARCH_WAREHOUSE = '/api/warehouse/list'
+
+
+// inventory 
+export const GET_PRODUCT_LIST = '/api/product/get'
+export const CREATE_PRODUCT = '/api/product/add'
+export const UPDATE_PRODUCT = '/api/product/edit'
+export const DELETE_PRODUCT = '/api/product/delete'
+export const SEARCH_PRODUCT = '/api/product/search'
+
+// location 
+export const GET_LOCATION = '/api/location/get'
+
+// User
+export const GET_USERS_LIST = '/api/user/get'
+export const CREATE_USERS = '/api/user/add'
+export const UPDATE_USERS = '/api/user/edit'
+export const DELETE_USERS = '/api/user/delete'
+export const LISTING_USERS = '/api/user/list'
+
+// Customer 
+export const GET_CUSTOMER_LIST = '/api/customer/get'
+export const CREATE_CUSTOMER = '/api/customer/add'
+export const UPDATE_CUSTOMER = '/api/customer/edit'
+export const DELETE_CUSTOMER = '/api/customer/delete'
+export const LISTING_CUSTOMER = '/api/customer/list'
+
+// Supplier
+export const GET_SUPPLIER_LIST = '/api/supplier/get'
+export const CREATE_SUPPLIER = '/api/supplier/add'
+export const UPDATE_SUPPLIER = '/api/supplier/edit'
+export const DELETE_SUPPLIER = '/api/supplier/delete'
+export const LISTING_SUPPLIER = '/api/supplier/list'
+
+
+// Opening Stock
+export const GET_STOCK_LIST = '/api/stock/get'
+export const CREATE_STOCK = '/api/stock/add'
+export const UPDATE_STOCK = '/api/stock/edit'
+
+// Stock In
+export const GET_STOCKIN_DATA = '/api/stockin/get/supplier-list'
+export const CREATE_STOCKIN = '/api/stockIn/add'
+export const UPDATE_STOCKIN = '/api/stockIn/edit'
+export const DELETE_STOCKIN = '/api/stockIn/delete'
+
+// Dispatch
+export const GET_DISPATCH = '/api/dispatch/get/customer-list'
+export const CREATE_DISPATCH = '/api/dispatch/add'
+export const UPDATE_DISPATCH = '/api/dispatch/edit'
+export const DELETE_DISPATCH = '/api/dispatch/delete'
+export const STOCK_CHECK = '/api/dispatch/stock-check'
+
+// report 
+export const GET_REPORT = 'api/report/send'

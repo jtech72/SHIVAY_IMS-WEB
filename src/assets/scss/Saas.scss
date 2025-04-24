@@ -1,0 +1,151 @@
+// Styles
+
+// Main styles
+
+@import './app.scss';
+
+// Hyper Icons
+@import './icons.scss';
+
+tbody tr {
+  transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+  /* moves the row slightly forward/up */
+  z-index: 11;
+  /* brings it on top of others if necessary */
+  background-color: #f9f9f9;
+  /* optional: subtle background highlight */
+}
+
+/* Transition and hover for the whole row */
+.highlight-row {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.highlight-row:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  // border: 1px solid black;
+  transform: translateY(-2px);
+  background-color: #f9f9f9;
+  z-index: 1;
+}
+
+/* Container for the floating icon */
+.icon-container {
+  position: absolute;
+  right: -3%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  /* spacing between icons */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding-top: 8px !important;
+  // pointer-events: none;
+}
+
+.highlight-row {
+  position: relative;
+  /* required for absolute child */
+}
+
+.highlight-row:hover .icon-container {
+  opacity: 1;
+}
+
+.highlight-row:hover {
+  background-color: transparent !important;
+}
+
+.icon-wrapper {
+  padding: 6px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.icon-wrapper:hover {
+  background-color: #e7e7f0;
+  /* fallback for bg-secondary */
+}
+
+//   dashboard card hover
+.card-hover-effect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.card-body-zoom {
+  transition: transform 0.3s ease;
+}
+
+.card-hover-effect:hover .card-body-zoom {
+  transform: scale(1.05);
+  /* Zoom effect */
+}
+
+// custom buttons
+.custom-button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #6655D9 !important;
+  border-radius: 5px !important;
+  font-weight: 700;
+}
+
+.custom-button:hover {
+  // transform: translateY(-3px); /* slightly lift the button */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  /* slightly darker, tighter shadow */
+  z-index: 1;
+}
+
+// cancel buttons
+.cancel-button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #363636 !important;
+  border-radius: 5px !important;
+  font-weight: 700;
+}
+
+.cancel-button:hover {
+  // transform: translateY(-3px); /* slightly lift the button */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  /* slightly darker, tighter shadow */
+  z-index: 1;
+}
+
+// table header color
+.table_header {
+  color: #6655D9;
+}
+
+.page-title-box a,
+.breadcrumb a {
+  color: #6655D9;
+  /* replace with your desired color */
+  text-decoration: none;
+  /* optional: remove underline */
+}
+
+.page-title-box a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+  /* optional: color on hover */
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: transparent !important;
+}
