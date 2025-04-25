@@ -1,13 +1,27 @@
 import React from 'react';
-import { ColorRing, RotatingLines } from 'react-loader-spinner';
+import { ColorRing, ThreeDots } from 'react-loader-spinner';
 const Loading = () => {
     return (
-        <div style={{ height: '50vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <RotatingLines
-                strokeColor="grey"
+        <div style={{ height: '54vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <ThreeDots
+                color="#6655D9"
                 strokeWidth="5"
                 animationDuration="0.75"
-                width="96"
+                width="70"
+                visible={true}
+            />
+        </div>
+    );
+};
+
+const DashboardLoading = () => {
+    return (
+        <div style={{ height: '30vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <ThreeDots
+                color="#6655D9"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="70"
                 visible={true}
             />
         </div>
@@ -18,11 +32,11 @@ const Loading = () => {
 const ButtonLoading = () => {
     return (
         // <div style={{ height: "5vh", display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
-        <div className=" d-flex justify-content-center align-items-center w-100">
+        <div className=" d-flex justify-content-center align-items-center w-100" style={{ height: '2vh' }}>
             <ColorRing
                 visible={true}
-                height="30"
-                width="30"
+                height="25"
+                width="25"
                 ariaLabel="blocks-loading"
                 wrapperStyle={{}}
                 wrapperClass="blocks-wrapper"
@@ -57,4 +71,4 @@ const CartLoading = () => {
     );
 };
 
-export { Loading, ButtonLoading, CartLoading };
+export { Loading, ButtonLoading, CartLoading, DashboardLoading };

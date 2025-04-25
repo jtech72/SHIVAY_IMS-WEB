@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteStockInActions, getStockInListActions } from '../../../redux/actions';
 import { MdDeleteOutline } from 'react-icons/md';
 import Pagination from '../../../helpers/Pagination';
+import { Loading } from '../../../helpers/loader/Loading';
 
 const StockIn = () => {
 
@@ -103,45 +104,60 @@ const StockIn = () => {
                       {/* <th scope="col">Action</th> */}
                     </tr>
                   </thead>
-                  <tbody>
-                    {StockInData?.map((data, index) => (
-                      <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                        <th scope="row">{index + 1}</th>
-                        <td className="text-uppercase fw-bold ">
-                          {data?.supplierData?.[0]?.name || <span className="text-black">-</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.controlNumber || <span className="text-black">-</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.warehouseData?.[0]?.name || <span className="text-black">-</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.createdAt ? (
-                            new Date(data?.createdAt).toLocaleDateString('en-GB')
-                          ) : (
-                            <span className="text-black">-</span>
-                          )}
-                        </td>
-                        {/* <td className="fw-bold">
+                  {store?.stockInListReducer?.loading ? (
+                    <tr>
+                      <td className='text-center' colSpan={6}>
+                        <Loading />
+                      </td>
+                    </tr>
+                  ) : (
+                    <tbody>
+                      {StockInData?.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className='text-center'>
+                            <p className='my-5 py-5 '>No data found in dispatch.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        StockInData?.map((data, index) => (
+                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                            <th scope="row">{index + 1}</th>
+                            <td className="text-uppercase fw-bold ">
+                              {data?.supplierData?.[0]?.name || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.controlNumber || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.warehouseData?.[0]?.name || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.createdAt ? (
+                                new Date(data?.createdAt).toLocaleDateString('en-GB')
+                              ) : (
+                                <span className="text-black">-</span>
+                              )}
+                            </td>
+                            {/* <td className="fw-bold">
                                       {data?.location || <span className="text-danger">N/A</span>}
                                     </td> */}
-                        <td></td>
-                        <td></td>
-                        <div className="icon-container d-flex  pb-0" >
-                          {/* <span className="icon-wrapper" title="View">
+                            <td></td>
+                            <td></td>
+                            <div className="icon-container d-flex  pb-0" >
+                              {/* <span className="icon-wrapper" title="View">
                             <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                           </span> */}
-                          <span className="icon-wrapper" title="Edit">
-                            <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                          </span>
-                          <span className="icon-wrapper" title="Delete" onClick={() => { setStockToDelete(data?._id); setShowConfirm(true); }}>
-                            <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                          </span>
-                        </div>
-                      </tr>
-                    ))}
-                  </tbody>
+                              <span className="icon-wrapper" title="Edit">
+                                <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                              </span>
+                              <span className="icon-wrapper" title="Delete" onClick={() => { setStockToDelete(data?._id); setShowConfirm(true); }}>
+                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                              </span>
+                            </div>
+                          </tr>
+                        )))}
+                    </tbody>
+                  )}
                 </table>
                 <Pagination
                   pageIndex={pageIndex}

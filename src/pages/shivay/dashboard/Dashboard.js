@@ -6,7 +6,7 @@ import { getDashboardActions, getDispatchActions, getStockinActions } from "../.
 import { FaLayerGroup, FaUsers, } from "react-icons/fa";
 import { MdOutlineSell } from "react-icons/md";
 import { MdOutlineStoreMallDirectory } from "react-icons/md";
-// import { Loading } from "../../../helpers/loader/Loading";
+import { DashboardLoading } from "../../../helpers/loader/Loading";
 import { MdFilterList } from "react-icons/md";
 import Tab from "./tabs/Tab";
 import { PiEye } from "react-icons/pi";
@@ -152,7 +152,7 @@ const Dashboard = () => {
 
                 {activeTab === 0 &&
                   <div>
-                    <table className="table table-striped bg-white mb-0">
+                    <table className="table table-striped bg-white ">
                       <thead>
                         <tr className="table_header">
                           <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -161,37 +161,52 @@ const Dashboard = () => {
                           <th scope="col">Stock</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {StockinData?.map((data, index) => (
-                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                            <th scope="row">{index + 1}</th>
-                            <td className="text-uppercase fw-bold">
-                              {data?.productName || <span className="text-danger">N/A</span>}
-                            </td>
-                            <td className="text-uppercase fw-bold">
-                              {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}
-                            </td>
-                            <td className="text-uppercase fw-bold ">
-                              {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
-                            </td>
-                            <td></td> {/* maintain table structure */}
+                      {store?.stockinTransListReducer?.loading ? (
+                        <tr>
+                          <td className='text-center' colSpan={4}>
+                            <DashboardLoading />
+                          </td>
+                        </tr>
+                      ) : (
+                        <tbody>
+                          {StockinData?.length === 0 ? (
+                            <tr>
+                              <td colSpan={6} className='text-center'>
+                                <p className='my-4 py-5'>No stock-in data to show.</p>
+                              </td>
+                            </tr>
+                          ) : (
+                            StockinData?.map((data, index) => (
+                              <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                <th scope="row">{index + 1}</th>
+                                <td className="text-uppercase fw-bold">
+                                  {data?.productName || <span className="text-danger">N/A</span>}
+                                </td>
+                                <td className="text-uppercase fw-bold">
+                                  {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}
+                                </td>
+                                <td className="text-uppercase fw-bold ">
+                                  {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
+                                </td>
+                                <td></td> {/* maintain table structure */}
 
-                            {/* Horizontally centered icons */}
-                            <div className="icon-container d-flex  pb-0" >
-                              <span className="icon-wrapper me-4" title="View">
-                                <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                              </span>
-                            </div>
-                          </tr>
-                        ))}
-                      </tbody>
+                                {/* Horizontally centered icons */}
+                                <div className="icon-container d-flex  pb-0" >
+                                  <span className="icon-wrapper me-4" title="View">
+                                    <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                  </span>
+                                </div>
+                              </tr>
+                            )))}
+                        </tbody>
+                      )}
                     </table>
                   </div>
                 }
                 {activeTab === 1 &&
                   <div>
                     <div>
-                      <table className="table table-striped bg-white mb-0">
+                      <table className="table table-striped bg-white ">
                         <thead>
                           <tr className="table_header">
                             <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -201,34 +216,43 @@ const Dashboard = () => {
                             {/* <th scope="col">View</th> */}
                           </tr>
                         </thead>
-                        <tbody>
-                          {DispatchData?.map((data, index) => (
-                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                              <th scope="row">{index + 1}</th>
-                              <td className="text-uppercase fw-bold ">
-                                {data?.productName || <span className="text-danger">N/A</span>}
-                              </td>
-                              <td className="text-uppercase fw-bold ">
-                                {data?.stockOut !== undefined ? data.stockOut : <span className="text-danger">N/A</span>}
-                              </td>
-                              <td className="text-uppercase fw-bold ">
-                                {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
-                              </td>
-                              <td ></td>
-                              <div className="icon-container d-flex  pb-0" >
-                                <span className="icon-wrapper me-4" title="View">
-                                  <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                </span>
-                                {/* <span className="icon-wrapper">
-                                <PiEye className="fs-4 text-warning" style={{ cursor: 'pointer' }} />
-                              </span>
-                              <span className="icon-wrapper">
-                                <PiEye className="fs-4 text-danger" style={{ cursor: 'pointer' }} />
-                              </span> */}
-                              </div>
-                            </tr>
-                          ))}
-                        </tbody>
+                        {store?.dispatchListReducer?.loading ? (
+                          <tr>
+                            <td className='text-center' colSpan={4}>
+                              <DashboardLoading />
+                            </td>
+                          </tr>
+                        ) : (
+                          <tbody>
+                            {StockinData?.length === 0 ? (
+                              <tr>
+                                <td colSpan={6} className='text-center'>
+                                  <p className='my-4 py-5'>No dispatch data to show.</p>
+                                </td>
+                              </tr>
+                            ) : (
+                              DispatchData?.map((data, index) => (
+                                <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                  <th scope="row">{index + 1}</th>
+                                  <td className="text-uppercase fw-bold ">
+                                    {data?.productName || <span className="text-danger">N/A</span>}
+                                  </td>
+                                  <td className="text-uppercase fw-bold ">
+                                    {data?.stockOut !== undefined ? data.stockOut : <span className="text-danger">N/A</span>}
+                                  </td>
+                                  <td className="text-uppercase fw-bold ">
+                                    {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
+                                  </td>
+                                  <td ></td>
+                                  <div className="icon-container d-flex  pb-0" >
+                                    <span className="icon-wrapper me-4" title="View">
+                                      <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                    </span>
+                                  </div>
+                                </tr>
+                              )))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>

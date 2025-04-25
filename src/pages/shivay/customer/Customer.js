@@ -10,6 +10,7 @@ import { deleteCustomerActions, getCustomerListActions } from '../../../redux/ac
 import { FaRegCopy } from 'react-icons/fa';
 import { MdDeleteOutline } from 'react-icons/md';
 import Pagination from '../../../helpers/Pagination';
+import { Loading } from '../../../helpers/loader/Loading';
 
 const Customer = () => {
 
@@ -116,57 +117,72 @@ const Customer = () => {
                       {/* <th scope="col">Action</th> */}
                     </tr>
                   </thead>
-                  <tbody>
-                    {CustomerData?.map((data, index) => (
-                      <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                        <th scope="row">{index + 1}</th>
-                        <td className="text-uppercase fw-bold ">
-                          {data?.name || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td className="fw-bold text-primary">
-                          {data?.email ? (
-                            <>
-                              <span>{data.email}</span>
-                              <FaRegCopy
-                                style={{ cursor: 'pointer' }}
-                                title="Copy Email"
-                                className='text-muted ms-2 fs-6'
-                                onClick={() => {
-                                  navigator.clipboard.writeText(data.email);
-                                  alert('Email copied to clipboard!');
-                                }}
-                              />
-                            </>
-                          ) : (
-                            <span className="text-danger">N/A</span>
-                          )}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.primaryPhoneNumber || <span className="text-danger">N/A</span>}
-                        </td>
-                        {/* <td className="fw-bold">
+                  {store?.customerListReducer?.loading ? (
+                    <tr>
+                      <td className='text-center' colSpan={6}>
+                        <Loading />
+                      </td>
+                    </tr>
+                  ) : (
+                    <tbody>
+                      {CustomerData?.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className='text-center'>
+                            <p className='my-5 py-5 '>No customer found.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        CustomerData?.map((data, index) => (
+                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                            <th scope="row">{index + 1}</th>
+                            <td className="text-uppercase fw-bold ">
+                              {data?.name || <span className="text-danger">N/A</span>}
+                            </td>
+                            <td className="fw-bold text-primary">
+                              {data?.email ? (
+                                <>
+                                  <span>{data.email}</span>
+                                  <FaRegCopy
+                                    style={{ cursor: 'pointer' }}
+                                    title="Copy Email"
+                                    className='text-muted ms-2 fs-6'
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(data.email);
+                                      alert('Email copied to clipboard!');
+                                    }}
+                                  />
+                                </>
+                              ) : (
+                                <span className="text-danger">N/A</span>
+                              )}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.primaryPhoneNumber || <span className="text-danger">N/A</span>}
+                            </td>
+                            {/* <td className="fw-bold">
                           {data?.location || <span className="text-danger">N/A</span>}
                         </td> */}
-                        <td></td>
-                        <td></td>
-                        <div className="icon-container d-flex  pb-0" >
-                          {/* <span className="icon-wrapper" title="View">
+                            <td></td>
+                            <td></td>
+                            <div className="icon-container d-flex  pb-0" >
+                              {/* <span className="icon-wrapper" title="View">
                             <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                           </span> */}
-                          <span className="icon-wrapper" title="Edit">
-                            <AiOutlineEdit
-                              className="fs-4 text-black"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => handleCustomerModal(data, 'Edit', true)}
-                            />
-                          </span>
-                          <span className="icon-wrapper" title="Delete" onClick={() => { setCustomerToDelete(data?._id); setShowConfirm(true); }}>
-                            <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                          </span>
-                        </div>
-                      </tr>
-                    ))}
-                  </tbody>
+                              <span className="icon-wrapper" title="Edit">
+                                <AiOutlineEdit
+                                  className="fs-4 text-black"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() => handleCustomerModal(data, 'Edit', true)}
+                                />
+                              </span>
+                              <span className="icon-wrapper" title="Delete" onClick={() => { setCustomerToDelete(data?._id); setShowConfirm(true); }}>
+                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                              </span>
+                            </div>
+                          </tr>
+                        )))}
+                    </tbody>
+                  )}
                 </table>
                 <Pagination
                   pageIndex={pageIndex}

@@ -101,7 +101,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
         } else {
             const productsData = {
                 productId: selectedModal?.value,
-                quantity: quantity,
+                qty: quantity,
                 product: selectedModal?.data
             }
             setOpeningProducts(prev => [...prev, productsData]);
@@ -209,7 +209,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                                         placeholder="Enter Quantity"
                                         // value={faq.question}
                                         value={quantity}
-                                        onChange={(e) => setQuantity(e.target.value)}
+                                        onChange={(e) => setQuantity(parseInt(e.target.value))}
                                         required
                                     />
                                 </Form.Group>
