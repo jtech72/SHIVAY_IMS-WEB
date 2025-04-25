@@ -112,11 +112,21 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                         type="text"
                                         placeholder="Enter Phone"
                                         name="Phone"
-                                        {...register("primaryPhoneNumber", { required: true })}
-                                        // value={faq.question}
-                                        // onChange={handleChange}
-                                        required
+                                        maxLength={10}
+                                        onInput={(e) => {
+                                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                        }}
+                                        {...register("primaryPhoneNumber", {
+                                            required: "Phone number is required",
+                                            pattern: {
+                                                value: /^[0-9]{10}$/,
+                                                message: "Phone number must be exactly 10 digits"
+                                            }
+                                        })}
                                     />
+                                    {errors.primaryPhoneNumber && (
+                                        <small className="text-danger">{errors.primaryPhoneNumber.message}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>
@@ -126,13 +136,24 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                         type="text"
                                         placeholder="Enter Phone"
                                         name="Phone"
-                                        {...register("secondaryPhoneNumber", { required: true })}
-                                        // value={faq.question}
-                                        // onChange={handleChange}
-                                        required
+                                        maxLength={10}
+                                        onInput={(e) => {
+                                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                        }}
+                                        {...register("secondaryPhoneNumber", {
+                                            required: "Phone number is required",
+                                            pattern: {
+                                                value: /^[0-9]{10}$/,
+                                                message: "Phone number must be exactly 10 digits"
+                                            }
+                                        })}
                                     />
+                                    {errors.secondaryPhoneNumber && (
+                                        <small className="text-danger">{errors.secondaryPhoneNumber.message}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
+
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
                                     <Form.Label className="mb-0">Location</Form.Label>

@@ -4,9 +4,10 @@ import Select from 'react-select';
 import { createUsersActions, getLocationActions, getWarehouseActions, updateUsersActions } from '../../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const AddUserModal = ({ showModal, handleClose, UserData }) => {
-    
+
     const { type } = UserData;
     const dispatch = useDispatch();
     const {
@@ -38,6 +39,12 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
         reset();
         handleClose()
     }
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(prev => !prev);
+    };
 
     useEffect(() => {
 
@@ -132,14 +139,35 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                             </Form.Group>
                         </Col>
                         <Col sm={6}>
-                            <Form.Group className="mb-1">
+                            <Form.Group className="mb-1 position-relative">
                                 <Form.Label className='mb-0'>Password</Form.Label>
-                                <Form.Control
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    {...register("password", { required: true })}
-                                />
-                                {errors.password && <small className="text-danger">Password is required</small>}
+                                <div className="position-relative">
+                                    <Form.Control
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter Password"
+                                        {...register("password", {
+                                            required: "Password is required",
+                                            minLength: {
+                                                value: 8,
+                                                message: "Minimum 8 characters"
+                                            },
+                                            pattern: {
+                                                value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                                message: "Must include uppercase, number, and special character"
+                                            }
+                                        })}
+                                    />
+                                    <span
+                                        onClick={togglePasswordVisibility}
+                                        className="position-absolute end-0 top-50 translate-middle-y me-2"
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        {showPassword ? <FiEyeOff /> : <FiEye />}
+                                    </span>
+                                </div>
+                                {errors.password && (
+                                    <small className="text-danger">{errors.password.message}</small>
+                                )}
                             </Form.Group>
                         </Col>
                         <Col sm={6}>
@@ -148,8 +176,17 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter Phone"
-                                    {...register("phoneNumber", { required: true })}
-                                />
+                                    maxLength={10}
+                                    onInput={(e) => {
+                                        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                    }}
+                                    {...register("phoneNumber", {
+                                        required: "Phone number is required",
+                                        pattern: {
+                                            value: /^[0-9]{10}$/,
+                                            message: "Phone number must be exactly 10 digits"
+                                        }
+                                    })} />
                                 {errors.phoneNumber && <small className="text-danger">Phone is required</small>}
                             </Form.Group>
                         </Col>

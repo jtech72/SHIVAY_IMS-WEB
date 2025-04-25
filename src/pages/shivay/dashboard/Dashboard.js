@@ -24,9 +24,10 @@ const Dashboard = () => {
   const handleShow = () => setShow(true);
   const [search, setSearch] = useState('')
   const store = useSelector((state) => state)
-  
+
   const StockinData = store?.stockinTransListReducer?.stockinList?.data;
   const DispatchData = store?.dispatchListReducer?.dispatchList?.data;
+  const DashboardCount = store?.dashboardDataReducer?.dashboardData?.response;
 
   useEffect(() => {
     dispatch(getDashboardActions());
@@ -51,28 +52,28 @@ const Dashboard = () => {
   const dashboardItems = [
     {
       title: "Total Warehouse",
-      value: 56,
+      value: DashboardCount?.totalWarehouse,
       icon: <MdOutlineStoreMallDirectory />,
       background: "https://img.freepik.com/free-photo/factory-workers-walking-through-large-production-hall-having-conversation_342744-167.jpg?t=st=1744610960~exp=1744614560~hmac=3a9848632fe4c06c84e920765cca04c97132034c3fd6238bfa595be131e5d0ca&w=996",
       link: "/shivay/warehouse"
     },
     {
       title: "Total Products",
-      value: 1200,
+      value: DashboardCount?.productCount,
       icon: <FaLayerGroup />,
       background: "https://img.freepik.com/premium-photo/woman-warehouse-using-computer-manage-inventory_239711-30274.jpg?w=1380",
       link: "/shivay/inventory"
     },
     {
       title: "Total User",
-      value: 200,
+      value: DashboardCount?.userCount,
       icon: <FaUsers />,
       background: "https://img.freepik.com/premium-photo/businessman-showing-virtual-graphic-human-icon-human-development-recruitment-leadership-human-resource-management_55710-1797.jpg?w=996",
       link: "/shivay/user"
     },
     {
       title: "Total Dispatch ",
-      value: 56,
+      value: DashboardCount?.dispatchCount,
       icon: <MdOutlineSell />,
       background: "https://img.freepik.com/premium-photo/manager-coordinating-with-truck-drivers-delivery-focus-streamlined-operations-vibrant-composite-organized-receiving-dock_35669-9100.jpg?w=1380",
       link: "/shivay/dispatch"

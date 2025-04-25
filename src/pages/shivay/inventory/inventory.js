@@ -93,7 +93,7 @@ const Inventory = () => {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
-                            <Button className="mt-2 fw-bold custom-button" onClick={handleShow}>
+                            <Button className="mt-2 fw-bold custom-button" onClick={() => handleUserModal(null, 'Add', true)}>
                                 <IoIosAdd className="fs-3" />&nbsp;Product
                             </Button>
                         </div>

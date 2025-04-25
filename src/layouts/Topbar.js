@@ -1,11 +1,11 @@
 // @flow
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { Logo, Shivay_Logo } from '../helpers/image'
 // actions
-import {  changeSidebarType } from '../redux/actions';
+import { changeSidebarType } from '../redux/actions';
 
 // components
 import ProfileDropdown from '../components/ProfileDropdown';
@@ -54,7 +54,7 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
     const dispatch = useDispatch();
 
     const [isopen, setIsopen] = useState(false);
-
+    const navigate = useNavigate()
     const navbarCssClasses = navCssClasses || '';
     const containerCssClasses = !hideLogo ? 'container-fluid' : '';
 
@@ -94,7 +94,7 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
     /**
      * Toggles the right sidebar
      */
-  
+
 
     return (
         <>
@@ -115,7 +115,7 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                         {/* <li className="dropdown notification-list topbar-dropdown d-none d-lg-block">
                             <LanguageDropdown />
                         </li> */}
-                        <li className="dropdown notification-list">
+                        <li className="dropdown notification-list" title="Notifications">
                             <NotificationDropdown notifications={Notifications} />
                         </li>
                         {/* <li className="dropdown notification-list d-none d-sm-inline-block">
@@ -129,14 +129,10 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                             </button>
                         </li> */}
 
-                        <li className="dropdown notification-list">
-                            <ProfileDropdown
-                                profilePic={Shivay_Logo}
-                                menuItems={ProfileMenus}
-                                // username={'SHIVAY Admin'}
-                                // userTitle={'Founder'}
-                            />
+                        <li className="dropdown notification-list d-flex align-items-center justify-content-center ps-2 mt-2" style={{borderLeft:'2px solid #E8EAE9'}}>
+                            <i className='mdi mdi-logout fs-3 cursor' title="Log Out" style={{marginTop:'6px'}} onClick={() => navigate('/account/logout')}></i>
                         </li>
+
                     </ul>
 
                     {/* toggle for vertical layout */}

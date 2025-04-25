@@ -1,5 +1,5 @@
 //Dashboard 
-export const GET_DASHBOARD_DATA = '/api/admin/dashboard/getAllDashBoardData'
+export const GET_DASHBOARD_DATA = '/api/dashboard/get'
 export const GET_STOCKIN_LIST = '/api/transaction/stockin/list'
 export const GET_DISPATCH_TRANS_LIST = '/api/transaction/dispatch/list'
 
