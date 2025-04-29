@@ -5,7 +5,7 @@ import PageTitle from '../../../helpers/PageTitle';
 import { AiOutlineEdit } from "react-icons/ai";
 import AddUserModal from './modal/AddUserModal';
 import { RiDeleteBinLine } from "react-icons/ri";
-import { deleteUsersActions, getUsersListActions } from '../../../redux/actions';
+import { deleteUsersActions, getUsersListActions, UsersStateEmptyActions } from '../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaRegCopy } from 'react-icons/fa';
 import { MdDeleteOutline } from 'react-icons/md';
@@ -51,6 +51,7 @@ const User = () => {
 
     const handleDelete = () => {
         dispatch(deleteUsersActions({ userId: userToDelete }));
+        dispatch(UsersStateEmptyActions())
         setShowConfirm(false);
     };
 
@@ -156,10 +157,7 @@ const User = () => {
                                                             {data?.password || <span className="text-danger">N/A</span>}
                                                         </td>
                                                         <td></td>
-                                                        <div className="icon-container d-flex  pb-0" >
-                                                            {/* <span className="icon-wrapper" title="View">
-                                                        <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span> */}
+                                                        <div className="icon-container d-flex pb-0" >
                                                             <span className="icon-wrapper" title="Edit">
                                                                 <AiOutlineEdit
                                                                     className="fs-4 text-black"
@@ -179,7 +177,7 @@ const User = () => {
                                 <Pagination
                                     pageIndex={pageIndex}
                                     pageSize={pageSize}
-                                    totalPages={useSelector((state) => state?.userListReducer?.userList?.totalPages)}
+                                    totalPages={store?.userListReducer?.userList?.totalPages}
                                     setPageIndex={setPageIndex}
                                     onChangePageSize={setPageSize}
                                 />

@@ -7,7 +7,7 @@ const USERS_LIST_INITIAL_STATE = {
 }
 
 const userListReducer = (state = USERS_LIST_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case UsersActionTypes.USERS_LIST_LOADING:
             return {
@@ -34,7 +34,7 @@ const CREATE_USERS_INITIAL_STATE = {
 }
 
 const createUsersReducer = (state = CREATE_USERS_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case UsersActionTypes.CREATE_USERS_LOADING:
             return {
@@ -61,7 +61,7 @@ const UPDATE_USERS_INITIAL_STATE = {
 }
 
 const updateUsersReducer = (state = UPDATE_USERS_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case UsersActionTypes.UPDATE_USERS_LOADING:
             return {
@@ -88,7 +88,7 @@ const DELETE_USERS_INITIAL_STATE = {
 }
 
 const deleteUsersReducer = (state = DELETE_USERS_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case UsersActionTypes.DELETE_USERS_LOADING:
             return {
@@ -105,6 +105,11 @@ const deleteUsersReducer = (state = DELETE_USERS_INITIAL_STATE, action) => {
                 deleteUsers: action.payload,
                 loading: false
             }
+        case UsersActionTypes.USERS_DATA_RESET:
+            return {
+                deleteUsers: [],
+                loading: false
+            }
         default: return state
     }
 }
@@ -115,7 +120,7 @@ const LISTING_USERS_INITIAL_STATE = {
 }
 
 const listingUsersReducer = (state = LISTING_USERS_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case UsersActionTypes.LISTING_USERS_LOADING:
             return {

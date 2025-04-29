@@ -146,7 +146,10 @@ const Dashboard = () => {
 
           <div>
             <Card
-              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+              style={{
+                boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset',
+                height: '40vh'
+              }}
             >
               <Card.Body className="text-center py-1">
 
@@ -224,7 +227,7 @@ const Dashboard = () => {
                           </tr>
                         ) : (
                           <tbody>
-                            {StockinData?.length === 0 ? (
+                            {DispatchData?.length === 0 ? (
                               <tr>
                                 <td colSpan={6} className='text-center'>
                                   <p className='my-4 py-5'>No dispatch data to show.</p>

@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import ToastContainer from '../../../../helpers/toast/ToastContainer';
 import { useLocation } from 'react-router-dom';
 
-const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningProducts,selectedWarehouse }) => {
+const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningProducts, selectedWarehouse }) => {
 
     const dispatch = useDispatch();
     const { handleSubmit, register } = useForm()
@@ -101,9 +101,11 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
         } else {
             const productsData = {
                 productId: selectedModal?.value,
-                qty: quantity,
+                quantity: quantity,
                 product: selectedModal?.data
             }
+            console.log(productsData, 'productsData')
+
             setOpeningProducts(prev => [...prev, productsData]);
             handleClose();
         }
@@ -133,7 +135,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                                             setProductName('');
                                         }}
                                     >
-                                        <option value="modelName">Model Name</option>
+                                        <option value="modelName">Model</option>
                                         <option value="code">Code</option>
                                     </Form.Select>
                                 </Form.Group>
