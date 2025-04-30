@@ -46,6 +46,11 @@ const createCustomerReducer = (state = CREATE_CUSTOMER_INITIAL_STATE, action) =>
                 createCustomer: action.payload,
                 loading: false
             }
+        case CustomerActionTypes.CREATE_CUSTOMER_RESET:
+            return {
+                createCustomer: [],
+                loading: false,
+            };
         case CustomerActionTypes.CREATE_CUSTOMER_ERROR:
             return {
                 createCustomer: action.payload,
@@ -73,6 +78,11 @@ const updateCustomerReducer = (state = UPDATE_CUSTOMER_INITIAL_STATE, action) =>
                 updateCustomer: action.payload,
                 loading: false
             }
+        case CustomerActionTypes.UPDATE_CUSTOMER_RESET:
+            return {
+                updateCustomer: [],
+                loading: false,
+            };
         case CustomerActionTypes.UPDATE_CUSTOMER_ERROR:
             return {
                 updateCustomer: action.payload,
@@ -103,6 +113,11 @@ const deleteCustomerReducer = (state = DELETE_CUSTOMER_INITIAL_STATE, action) =>
         case CustomerActionTypes.DELETE_CUSTOMER_ERROR:
             return {
                 deleteCustomer: action.payload,
+                loading: false
+            }
+        case CustomerActionTypes.DELETE_CUSTOMER_RESET:
+            return {
+                deleteCustomer: [],
                 loading: false
             }
         default: return state

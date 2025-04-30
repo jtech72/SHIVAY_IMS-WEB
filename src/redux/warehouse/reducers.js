@@ -18,6 +18,11 @@ const createWarehouseReducer = (state = CRATE_WAREHOUSE_INITIAL_STATE, action) =
                 warehouseData: action.payload,
                 loading: false
             }
+        case WarehouseActionTypes.CREATE_WAREHOUSE_RESET:
+            return {
+                warehouseData: [],
+                loading: false,
+            };
         case WarehouseActionTypes.CREATE_WAREHOUSE_ERROR:
             return {
                 warehouseData: action.payload,
@@ -70,6 +75,11 @@ const updateWarehouseReducer = (state = UPDATE_WAREHOUSE_INITIAL_STATE, action) 
                 warehouseUpdate: action.payload,
                 loading: false
             }
+        case WarehouseActionTypes.UPDATE_WAREHOUSE_RESET:
+            return {
+                warehouseUpdate: [],
+                loading: false,
+            };
         case WarehouseActionTypes.UPDATE_WAREHOUSE_ERROR:
             return {
                 warehouseUpdate: action.payload,
@@ -97,6 +107,11 @@ const deleteWarehouseReducer = (state = DELETE_WAREHOUSE_INITIAL_STATE, action) 
         case WarehouseActionTypes.DELETE_WAREHOUSE_ERROR:
             return {
                 warehouseDelete: action.payload,
+                loading: false
+            }
+        case WarehouseActionTypes.DELETE_WAREHOUSE_RESET:
+            return {
+                warehouseDelete: [],
                 loading: false
             }
         default: return state

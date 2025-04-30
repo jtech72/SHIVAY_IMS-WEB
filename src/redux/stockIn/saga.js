@@ -47,6 +47,10 @@ function* createStockInFunction(data) {
                 type: StockInActionTypes.CREATE_STOCKIN_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: StockInActionTypes.CREATE_STOCKIN_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: StockInActionTypes.CREATE_STOCKIN_ERROR,
@@ -54,6 +58,7 @@ function* createStockInFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: StockInActionTypes.CREATE_STOCKIN_ERROR,
             payload: error,
@@ -74,6 +79,10 @@ function* updateStockInFunction(data) {
                 type: StockInActionTypes.UPDATE_STOCKIN_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: StockInActionTypes.UPDATE_STOCKIN_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: StockInActionTypes.UPDATE_STOCKIN_ERROR,
@@ -81,6 +90,7 @@ function* updateStockInFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: StockInActionTypes.UPDATE_STOCKIN_ERROR,
             payload: error,
@@ -100,6 +110,10 @@ function* deleteStockInFunction(data) {
             yield put({
                 type: StockInActionTypes.DELETE_STOCKIN_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: StockInActionTypes.DELETE_STOCKIN_RESET,
+                payload: {},
             });
         } else {
             yield put({

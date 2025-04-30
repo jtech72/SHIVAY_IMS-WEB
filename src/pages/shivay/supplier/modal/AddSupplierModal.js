@@ -26,7 +26,8 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
 
     const closeModal = () => {
         reset();
-        handleClose()
+        handleClose();
+        setLocationSelected(null);
     }
 
     useEffect(() => {

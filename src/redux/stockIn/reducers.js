@@ -7,7 +7,7 @@ const STOCKIN_LIST_INITIAL_STATE = {
 }
 
 const stockInListReducer = (state = STOCKIN_LIST_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockInActionTypes.STOCKIN_LIST_LOADING:
             return {
@@ -34,7 +34,7 @@ const CREATE_STOCKIN_INITIAL_STATE = {
 }
 
 const createStockInReducer = (state = CREATE_STOCKIN_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockInActionTypes.CREATE_STOCKIN_LOADING:
             return {
@@ -46,6 +46,11 @@ const createStockInReducer = (state = CREATE_STOCKIN_INITIAL_STATE, action) => {
                 createStockIn: action.payload,
                 loading: false
             }
+        case StockInActionTypes.CREATE_STOCKIN_RESET:
+            return {
+                createStockIn: [],
+                loading: false,
+            };
         case StockInActionTypes.CREATE_STOCKIN_ERROR:
             return {
                 createStockIn: action.payload,
@@ -61,7 +66,7 @@ const UPDATE_STOCKIN_INITIAL_STATE = {
 }
 
 const updateStockInReducer = (state = UPDATE_STOCKIN_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockInActionTypes.UPDATE_STOCKIN_LOADING:
             return {
@@ -73,6 +78,11 @@ const updateStockInReducer = (state = UPDATE_STOCKIN_INITIAL_STATE, action) => {
                 updateStockIn: action.payload,
                 loading: false
             }
+        case StockInActionTypes.UPDATE_STOCKIN_RESET:
+            return {
+                updateStockIn: [],
+                loading: false,
+            };
         case StockInActionTypes.UPDATE_STOCKIN_ERROR:
             return {
                 updateStockIn: action.payload,
@@ -88,7 +98,7 @@ const DELETE_STOCKIN_INITIAL_STATE = {
 }
 
 const deleteStockInReducer = (state = DELETE_STOCKIN_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockInActionTypes.DELETE_STOCKIN_LOADING:
             return {
@@ -103,6 +113,11 @@ const deleteStockInReducer = (state = DELETE_STOCKIN_INITIAL_STATE, action) => {
         case StockInActionTypes.DELETE_STOCKIN_ERROR:
             return {
                 deleteStockIn: action.payload,
+                loading: false
+            }
+        case StockInActionTypes.DELETE_STOCKIN_RESET:
+            return {
+                deleteStockIn: [],
                 loading: false
             }
         default: return state
