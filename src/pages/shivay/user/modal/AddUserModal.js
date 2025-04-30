@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { createUsersActions, getLocationActions, getWarehouseActions, updateUsersActions } from '../../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { Controller } from "react-hook-form";
+import InputGroupText from 'react-bootstrap/esm/InputGroupText';
 
 const AddUserModal = ({ showModal, handleClose, UserData }) => {
 
@@ -97,7 +98,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
     };
 
     return (
-        <Modal show={showModal} centered size='lg' onHide={handleClose}>
+        <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header closeButton>
                     <Modal.Title className='text-black'>{type} User</Modal.Title>
@@ -115,7 +116,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                                         label: data.name,
                                         value: data._id,
                                     }))}
-                                    placeholder="Select a warehouse"
+                                    placeholder="Select warehouse"
                                     isClearable
                                     isMulti
                                     required
@@ -197,21 +198,28 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                             <Form.Group className="mb-1">
                                 <Form.Label className='mb-0'>Phone {!UserData?.data && <span className="text-danger">*</span>}
                                 </Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Enter Phone"
-                                    maxLength={10}
-                                    onInput={(e) => {
-                                        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                    }}
-                                    {...register("phoneNumber", {
-                                        required: "Phone number is required",
-                                        pattern: {
-                                            value: /^[0-9]{10}$/,
-                                            message: "Phone number must be exactly 10 digits"
-                                        }
-                                    })} />
-                                {errors.phoneNumber && <small className="text-danger">Phone is required</small>}
+
+                                <InputGroup>
+                                    <InputGroupText>+91</InputGroupText>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Phone Number"
+                                        maxLength={10}
+                                        onInput={(e) => {
+                                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                        }}
+                                        {...register("phoneNumber", {
+                                            required: "Phone number is required",
+                                            pattern: {
+                                                value: /^[0-9]{10}$/,
+                                                message: "Phone number must be exactly 10 digits"
+                                            }
+                                        })}
+                                    />
+                                </InputGroup>
+                                {errors.phoneNumber && (
+                                    <small className="text-danger">{errors.phoneNumber.message}</small>
+                                )}
                             </Form.Group>
                         </Col>
                         <Col sm={6}>

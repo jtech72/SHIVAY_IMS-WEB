@@ -8,6 +8,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
     const { type } = ProductData;
     const dispatch = useDispatch();
+
     const {
         handleSubmit,
         register,
@@ -20,22 +21,18 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
     const closeModal = () => {
         reset();
-        handleClose()
-    }
+        handleClose();
+    };
 
     useEffect(() => {
-
         if (ProductData?.data) {
-
-            setValue('name', ProductData.data?.name)
-            setValue('model', ProductData.data?.modelData?.name)
-            setValue('code', ProductData.data?.code)
-            setValue('description', ProductData.data?.description)
-
+            setValue('name', ProductData.data?.name);
+            setValue('model', ProductData.data?.modelData?.name);
+            setValue('code', ProductData.data?.code);
+            setValue('description', ProductData.data?.description);
             setThreshold(Number(ProductData?.data?.lowestStock));
-
         }
-    }, [ProductData]);
+    }, [ProductData, setValue]);
 
     const onSubmit = (data) => {
         const payload = {
@@ -45,6 +42,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
             description: data?.description,
             lowestStock: threshold,
         };
+
         if (ProductData?.data?._id) {
             const updatedData = {
                 ...payload,
@@ -52,15 +50,16 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
             };
             dispatch(updateProductActions(updatedData));
         } else {
-        dispatch(createProductActions(payload));
+            dispatch(createProductActions(payload));
         }
-        console.log(payload, 'payload')
+
+        console.log(payload, 'payload');
         closeModal();
     };
 
     return (
         <div>
-            <Modal show={showModal} centered size='lg' onHide={handleClose}>
+            <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Modal.Header closeButton>
                         <Modal.Title className='text-black'>{type} Product</Modal.Title>
@@ -70,14 +69,19 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                         <Row>
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Product Name</Form.Label>
+                                    <Form.Label className="mb-0">
+                                        Product Name <span className="text-danger">*</span>
+                                    </Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Product Name"
-                                        name="Product Name"
-                                        {...register("name", { required: true })}
-                                        required
+                                        {...register('name', {
+                                            required: 'Product Name is required',
+                                        })}
                                     />
+                                    {errors.name && (
+                                        <small className="text-danger">{errors.name.message}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>
@@ -111,8 +115,8 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                                         rows={3}
                                         placeholder="Enter Description"
                                         name="Description"
-                                        {...register("description", { required: true })}
-                                        required
+                                        // {...register("description", { required: true })}
+                                        // required
                                     />
                                 </Form.Group>
                             </Col>
