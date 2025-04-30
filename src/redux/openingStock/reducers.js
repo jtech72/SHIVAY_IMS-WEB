@@ -7,7 +7,7 @@ const STOCK_LIST_INITIAL_STATE = {
 }
 
 const stockListReducer = (state = STOCK_LIST_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockActionTypes.STOCK_LIST_LOADING:
             return {
@@ -34,7 +34,7 @@ const CREATE_STOCK_INITIAL_STATE = {
 }
 
 const createStockReducer = (state = CREATE_STOCK_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockActionTypes.CREATE_STOCK_LOADING:
             return {
@@ -46,6 +46,11 @@ const createStockReducer = (state = CREATE_STOCK_INITIAL_STATE, action) => {
                 createStock: action.payload,
                 loading: false
             }
+        case StockActionTypes.CREATE_STOCK_RESET:
+            return {
+                createStock: [],
+                loading: false,
+            };
         case StockActionTypes.CREATE_STOCK_ERROR:
             return {
                 createStock: action.payload,
@@ -61,7 +66,7 @@ const UPDATE_STOCK_INITIAL_STATE = {
 }
 
 const updateStockReducer = (state = UPDATE_STOCK_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case StockActionTypes.UPDATE_STOCK_LOADING:
             return {

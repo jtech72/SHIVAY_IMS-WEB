@@ -47,6 +47,10 @@ function* createStockFunction(data) {
                 type: StockActionTypes.CREATE_STOCK_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: StockActionTypes.CREATE_STOCK_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: StockActionTypes.CREATE_STOCK_ERROR,

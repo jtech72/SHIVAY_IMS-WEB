@@ -13,7 +13,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
     const dispatch = useDispatch();
     const { handleSubmit, register } = useForm()
     const store = useSelector((state) => state)
-    const ProductSearch = store?.searchProductReducer?.searchProduct?.response;
+    const ProductSearch = store?.searchProductReducer?.searchProduct?.data;
     // console.log(ProductSearch,'ProductSearch')
     const [searchTerm, setSearchTerm] = useState('');
     const [productName, setProductName] = useState('');
@@ -42,7 +42,6 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
 
         return () => clearTimeout(delayDebounceFn);
     }, [searchTerm, dispatch, searchType]);
-
 
     const modalOptions = ProductSearch?.map((data) => ({
         value: data?._id,
