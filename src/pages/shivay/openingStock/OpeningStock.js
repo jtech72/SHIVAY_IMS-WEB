@@ -104,7 +104,7 @@ const OpeningStock = () => {
                               {data?.description || <span className="text-danger">N/A</span>}
                             </td>
                             <td className="fw-bold">
-                              {data?.productData?.quantity || <span className="text-danger">N/A</span>}
+                              {data?.quantity || <span className="text-danger">N/A</span>}
                             </td>
                             <td></td>
                             <td></td>

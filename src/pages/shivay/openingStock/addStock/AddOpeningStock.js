@@ -9,11 +9,12 @@ import AddProductModal from './AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStockActions, getStockListActions, getWarehouseListActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const AddOpeningStock = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { handleSubmit, register, setValue } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
@@ -38,6 +39,15 @@ const AddOpeningStock = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState(selectedStock?.quantity || '');
     const inputRef = useRef(null);
+
+    const createResponse = store?.createStockReducer?.createStock?.status;
+    console.log(store?.createStockReducer, 'createResponse')
+
+    useEffect(() => {
+            if (createResponse === 200) {
+                navigate("/shivay/openingStock");
+            }
+        }, [createResponse]);
 
     const handleWarehouseChange = (selectedOption) => {
         setSelectedWarehouse(selectedOption);
@@ -74,7 +84,7 @@ const AddOpeningStock = () => {
             date: data?.date
         };
         dispatch(createStockActions(payload));
-        // console.log(payload, 'payload');
+        console.log(payload, 'payload');
     };
 
     const handleDeleteProduct = (indexToRemove) => {
