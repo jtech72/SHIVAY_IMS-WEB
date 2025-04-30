@@ -3,7 +3,6 @@ import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
 import Select from 'react-select'; // Import React Select
 import { createStockCheckActions, searchProductActions } from '../../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import AsyncSelect from 'react-select/async';
 import { useForm } from 'react-hook-form';
 import ToastContainer from '../../../../helpers/toast/ToastContainer';
 import { useLocation } from 'react-router-dom';
@@ -13,7 +12,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
     const dispatch = useDispatch();
     const { handleSubmit, register } = useForm()
     const store = useSelector((state) => state)
-    const ProductSearch = store?.searchProductReducer?.searchProduct?.data;
+    const ProductSearch = store?.searchProductReducer?.searchProduct?.response;
     // console.log(ProductSearch,'ProductSearch')
     const [searchTerm, setSearchTerm] = useState('');
     const [productName, setProductName] = useState('');

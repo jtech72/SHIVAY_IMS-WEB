@@ -17,7 +17,7 @@ function createStockApi(params) {
 
 function updateStockApi(params) {
     const { data } = params
-    return api.update(URL.UPDATE_STOCK, data);
+    return api.create(URL.UPDATE_STOCK, data);
 }
 
 export {

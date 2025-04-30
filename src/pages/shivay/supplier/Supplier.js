@@ -133,7 +133,7 @@ const Supplier = () => {
                           <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                             <th scope="row">{index + 1}</th>
                             <td className="text-uppercase fw-bold ">
-                              {data?.name || <span className="text-danger">N/A</span>}
+                              {data?.name || <span className="text-black">-</span>}
                             </td>
                             <td className="fw-bold text-primary">
                               {data?.email ? (
@@ -150,11 +150,11 @@ const Supplier = () => {
                                   />
                                 </>
                               ) : (
-                                <span className="text-danger">N/A</span>
+                                <span className="text-black">-</span>
                               )}
                             </td>
                             <td className="fw-bold">
-                              {data?.phoneNumber || <span className="text-danger">N/A</span>}
+                              {data?.phoneNumber || <span className="text-black">-</span>}
                             </td>
                             <td></td>
                             <td></td>

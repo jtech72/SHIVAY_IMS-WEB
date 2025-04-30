@@ -7,7 +7,7 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import AddProductModal from './AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { createStockActions, getStockListActions, getWarehouseListActions } from '../../../../redux/actions';
+import { createStockActions, getStockListActions, getWarehouseListActions, updateStockActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -20,12 +20,12 @@ const AddOpeningStock = () => {
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const store = useSelector((state) => state)
-    const today = new Date().toISOString().split('T')[0];
+    const [today,setToday] = useState(new Date().toISOString().split('T')[0]);
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('Id');
     const isEditMode = Boolean(stockId);
-    const OpeningStockData = store?.stockListReducer?.stockList?.response
-
+    const StockInData = store?.stockInListReducer;
+console.log(StockInData,'StockInDataStockInDataStockInData')
     const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
     const warehouseOptions = Warehouse?.map((warehouse) => ({
         value: warehouse._id,
@@ -34,6 +34,7 @@ const AddOpeningStock = () => {
 
     const [openingProducts, setOpeningProducts] = useState([])
     const [selectedStock, setSelectedStock] = useState(null);
+    console.log(selectedStock, 'selectedStock')
     // console.log(openingProducts, 'openingProducts')
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -67,22 +68,28 @@ const AddOpeningStock = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (stockId && OpeningStockData?.length > 0) {
-            const foundStock = OpeningStockData?.find(item => item._id === stockId);
+        if (stockId && StockInData?.length > 0) {
+            const foundStock = StockInData?.find(item => item._id === stockId);
             setSelectedStock(foundStock);
         }
-    }, [stockId, OpeningStockData]);
+    }, [stockId, StockInData]);
+
+    console.log(selectedStock, 'selectedStock')
 
     const onSubmit = (data) => {
         const cleanedProducts = openingProducts.map(({ product, ...rest }) => rest);
 
         const payload = {
             warehouseId: selectedWarehouse?.value,
-            productStock: cleanedProducts,
+            ...(!stockId&&{productStock: cleanedProducts}),
             description: data?.description,
             date: data?.date
         };
+        if (stockId) {
+            dispatch(updateStockActions({ ...payload, _id:stockId, quantity: editedQuantity }));
+        } else {
         dispatch(createStockActions(payload));
+        }
     };
 
     const handleDeleteProduct = (indexToRemove) => {
@@ -93,14 +100,17 @@ const AddOpeningStock = () => {
     useEffect(() => {
 
         if (selectedStock) {
+            setEditedQuantity(selectedStock?.quantity || '');
             const updateWarehouses = selectedStock?.warehouseData
                 ? [{ value: selectedStock.warehouseData._id, label: selectedStock.warehouseData.name }]
                 : [];
 
             setSelectedWarehouse(updateWarehouses)
+            setToday(selectedStock?.date?new Date(selectedStock?.date).toISOString().split('T')[0]:'')
+console.log(selectedStock?.date,'selectedStock?.date')
 
-            setValue('date', selectedStock?.date)
-            setValue('description', selectedStock?.description)
+  
+              setValue('description', selectedStock?.description)
         }
     }, [selectedStock]);
     console.log(selectedStock, 'selectedStock')
@@ -174,8 +184,9 @@ const AddOpeningStock = () => {
                             <Form.Label className='mb-0'>Date Range</Form.Label>
                             <Form.Control
                                 type="date"
-                                value={!stockId ? today : ''}
+                                value={today}
                                 {...register('date', { required: true })}
+                                onChange={(e) => setToday( e.target.value)}
                                 required
                             />
                         </Form.Group>

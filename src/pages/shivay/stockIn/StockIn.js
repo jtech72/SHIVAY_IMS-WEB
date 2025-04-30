@@ -26,7 +26,7 @@ const StockIn = () => {
 
   const StockInData = store?.stockInListReducer?.stockInList?.response;
   const deleteResponse = store?.deleteStockInReducer?.deleteStockIn?.status;
-
+console.log(StockInData,'StockInDataStockInDataStockInData')
   useEffect(() => {
     dispatch(getStockInListActions({
       limit: pageSize,
@@ -148,7 +148,7 @@ const StockIn = () => {
                             <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                           </span> */}
                               <span className="icon-wrapper" title="Edit">
-                                <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                <AiOutlineEdit onClick={()=>navigate(`/shivay/addStockIn?id=${data?._id}`)} className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                               </span>
                               <span className="icon-wrapper" title="Delete" onClick={() => { setStockToDelete(data?._id); setShowConfirm(true); }}>
                                 <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />

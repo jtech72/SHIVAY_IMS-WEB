@@ -141,7 +141,7 @@ const Dispatch = () => {
                             <td></td>
                             <div className="icon-container d-flex pb-0" >
                               <span className="icon-wrapper" title="Edit">
-                                <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                <AiOutlineEdit onClick={()=>navigate(`/shivay/addDispatch?id=${data?._id}`)} className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                               </span>
                               <span className="icon-wrapper" title="Delete" onClick={() => { setDispatchToDelete(data?._id); setShowConfirm(true); }}>
                                 <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PageTitle from '../../../../helpers/PageTitle'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
 import Select from 'react-select'; // Import React Select
@@ -8,23 +8,70 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import AddProductModal from '../../openingStock/addStock/AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { createStockInActions, getWarehouseListActions, listingSupplierActions, listingUsersActions } from '../../../../redux/actions';
+import { createStockInActions, getWarehouseListActions, listingSupplierActions, listingUsersActions, updateStockInActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 
 const AddStockIn = () => {
-
+    const [searchParams] = useSearchParams();
+    const stockId = searchParams.get('id')
     const dispatch = useDispatch();
-    const { handleSubmit, register } = useForm()
+    const { handleSubmit, register, setValue } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const store = useSelector((state) => state)
-    const today = new Date().toISOString().split('T')[0];
+    const [today, setToday] = useState(new Date().toISOString().split('T')[0]);
     const [openingProducts, setOpeningProducts] = useState([])
-
+    const StockInData = store?.stockInListReducer?.stockInList?.response;
+    const [selectedStock, setSelectedStock] = useState(null);
     const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
     const UsersList = store?.listingUsersReducer?.listingUsers?.response;
     const SupplierList = store?.listingSupplierReducer?.listingSupplier?.response;
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedQuantity, setEditedQuantity] = useState('');
+    const inputRef = useRef(null);
+console.log(editedQuantity, 'editedQuantity')
+    const handleQuantityChange = (e) => {
+        setEditedQuantity(e.target.value);
+    };
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSave();
+        }
+    };
+
+    // Handle save (when clicking outside or pressing Enter)
+    const handleSave = () => {
+        setIsEditing(false);
+        // Here you would typically also call an API to update the quantity in your backend
+    };
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (inputRef.current && !inputRef.current.contains(e.target)) {
+                handleSave();
+            }
+        };
+
+
+        if (isEditing) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }
+    }, [isEditing]);
+
+    useEffect(() => {
+        if (stockId && StockInData?.length > 0) {
+            const foundStock = StockInData?.find(item => item._id === stockId);
+            setSelectedStock(foundStock);
+        }
+    }, [stockId, StockInData]);
 
     const warehouseOptions = Warehouse?.map((warehouse) => ({
         value: warehouse._id,
@@ -45,7 +92,33 @@ const AddStockIn = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+console.log(selectedWarehouse, 'selectedWarehouse')
+    useEffect(() => {
+        if (stockId && selectedStock) {
+            console.log(selectedStock, '2345432')
+            setToday(selectedStock?.createdAt ? new Date(selectedStock?.createdAt).toISOString().split('T')[0] : '')
+            const updateWarehouses = selectedStock?.warehouseData
+                ? { value: selectedStock.warehouseId, label: selectedStock.warehouseData?.find((ele) => ele?._id === selectedStock?.warehouseId)?.name }
+                : {};
+            setSelectedWarehouse(updateWarehouses)
 
+            const updatedUser = selectedStock?.receivedByData ? { value: selectedStock?.receivedBy, label: selectedStock.receivedByData?.find((ele) => ele?._id === selectedStock?.receivedBy)?.name }
+                : {}
+            setSelectedUser(updatedUser)
+
+            const updatedSupplier = selectedStock?.supplierId ? { value: selectedStock?.supplierId, label: selectedStock.supplierData?.find((ele) => ele?._id === selectedStock?.supplierId)?.name }
+                : {}
+            setSelectedSupplier(updatedSupplier)
+
+            setValue('invoiceNumber', selectedStock?.invoiceNumber || '');
+            setValue('description', selectedStock?.description || '');
+            setValue('invoiceValue', selectedStock?.fright || '');
+            setValue('invoiceAttachment', selectedStock?.invoiceAttachment || '');
+            setEditedQuantity(selectedStock?.productData?.stockInQty || '');
+        }
+
+    }, [stockId, selectedStock])
+    console.log(selectedWarehouse, 'selectedWarehouse')
     const handleAccordionToggle = () => {
         setIsAccordionOpen(prevState => !prevState);
     };
@@ -84,13 +157,20 @@ const AddStockIn = () => {
         formData.append('warehouseId', selectedWarehouse?.value)
         formData.append('receivedBy', selectedUser?.value);
         formData.append('supplierId', selectedSupplier?.value);
-        formData.append('stockInQty', JSON.stringify(cleanedProducts)); 
+        formData.append('stockInQty', stockId?parseInt(editedQuantity):JSON.stringify(cleanedProducts));
         formData.append('description', data?.description);
         formData.append('date', data?.date);
         formData.append('invoiceNumber', data?.invoiceNumber);
         formData.append('fright', data?.invoiceValue);
-
-        dispatch(createStockInActions(formData));
+        if(stockId){
+            formData.append('_id', stockId);
+        }
+if(stockId){
+    alert('update')
+dispatch(updateStockInActions(formData))
+}else{
+    dispatch(createStockInActions(formData));
+}
         // console.log(formData, 'formData');
     };
 
@@ -183,7 +263,7 @@ const AddStockIn = () => {
                                             <Form.Label className='mb-0'>Date Range</Form.Label>
                                             <Form.Control
                                                 type="date"
-                                                defaultValue={today}
+                                                value={today}
                                                 {...register('date', { required: true })}
                                                 required
                                             />
@@ -206,11 +286,24 @@ const AddStockIn = () => {
                                             <Form.Control
                                                 type="file"
                                                 placeholder="Upload file"
-                                                required
-                                                {...register('invoiceAttachment', { required: true })}
+                                                {...register('invoiceAttachment', {
+                                                    required: !selectedStock?.invoiceAttachment, // only require if no existing
+                                                })}
                                             />
+                                            {selectedStock?.invoiceAttachment && (
+                                                <div className="mt-2">
+                                                    <a
+                                                        href={selectedStock.invoiceAttachment}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        View Existing Invoice
+                                                    </a>
+                                                </div>
+                                            )}
                                         </Form.Group>
                                     </Col>
+
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
                                             <Form.Label className="mb-0">Invoice Value</Form.Label>
@@ -254,22 +347,80 @@ const AddStockIn = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {openingProducts && openingProducts.length > 0 ? (
-                                        openingProducts?.map((data, index) => (
-                                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                                                <th scope="row">{index + 1}</th>
-                                                <td className="text-uppercase fw-bold ">
-                                                    {data?.product?.name || <span className="text-black">-</span>}
+                                    {!stockId ? (
+                                        openingProducts && openingProducts.length > 0 ? (
+                                            openingProducts.map((data, index) => (
+                                                <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                                    <th scope="row">{index + 1}</th>
+                                                    <td className="text-uppercase fw-bold">
+                                                        {data?.product?.name || <span className="text-black">-</span>}
+                                                    </td>
+                                                    <td className="fw-bold">
+                                                        {data?.product?.code || <span className="text-black">-</span>}
+                                                    </td>
+                                                    <td className="fw-bold">
+                                                        {data?.quantity || <span className="text-black">-</span>}
+                                                    </td>
+                                                    <td></td>
+                                                    <td>
+                                                        <div className="icon-container d-flex pb-0">
+                                                            <span className="icon-wrapper" title="View">
+                                                                <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                            </span>
+                                                            <span className="icon-wrapper" title="Edit">
+                                                                <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                            </span>
+                                                            <span className="icon-wrapper" title="Delete">
+                                                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" className="text-center text-muted py-3">
+                                                    No products added yet. Please add products to add stockIn.
                                                 </td>
-                                                <td className="fw-bold">
-                                                    {data?.product?.code || <span className="text-black">-</span>}
-                                                </td>
-                                                <td className="fw-bold">
-                                                    {data?.quantity || <span className="text-black">-</span>}
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-                                                <div className="icon-container d-flex  pb-0" >
+                                            </tr>
+                                        )
+                                    ) : (
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td className="text-uppercase fw-bold">
+                                                {selectedStock?.productData?.name || <span className="text-black">-</span>}
+                                            </td>
+                                            <td className="fw-bold">
+                                                {selectedStock?.productData?.code || <span className="text-black">-</span>}
+                                            </td>
+                                            <td className="fw-bold">
+                                                {isEditing ? (
+                                                   <input
+                                                   ref={inputRef}
+                                                   type="number"  // or "text" depending on your needs
+                                                   value={editedQuantity}
+                                                   onChange={handleQuantityChange}
+                                                   onKeyPress={handleKeyPress}
+                                                   // autoFocus
+                                                   className="form-control form-control-md"
+                                                   style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
+                                               />
+                                                ) : (
+                                                    <span onClick={handleEditClick} > {editedQuantity}</span>
+                                                )}
+
+                                            </td>
+                                            <div className="icon-container d-flex pb-0">
+                                                <span
+                                                    className="icon-wrapper me-4"
+                                                    title="Edit"
+                                                    onClick={handleEditClick}
+                                                >
+                                                    <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                </span>
+                                            </div>
+                                            <td>
+                                                <div className="icon-container d-flex pb-0">
                                                     <span className="icon-wrapper" title="View">
                                                         <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                                                     </span>
@@ -280,15 +431,10 @@ const AddStockIn = () => {
                                                         <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                                                     </span>
                                                 </div>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="6" className="text-center text-muted py-3">
-                                                No products added yet. Please add products to add stockIn.
                                             </td>
                                         </tr>
                                     )}
+
                                 </tbody>
 
                             </table>
@@ -301,7 +447,7 @@ const AddStockIn = () => {
                         >
                             Cancel
                         </Button>
-                        <Button className="fw-bold custom-button" type='submit'>Submit</Button>
+                        <Button className="fw-bold custom-button" type='submit'>{stockId?'Update':"Submit"}</Button>
                     </div>
                 </div>
             </Form>

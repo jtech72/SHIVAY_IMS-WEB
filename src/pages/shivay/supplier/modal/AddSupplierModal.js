@@ -37,6 +37,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
             setValue('name', SupplierData.data?.name)
             setValue('email', SupplierData.data?.email)
             setValue('phoneNumber', SupplierData.data?.phoneNumber)
+            setValue('gstNumber', SupplierData.data?.gstNumber)
             setValue('address', SupplierData.data?.address)
 
             setLocationSelected({
@@ -51,6 +52,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
             name: data?.name,
             email: data?.email,
             phoneNumber: data?.phoneNumber,
+            gstNumber: data?.gstNumber,
             address: data?.address,
             location: locationSelected?.value,
         };
@@ -133,7 +135,18 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                     {errors.location && <small className="text-danger">Location is required</small>}
                                 </Form.Group>
                             </Col>
-                            <Col sm={12}>
+                            <Col sm={6}>
+                                <Form.Group className="mb-1">
+                                    <Form.Label className='mb-0'>GST Number</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter GST Number"
+                                        name="GST Number"
+                                        {...register("gstNumber")}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col sm={6}>
                                 <Form.Group className="mb-1">
                                     <Form.Label className='mb-0'>Full Address</Form.Label>
                                     <Form.Control
@@ -141,8 +154,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                         rows={3}
                                         placeholder="Enter Full Address"
                                         name="Full Address"
-                                        {...register("address", { required: true })}
-                                        required
+                                        {...register("address")}
                                     />
                                 </Form.Group>
                             </Col>

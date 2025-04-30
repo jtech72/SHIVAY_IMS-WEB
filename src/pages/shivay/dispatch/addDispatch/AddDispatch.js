@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PageTitle from '../../../../helpers/PageTitle'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
 import Select from 'react-select'; // Import React Select
@@ -7,25 +7,28 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import AddProductModal from '../../openingStock/addStock/AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { createDispatchActions, getWarehouseListActions, listingCustomerActions, listingUsersActions } from '../../../../redux/actions';
+import { createDispatchActions, getWarehouseListActions, listingCustomerActions, listingUsersActions, updateDispatchActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 
 const AddDispatch = () => {
+    const [searchParams] = useSearchParams();
+    const stockId = searchParams.get('id')
 
     const dispatch = useDispatch();
-    const { handleSubmit, register } = useForm()
+    const { handleSubmit, register, setValue } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const store = useSelector((state) => state)
-    const today = new Date().toISOString().split('T')[0];
+    const [today, setToday] = useState(new Date().toISOString().split('T')[0]);
     const [openingProducts, setOpeningProducts] = useState([])
     console.log(openingProducts, 'openingProducts')
-
+    const DispatchData = store?.getDispatchDataReducer?.dispatchList?.response;
+    console.log(DispatchData, 'DispatchData')
     const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
     const UsersList = store?.listingUsersReducer?.listingUsers?.response;
     const CustomerList = store?.listingCustomerReducer?.listingCustomer?.response;
-
     const warehouseOptions = Warehouse?.map((warehouse) => ({
         value: warehouse._id,
         label: warehouse.name,
@@ -43,10 +46,83 @@ const AddDispatch = () => {
 
     // State to handle selected warehouse
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+    console.log(selectedWarehouse, 'selectedWarehouse')
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+    const [selectedStock, setSelectedStock] = useState(null);
 
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedQuantity, setEditedQuantity] = useState('');
+    const inputRef = useRef(null);
+    console.log(editedQuantity, 'editedQuantity')
+    const handleQuantityChange = (e) => {
+        setEditedQuantity(e.target.value);
+    };
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSave();
+        }
+    };
+    console.log(selectedStock, 'selectedStock34534r')
+
+    // Handle save (when clicking outside or pressing Enter)
+    const handleSave = () => {
+        setIsEditing(false);
+        // Here you would typically also call an API to update the quantity in your backend
+    };
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (inputRef.current && !inputRef.current.contains(e.target)) {
+                handleSave();
+            }
+        };
+
+
+        if (isEditing) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }
+    }, [isEditing]);
+
+    useEffect(() => {
+        if (stockId && DispatchData?.length > 0) {
+            const foundStock = DispatchData?.find(item => item._id === stockId);
+            setSelectedStock(foundStock);
+        }
+    }, [stockId, DispatchData]);
+    useEffect(() => {
+        if (stockId && selectedStock) {
+            console.log(selectedStock, '2345432')
+            setToday(selectedStock?.createdAt ? new Date(selectedStock?.createdAt).toISOString().split('T')[0] : '')
+            const updateWarehouses = selectedStock?.warehouseData
+                ? { value: selectedStock.warehouseId, label: selectedStock.warehouseData?.find((ele) => ele?._id === selectedStock?.warehouseId)?.name }
+                : {};
+            setSelectedWarehouse(updateWarehouses)
+
+            const updatedUser = selectedStock?.customerData ? { value: selectedStock?.customerId, label: selectedStock.customerData?.find((ele) => ele?._id === selectedStock?.customerId)?.name }
+                : {}
+            setSelectedCustomer(updatedUser)
+
+            const updatedSupplier = selectedStock?.dispatchId ? { value: selectedStock?.dispatchId, label: selectedStock.dispatchByData?.[0]?.name }
+                : {}
+            setSelectedUser(updatedSupplier)
+
+            setValue('invoiceNumber', selectedStock?.invoiceNumber || '');
+            setValue('description', selectedStock?.description || '');
+            setValue('invoiceValue', selectedStock?.fright || '');
+            setValue('attachmentGRfile', selectedStock?.attachmentGRfile || '');
+            setValue('grNumber', selectedStock?.grNumber || '');
+            // setEditedQuantity(selectedStock?.productData?.stockInQty || '');
+        }
+
+    }, [stockId, selectedStock])
     const handleAccordionToggle = () => {
         setIsAccordionOpen(prevState => !prevState);
     };
@@ -86,13 +162,20 @@ const AddDispatch = () => {
         formData.append('warehouseId', selectedWarehouse?.value)
         formData.append('dispatchBy', selectedUser?.value);
         formData.append('customerId', selectedCustomer?.value);
-        formData.append('productDispatchQty', JSON.stringify(cleanedProducts));
+        
+        formData.append('productDispatchQty', stockId?10:JSON.stringify(cleanedProducts));
         formData.append('description', data?.description);
         formData.append('date', data?.date);
         formData.append('grNumber', data?.grNumber);
-
-        dispatch(createDispatchActions(formData));
-        console.log(formData, 'formData');
+        if (stockId) {
+            formData.append('_id', stockId);
+        }
+        if (stockId) {
+            dispatch(updateDispatchActions(formData))
+        } else {
+            dispatch(createDispatchActions(formData));
+        }
+        // console.log(formData, 'formData');
     };
 
     return (
@@ -204,11 +287,34 @@ const AddDispatch = () => {
                                                 <Form.Control
                                                     type="file"
                                                     placeholder="Upload file"
+                                                    {...register('attachmentGRfile', {
+                                                        required: !selectedStock?.attachmentGRfile, // only require if no existing
+                                                    })}
+                                                />
+                                                {selectedStock?.attachmentGRfile && (
+                                                    <div className="mt-2">
+                                                        <a
+                                                            href={selectedStock.attachmentGRfile}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            View Existing Invoice
+                                                        </a>
+                                                    </div>
+                                                )}
+                                            </Form.Group>
+                                        </Col>
+                                        {/* <Col sm={3}>
+                                            <Form.Group className="mb-1">
+                                                <Form.Label className="mb-0">Attach GR File</Form.Label>
+                                                <Form.Control
+                                                    type="file"
+                                                    placeholder="Upload file"
                                                     required
                                                     {...register('attachmentGRfile', { required: true })}
                                                 />
                                             </Form.Group>
-                                        </Col>
+                                        </Col> */}
                                         <Col sm={6}>
                                             <Form.Group className="mb-1">
                                                 <Form.Label className="mb-0">Description</Form.Label>
@@ -243,43 +349,58 @@ const AddDispatch = () => {
                                         <th scope="col">Quantity</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {openingProducts && openingProducts.length > 0 ? (
-                                        openingProducts.map((data, index) => (
-                                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                                                <th scope="row">{index + 1}</th>
-                                                <td className="text-uppercase fw-bold">
-                                                    {data?.product?.name || <span className="text-danger">N/A</span>}
+                                {!stockId &&
+                                    <tbody>
+                                        {openingProducts && openingProducts.length > 0 ? (
+                                            openingProducts.map((data, index) => (
+                                                <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                                    <th scope="row">{index + 1}</th>
+                                                    <td className="text-uppercase fw-bold">
+                                                        {data?.product?.name || <span className="text-danger">N/A</span>}
+                                                    </td>
+                                                    <td className="fw-bold">
+                                                        {data?.product?.modelId?.name || <span className="text-danger">N/A</span>}
+                                                    </td>
+                                                    <td className="fw-bold">
+                                                        {data?.product?.code || <span className="text-danger">N/A</span>}
+                                                    </td>
+                                                    <td className="fw-bold">
+                                                        {data?.quantity || <span className="text-danger">N/A</span>}
+                                                    </td>
+                                                    <td></td>
+                                                    {/* <td></td> */}
+                                                    <div className="icon-container d-flex pb-0">
+                                                        <span className="icon-wrapper" title="Edit">
+                                                            <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                        </span>
+                                                        <span className="icon-wrapper" title="Delete">
+                                                            <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                        </span>
+                                                    </div>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" className="text-center text-muted py-3">
+                                                    No products added yet. Please add products to add dispatch.
                                                 </td>
-                                                <td className="fw-bold">
-                                                    {data?.product?.modelId?.name || <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td className="fw-bold">
-                                                    {data?.product?.code || <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td className="fw-bold">
-                                                    {data?.quantity || <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td></td>
-                                                {/* <td></td> */}
-                                                <div className="icon-container d-flex pb-0">
-                                                    <span className="icon-wrapper" title="Edit">
-                                                        <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                    <span className="icon-wrapper" title="Delete">
-                                                        <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                </div>
                                             </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="6" className="text-center text-muted py-3">
-                                                No products added yet. Please add products to add dispatch.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
+                                        )}
+                                    </tbody>
+                                }
+                                {stockId &&
+                                    <tbody>
+                                        {selectedStock?.productData?.map((data, index) => (
+                                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                                <td>{index + 1}</td>
+                                                <td>{data?.name}</td>
+                                                <td>{selectedStock?.modelData?.find((ele) => ele?._id === data?.modelId)?.name}</td>
+                                                <td>{data?.code}</td>
+                                                <td>{data?.stockOutQty}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                }
                             </table>
 
                         </Card.Body>
