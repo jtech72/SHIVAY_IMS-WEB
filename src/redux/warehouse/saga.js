@@ -26,6 +26,10 @@ function* createWarehouseFunction(data) {
                 type: WarehouseActionTypes.CREATE_WAREHOUSE_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: WarehouseActionTypes.CREATE_WAREHOUSE_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: WarehouseActionTypes.CREATE_WAREHOUSE_ERROR,
@@ -33,6 +37,7 @@ function* createWarehouseFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: WarehouseActionTypes.CREATE_WAREHOUSE_ERROR,
             payload: error,
@@ -81,6 +86,10 @@ function* updateWarehouseFunction(data) {
                 type: WarehouseActionTypes.UPDATE_WAREHOUSE_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: WarehouseActionTypes.UPDATE_WAREHOUSE_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: WarehouseActionTypes.UPDATE_WAREHOUSE_ERROR,
@@ -88,6 +97,7 @@ function* updateWarehouseFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: WarehouseActionTypes.UPDATE_WAREHOUSE_ERROR,
             payload: error,
@@ -109,6 +119,10 @@ function* deleteWarehouseFunction(data) {
             yield put({
                 type: WarehouseActionTypes.DELETE_WAREHOUSE_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: WarehouseActionTypes.DELETE_WAREHOUSE_RESET,
+                payload: {},
             });
         } else {
             yield put({

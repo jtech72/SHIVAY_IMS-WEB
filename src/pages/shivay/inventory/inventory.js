@@ -134,16 +134,16 @@ const Inventory = () => {
                                                     <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                                                         <th scope="row">{index + 1}</th>
                                                         <td className="text-uppercase fw-bold ">
-                                                            {data?.name || <span className="text-danger">N/A</span>}
+                                                            {data?.name || <span className="text-black">-</span>}
                                                         </td>
                                                         <td className="text-uppercase fw-bold ">
-                                                            {data?.modelData?.name || <span className="text-danger">N/A</span>}
+                                                            {data?.modelData?.name || <span className="text-black">-</span>}
                                                         </td>
                                                         <td className="text-uppercase fw-bold ">
-                                                            {data?.code || <span className="text-danger">N/A</span>}
+                                                            {data?.code || <span className="text-black">-</span>}
                                                         </td>
                                                         <td className="text-uppercase fw-bold ">
-                                                            {data?.quantity !== undefined ? data.quantity : <span className="text-danger">N/A</span>}
+                                                            {data?.quantity !== undefined ? data.quantity : <span className="text-black">-</span>}
                                                         </td>
                                                         <td ></td>
                                                         <div className="icon-container d-flex  pb-0" >

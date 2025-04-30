@@ -34,14 +34,14 @@ const AddOpeningStock = () => {
 
     const [openingProducts, setOpeningProducts] = useState([])
     const [selectedStock, setSelectedStock] = useState(null);
-    console.log(openingProducts, 'openingProducts')
+    // console.log(openingProducts, 'openingProducts')
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState(selectedStock?.quantity || '');
     const inputRef = useRef(null);
 
     const createResponse = store?.createStockReducer?.createStock?.status;
-    console.log(store?.createStockReducer, 'createResponse')
+    // console.log(store?.createStockReducer, 'createResponse')
 
     useEffect(() => {
             if (createResponse === 200) {
@@ -70,7 +70,6 @@ const AddOpeningStock = () => {
         if (stockId && OpeningStockData?.length > 0) {
             const foundStock = OpeningStockData?.find(item => item._id === stockId);
             setSelectedStock(foundStock);
-            console.log(foundStock, 'foundStock')
         }
     }, [stockId, OpeningStockData]);
 
@@ -84,7 +83,6 @@ const AddOpeningStock = () => {
             date: data?.date
         };
         dispatch(createStockActions(payload));
-        console.log(payload, 'payload');
     };
 
     const handleDeleteProduct = (indexToRemove) => {

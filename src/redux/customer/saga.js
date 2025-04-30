@@ -48,6 +48,10 @@ function* createCustomerFunction(data) {
                 type: CustomerActionTypes.CREATE_CUSTOMER_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: CustomerActionTypes.CREATE_CUSTOMER_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: CustomerActionTypes.CREATE_CUSTOMER_ERROR,
@@ -55,6 +59,7 @@ function* createCustomerFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: CustomerActionTypes.CREATE_CUSTOMER_ERROR,
             payload: error,
@@ -76,6 +81,10 @@ function* updateCustomerFunction(data) {
                 type: CustomerActionTypes.UPDATE_CUSTOMER_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: CustomerActionTypes.UPDATE_CUSTOMER_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: CustomerActionTypes.UPDATE_CUSTOMER_ERROR,
@@ -83,6 +92,7 @@ function* updateCustomerFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: CustomerActionTypes.UPDATE_CUSTOMER_ERROR,
             payload: error,
@@ -102,6 +112,10 @@ function* deleteCustomerFunction(data) {
             yield put({
                 type: CustomerActionTypes.DELETE_CUSTOMER_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: CustomerActionTypes.DELETE_CUSTOMER_RESET,
+                payload: {},
             });
         } else {
             yield put({

@@ -46,6 +46,11 @@ const createUsersReducer = (state = CREATE_USERS_INITIAL_STATE, action) => {
                 createUsers: action.payload,
                 loading: false
             }
+        case UsersActionTypes.CREATE_USERS_RESET:
+            return {
+                createUsers: [],
+                loading: false,
+            };
         case UsersActionTypes.CREATE_USERS_ERROR:
             return {
                 createUsers: action.payload,
@@ -73,6 +78,11 @@ const updateUsersReducer = (state = UPDATE_USERS_INITIAL_STATE, action) => {
                 updateUsers: action.payload,
                 loading: false
             }
+        case UsersActionTypes.UPDATE_USERS_RESET:
+            return {
+                updateUsers: [],
+                loading: false,
+            };
         case UsersActionTypes.UPDATE_USERS_ERROR:
             return {
                 updateUsers: action.payload,

@@ -7,7 +7,7 @@ const PRODUCT_LIST_INITIAL_STATE = {
 }
 
 const productListReducer = (state = PRODUCT_LIST_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case InventoryActionTypes.PRODUCT_LIST_LOADING:
             return {
@@ -34,7 +34,7 @@ const CREATE_PRODUCT_INITIAL_STATE = {
 }
 
 const createProductReducer = (state = CREATE_PRODUCT_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case InventoryActionTypes.CREATE_PRODUCT_LOADING:
             return {
@@ -46,6 +46,11 @@ const createProductReducer = (state = CREATE_PRODUCT_INITIAL_STATE, action) => {
                 createProduct: action.payload,
                 loading: false
             }
+        case InventoryActionTypes.CREATE_PRODUCT_RESET:
+            return {
+                createProduct: [],
+                loading: false,
+            };
         case InventoryActionTypes.CREATE_PRODUCT_ERROR:
             return {
                 createProduct: action.payload,
@@ -61,7 +66,7 @@ const UPDATE_PRODUCT_INITIAL_STATE = {
 }
 
 const updateProductReducer = (state = UPDATE_PRODUCT_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case InventoryActionTypes.UPDATE_PRODUCT_LOADING:
             return {
@@ -73,6 +78,11 @@ const updateProductReducer = (state = UPDATE_PRODUCT_INITIAL_STATE, action) => {
                 updateProduct: action.payload,
                 loading: false
             }
+        case InventoryActionTypes.UPDATE_PRODUCT_RESET:
+            return {
+                updateProduct: [],
+                loading: false,
+            };
         case InventoryActionTypes.UPDATE_PRODUCT_ERROR:
             return {
                 updateProduct: action.payload,
@@ -88,7 +98,7 @@ const DELETE_PRODUCT_INITIAL_STATE = {
 }
 
 const deleteProductReducer = (state = DELETE_PRODUCT_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case InventoryActionTypes.DELETE_PRODUCT_LOADING:
             return {
@@ -105,6 +115,11 @@ const deleteProductReducer = (state = DELETE_PRODUCT_INITIAL_STATE, action) => {
                 deleteProduct: action.payload,
                 loading: false
             }
+        case InventoryActionTypes.DELETE_PRODUCT_RESET:
+            return {
+                deleteProduct: [],
+                loading: false
+            }
         default: return state
     }
 }
@@ -115,7 +130,7 @@ const SEARCH_PRODUCT_INITIAL_STATE = {
 }
 
 const searchProductReducer = (state = SEARCH_PRODUCT_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case InventoryActionTypes.SEARCH_PRODUCT_LOADING:
             return {

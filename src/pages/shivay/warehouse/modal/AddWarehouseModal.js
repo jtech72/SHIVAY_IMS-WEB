@@ -15,7 +15,7 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
         reset,
         formState: { errors },
     } = useForm();
-    
+
     const closeModal = () => {
         reset();
         handleClose()
@@ -68,8 +68,8 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
     };
 
     return (
-        <Modal show={showModal} centered size='lg' onHide={closeModal}>
-            <Modal.Header closeButton>
+<Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
+<Modal.Header closeButton>
                 <Modal.Title className='text-black'>{type} Warehouse</Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -77,13 +77,17 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
                     <Row>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Warehouse</Form.Label>
+                                <Form.Label className='mb-0'>Warehouse <span className='text-danger'>*</span></Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter Warehouse"
-                                    {...register('warehouse', { required: true })}
+                                    {...register('warehouse', {
+                                        required: 'Warehouse is required',
+                                        validate: value => value.trim() !== '' || 'Warehouse cannot be empty spaces'
+                                    })}
                                 />
-                                {errors.warehouse && <small className="text-danger">Warehouse is required</small>}
+                                {errors.warehouse && <small className="text-danger">{errors.warehouse.message}</small>}
+
                             </Form.Group>
                         </Col>
 
@@ -102,7 +106,7 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
                                     }}
                                     value={locationSelected}
                                     isSearchable
-                                    // isMulti
+                                // isMulti
                                 />
 
                                 {errors.location && <small className="text-danger">Location is required</small>}

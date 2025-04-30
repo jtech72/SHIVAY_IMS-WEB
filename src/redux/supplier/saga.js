@@ -47,6 +47,10 @@ function* createSupplierFunction(data) {
                 type: SupplierActionTypes.CREATE_SUPPLIER_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: SupplierActionTypes.CREATE_SUPPLIER_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: SupplierActionTypes.CREATE_SUPPLIER_ERROR,
@@ -54,6 +58,7 @@ function* createSupplierFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: SupplierActionTypes.CREATE_SUPPLIER_ERROR,
             payload: error,
@@ -74,6 +79,10 @@ function* updateSupplierFunction(data) {
                 type: SupplierActionTypes.UPDATE_SUPPLIER_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: SupplierActionTypes.UPDATE_SUPPLIER_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: SupplierActionTypes.UPDATE_SUPPLIER_ERROR,
@@ -81,6 +90,7 @@ function* updateSupplierFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: SupplierActionTypes.UPDATE_SUPPLIER_ERROR,
             payload: error,
@@ -100,6 +110,10 @@ function* deleteSupplierFunction(data) {
             yield put({
                 type: SupplierActionTypes.DELETE_SUPPLIER_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: SupplierActionTypes.DELETE_SUPPLIER_RESET,
+                payload: {},
             });
         } else {
             yield put({

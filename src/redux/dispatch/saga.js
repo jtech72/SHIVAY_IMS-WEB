@@ -47,6 +47,10 @@ function* createDispatchFunction(data) {
                 type: DispatchActionTypes.CREATE_DISPATCH_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: DispatchActionTypes.CREATE_DISPATCH_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: DispatchActionTypes.CREATE_DISPATCH_ERROR,
@@ -54,6 +58,7 @@ function* createDispatchFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: DispatchActionTypes.CREATE_DISPATCH_ERROR,
             payload: error,
@@ -74,6 +79,10 @@ function* updateDispatchFunction(data) {
                 type: DispatchActionTypes.UPDATE_DISPATCH_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: DispatchActionTypes.UPDATE_DISPATCH_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: DispatchActionTypes.UPDATE_DISPATCH_ERROR,
@@ -81,6 +90,7 @@ function* updateDispatchFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: DispatchActionTypes.UPDATE_DISPATCH_ERROR,
             payload: error,
@@ -100,6 +110,10 @@ function* deleteDispatchFunction(data) {
             yield put({
                 type: DispatchActionTypes.DELETE_DISPATCH_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: DispatchActionTypes.DELETE_DISPATCH_RESET,
+                payload: {},
             });
         } else {
             yield put({
