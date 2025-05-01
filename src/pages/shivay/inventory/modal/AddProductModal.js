@@ -3,6 +3,7 @@ import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { createProductActions, updateProductActions } from '../../../../redux/actions';
+import StockIn from '../../stockIn/StockIn';
 
 const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
@@ -44,7 +45,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
             lowestStock: threshold,
         };
 
-        if (ProductData?.data?._id) {
+        if (StockIn) {
             const updatedData = {
                 ...payload,
                 productId: ProductData?.data?._id,
@@ -58,7 +59,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         closeModal();
     };
     const modelValue = watch("model");
-const codeValue = watch("code");
+    const codeValue = watch("code");
 
     return (
         <div>
@@ -81,7 +82,7 @@ const codeValue = watch("code");
                                         {...register('name', {
                                             required: 'Product Name is required',
                                             validate: value =>
-                                                value.trim() !== '' || 'Product Name cannot be only spaces',
+                                                value?.trim() !== '' || 'Product Name cannot be only spaces',
                                         })}
                                     />
                                     {errors.name && (
@@ -91,46 +92,46 @@ const codeValue = watch("code");
 
                             </Col>
                             <Col sm={6}>
-    <Form.Group className="mb-2">
-      <Form.Label className='mb-0'>Model</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Enter Model"
-        {...register("model", {
-          validate: (value) => {
-            if (!value.trim() && !codeValue.trim()) {
-              return "Either Model or Code is required";
-            }
-            return true;
-          }
-        })}
-      />
-      {errors.model && (
-        <small className="text-danger">{errors.model.message}</small>
-      )}
-    </Form.Group>
-  </Col>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className='mb-0'>Model</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Model"
+                                        {...register("model", {
+                                            validate: (value) => {
+                                                if (!value?.trim() && !codeValue?.trim()) {
+                                                    return "Either Model or Code is required";
+                                                }
+                                                return true;
+                                            }
+                                        })}
+                                    />
+                                    {errors.model && (
+                                        <small className="text-danger">{errors.model.message}</small>
+                                    )}
+                                </Form.Group>
+                            </Col>
 
-  <Col sm={6}>
-    <Form.Group className="mb-2">
-      <Form.Label className='mb-0'>Code</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Enter Code"
-        {...register("code", {
-          validate: (value) => {
-            if (!value.trim() && !modelValue.trim()) {
-              return "Either Code or Model is required";
-            }
-            return true;
-          }
-        })}
-      />
-      {errors.code && (
-        <small className="text-danger">{errors.code.message}</small>
-      )}
-    </Form.Group>
-  </Col>
+                            <Col sm={6}>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className='mb-0'>Code</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Code"
+                                        {...register("code", {
+                                            validate: (value) => {
+                                                if (!value?.trim() && !modelValue?.trim()) {
+                                                    return "Either Code or Model is required";
+                                                }
+                                                return true;
+                                            }
+                                        })}
+                                    />
+                                    {errors.code && (
+                                        <small className="text-danger">{errors.code.message}</small>
+                                    )}
+                                </Form.Group>
+                            </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-2">
                                     <Form.Label className=''>Low Stock Threshold</Form.Label>
@@ -175,8 +176,8 @@ const codeValue = watch("code");
                             Close
                         </Button>
                         <Button className='custom-button' type='submit'>
-    {type === 'Add' ? 'Save' : 'Update'}
-  </Button>
+                            {type === 'Add' ? 'Save' : 'Update'}
+                        </Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
