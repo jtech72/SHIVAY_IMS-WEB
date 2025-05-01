@@ -29,7 +29,7 @@ axios.interceptors.response.use(
                     break;
                 
             case 404:
-                message = "Please enter a valid email address";
+                message = data?.message;
                 // message = "Sorry! The data you are looking for could not be found.";
                 break;
             case 500:

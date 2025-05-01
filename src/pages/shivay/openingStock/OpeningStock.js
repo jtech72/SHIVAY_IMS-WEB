@@ -95,16 +95,16 @@ const OpeningStock = () => {
                           <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                             <th scope="row">{index + 1}</th>
                             <td className="text-uppercase fw-bold">
-                              {data?.warehouseData?.name || <span className="text-danger">N/A</span>}
+                              {data?.warehouseData?.name || <span className="text-black">-</span>}
                             </td>
                             <td className="fw-bold">
-                              {data?.productData?.code || <span className="text-danger">N/A</span>}
+                              {data?.productData?.code || <span className="text-black">-</span>}
                             </td>
                             <td className="fw-bold">
-                              {data?.description || <span className="text-danger">N/A</span>}
+                              {data?.description || <span className="text-black">-</span>}
                             </td>
                             <td className="fw-bold">
-                              {data?.quantity || <span className="text-danger">N/A</span>}
+                              {data?.quantity || <span className="text-black">-</span>}
                             </td>
                             <td></td>
                             <td></td>

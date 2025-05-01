@@ -13,7 +13,8 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
     const { handleSubmit, register } = useForm()
     const store = useSelector((state) => state)
     const ProductSearch = store?.searchProductReducer?.searchProduct?.response;
-    // console.log(ProductSearch,'ProductSearch')
+    const StockCheck = store?.createStockCheckReducer?.createStockCheck;
+    console.log(StockCheck, 'StockCheck')
     const [searchTerm, setSearchTerm] = useState('');
     const [productName, setProductName] = useState('');
     const [quantity, setQuantity] = useState()
@@ -24,7 +25,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
     useEffect(() => {
         if (location.pathname === '/shivay/addDispatch' && quantity) {
             dispatch(createStockCheckActions({
-                warehouseId: selectedWarehouse?.value, quantity: quantity, productId: ProductSearch?.[0]?._id
+                warehouseId: selectedWarehouse?.value, qty: quantity, productId: ProductSearch?.[0]?._id
             }))
         }
     }, [location, quantity])
@@ -214,8 +215,13 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                                     />
                                 </Form.Group>
                             </Col>
-
                         </Row>
+                        {!StockCheck?.status&&
+                        <Row className='px-2'>
+                            <div className="py-1  text-center border border-primary rounded bg-light text-primary">
+                                {StockCheck}
+                            </div>
+                        </Row>}
                     </Modal.Body>
                     <Modal.Footer>
                         <Button className='cancel-button' onClick={handleClose}>

@@ -31,7 +31,7 @@ const AddStockIn = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState('');
     const inputRef = useRef(null);
-console.log(editedQuantity, 'editedQuantity')
+    console.log(editedQuantity, 'editedQuantity')
     const handleQuantityChange = (e) => {
         setEditedQuantity(e.target.value);
     };
@@ -92,7 +92,7 @@ console.log(editedQuantity, 'editedQuantity')
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-console.log(selectedWarehouse, 'selectedWarehouse')
+    console.log(selectedWarehouse, 'selectedWarehouse')
     useEffect(() => {
         if (stockId && selectedStock) {
             console.log(selectedStock, '2345432')
@@ -157,20 +157,20 @@ console.log(selectedWarehouse, 'selectedWarehouse')
         formData.append('warehouseId', selectedWarehouse?.value)
         formData.append('receivedBy', selectedUser?.value);
         formData.append('supplierId', selectedSupplier?.value);
-        formData.append('stockInQty', stockId?parseInt(editedQuantity):JSON.stringify(cleanedProducts));
+        formData.append('stockInQty', stockId ? parseInt(editedQuantity) : JSON.stringify(cleanedProducts));
         formData.append('description', data?.description);
         formData.append('date', data?.date);
         formData.append('invoiceNumber', data?.invoiceNumber);
         formData.append('fright', data?.invoiceValue);
-        if(stockId){
+        if (stockId) {
             formData.append('_id', stockId);
         }
-if(stockId){
-    alert('update')
-dispatch(updateStockInActions(formData))
-}else{
-    dispatch(createStockInActions(formData));
-}
+        if (stockId) {
+            alert('update')
+            dispatch(updateStockInActions(formData))
+        } else {
+            dispatch(createStockInActions(formData));
+        }
         // console.log(formData, 'formData');
     };
 
@@ -395,21 +395,22 @@ dispatch(updateStockInActions(formData))
                                             </td>
                                             <td className="fw-bold">
                                                 {isEditing ? (
-                                                   <input
-                                                   ref={inputRef}
-                                                   type="number"  // or "text" depending on your needs
-                                                   value={editedQuantity}
-                                                   onChange={handleQuantityChange}
-                                                   onKeyPress={handleKeyPress}
-                                                   // autoFocus
-                                                   className="form-control form-control-md"
-                                                   style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
-                                               />
+                                                    <input
+                                                        ref={inputRef}
+                                                        type="number"  // or "text" depending on your needs
+                                                        value={editedQuantity}
+                                                        onChange={handleQuantityChange}
+                                                        onKeyPress={handleKeyPress}
+                                                        // autoFocus
+                                                        className="form-control form-control-md"
+                                                        style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
+                                                    />
                                                 ) : (
                                                     <span onClick={handleEditClick} > {editedQuantity}</span>
                                                 )}
 
                                             </td>
+                                            <td></td>
                                             <div className="icon-container d-flex pb-0">
                                                 <span
                                                     className="icon-wrapper me-4"
@@ -419,19 +420,6 @@ dispatch(updateStockInActions(formData))
                                                     <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                                                 </span>
                                             </div>
-                                            <td>
-                                                <div className="icon-container d-flex pb-0">
-                                                    <span className="icon-wrapper" title="View">
-                                                        <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                    <span className="icon-wrapper" title="Edit">
-                                                        <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                    <span className="icon-wrapper" title="Delete">
-                                                        <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                </div>
-                                            </td>
                                         </tr>
                                     )}
 
@@ -447,7 +435,7 @@ dispatch(updateStockInActions(formData))
                         >
                             Cancel
                         </Button>
-                        <Button className="fw-bold custom-button" type='submit'>{stockId?'Update':"Submit"}</Button>
+                        <Button className="fw-bold custom-button" type='submit'>{stockId ? 'Update' : "Submit"}</Button>
                     </div>
                 </div>
             </Form>
