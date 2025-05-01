@@ -15,6 +15,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         setValue,
         reset,
         formState: { errors },
+        watch,
     } = useForm();
 
     const [threshold, setThreshold] = useState(100);
@@ -56,6 +57,8 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         console.log(payload, 'payload');
         closeModal();
     };
+    const modelValue = watch("model");
+const codeValue = watch("code");
 
     return (
         <div>
@@ -88,54 +91,46 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-2">
-                                    <Form.Label className='mb-0'>Model</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter Model"
-                                        name="Model"
-                                        {...register("model", {
-                                            required: "Model is required",
-                                            validate: (value) => value.trim() !== "" || "Model cannot be empty or spaces only"
-                                        })}
-                                    />
-                                    {errors.model && (
-                                        <small className="text-danger">{errors.model.message}</small>
-                                    )}
-                                </Form.Group>
+    <Form.Group className="mb-2">
+      <Form.Label className='mb-0'>Model</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter Model"
+        {...register("model", {
+          validate: (value) => {
+            if (!value.trim() && !codeValue.trim()) {
+              return "Either Model or Code is required";
+            }
+            return true;
+          }
+        })}
+      />
+      {errors.model && (
+        <small className="text-danger">{errors.model.message}</small>
+      )}
+    </Form.Group>
+  </Col>
 
-
-
-                            </Col>
-                            <Col sm={6}>
-                                <Form.Group className="mb-2">
-                                    <Form.Label className='mb-0'>Code</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter Code"
-                                        name="code"
-                                        {...register("code", { required: "Code is required",
-                                            validate: (value) => value.trim() !== "" || "Code cannot be empty or spaces only"
-
-                                         })}
-                                    />
-                                    {errors.code && (
-                                        <small className="text-danger">{errors.code.message}</small>
-                                    )}
-                                </Form.Group>
-
-                                <Form.Group className="mb-2">
-                                    <Form.Label className='mb-0'>Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Enter Description"
-                                        name="Description"
-                                    {...register("description")}
-                                    // required
-                                    />
-                                </Form.Group>
-                            </Col>
+  <Col sm={6}>
+    <Form.Group className="mb-2">
+      <Form.Label className='mb-0'>Code</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter Code"
+        {...register("code", {
+          validate: (value) => {
+            if (!value.trim() && !modelValue.trim()) {
+              return "Either Code or Model is required";
+            }
+            return true;
+          }
+        })}
+      />
+      {errors.code && (
+        <small className="text-danger">{errors.code.message}</small>
+      )}
+    </Form.Group>
+  </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-2">
                                     <Form.Label className=''>Low Stock Threshold</Form.Label>
@@ -158,6 +153,20 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                                     </div>
                                 </Form.Group>
                             </Col>
+                            <Col sm={12}>
+
+                                <Form.Group className="">
+                                    <Form.Label className='mb-0'>Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={2}
+                                        placeholder="Enter Description"
+                                        name="Description"
+                                        {...register("description")}
+                                    // required
+                                    />
+                                </Form.Group>
+                            </Col>
 
                         </Row>
                     </Modal.Body>
@@ -166,8 +175,8 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                             Close
                         </Button>
                         <Button className='custom-button' type='submit'>
-                            {type === 'Add' ? 'Save' : 'Update'}
-                        </Button>
+    {type === 'Add' ? 'Save' : 'Update'}
+  </Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
