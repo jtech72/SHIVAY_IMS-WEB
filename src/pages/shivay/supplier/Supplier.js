@@ -110,8 +110,8 @@ const Supplier = () => {
                     <tr className="table_header">
                       <th scope="col"><i className="mdi mdi-merge"></i></th>
                       <th scope="col">Supplier Name</th>
-                      <th scope="col">Email ID</th>
-                      <th scope="col">Phone Number</th>
+                      <th scope="col">Location</th>
+                      <th scope="col">Address</th>
                     </tr>
                   </thead>
                   {store?.supplierListReducer?.loading ? (
@@ -135,7 +135,7 @@ const Supplier = () => {
                             <td className="text-uppercase fw-bold ">
                               {data?.name || <span className="text-black">-</span>}
                             </td>
-                            <td className="fw-bold text-primary">
+                            {/* <td className="fw-bold text-primary">
                               {data?.email ? (
                                 <>
                                   <span>{data.email}</span>
@@ -152,11 +152,13 @@ const Supplier = () => {
                               ) : (
                                 <span className="text-black">-</span>
                               )}
+                            </td> */}
+                            <td>{data?.location || <span className="text-black">-</span>}</td>
+                            <td className="fw-bold" title={data?.address}>
+                              {data?.address
+                                ? `${data.address.slice(0, 30)}${data.address.length > 30 ? '...' : ''}`
+                                : <span className="text-black">-</span>}
                             </td>
-                            <td className="fw-bold">
-                              {data?.phoneNumber || <span className="text-black">-</span>}
-                            </td>
-                            <td></td>
                             <td></td>
                             <div className="icon-container d-flex  pb-0" >
                               <span className="icon-wrapper" title="Edit">

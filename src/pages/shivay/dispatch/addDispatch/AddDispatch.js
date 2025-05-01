@@ -209,7 +209,7 @@ const AddDispatch = () => {
                                     <Button
                                         className="fw-bold custom-button me-2"
                                         onClick={handleShow}
-                                        disabled={!isAccordionOpen}
+                                        disabled={!selectedWarehouse}
                                     >
                                         <IoIosAdd className="fs-3" />&nbsp;Product
                                     </Button>
@@ -226,7 +226,7 @@ const AddDispatch = () => {
                                     <Row>
                                         <Col sm={3}>
                                             <Form.Group className="mb-1">
-                                                <Form.Label className='mb-0'>Warehouse</Form.Label>
+                                                <Form.Label className='mb-0'>Warehouse {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                                 <Select
                                                     value={selectedWarehouse}
                                                     onChange={handleWarehouseChange}
@@ -347,7 +347,7 @@ const AddDispatch = () => {
                                     <tr className="table_header">
                                         <th scope="col"><i className="mdi mdi-merge"></i></th>
                                         <th scope="col">Product Name</th>
-                                        <th scope="col">Modal</th>
+                                        <th scope="col">Model Name</th>
                                         <th scope="col">Code</th>
                                         <th scope="col">Quantity</th>
                                     </tr>
@@ -384,8 +384,8 @@ const AddDispatch = () => {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="6" className="text-center text-muted py-3">
-                                                    No products added yet. Please add products to add dispatch.
+                                                <td colSpan="6" className="text-center text-danger py-3">
+                                                   Note : No products added yet. Please select a warehouse and add products to add dispatch.
                                                 </td>
                                             </tr>
                                         )}

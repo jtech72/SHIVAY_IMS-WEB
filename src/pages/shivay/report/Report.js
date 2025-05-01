@@ -37,8 +37,8 @@ const Report = () => {
   const resp = store?.reportReducer?.report?.status;
   console.log(resp, 'response')
 
-  useEffect(()=>{
-    if(stockType&&selectedWarehouse?.value){
+  useEffect(() => {
+    if (stockType && selectedWarehouse?.value) {
       const payload = {
         warehouseId: selectedWarehouse?.value,
         search: '',
@@ -49,7 +49,7 @@ const Report = () => {
       }
       dispatch(getReportActions(payload))
     }
-  },[stockType])
+  }, [stockType])
   const handleProductsSearch = () => {
     const payload = {
       warehouseId: selectedWarehouse?.value,
@@ -79,11 +79,11 @@ const Report = () => {
     if (resp === 200 && toast) {
       setToast(false);
       ToastContainer('Email sent successfully', 'success')
-    } else if (resp&&resp !== 200) {
+    } else if (resp && resp !== 200) {
       setToast(false);
       ToastContainer('Email not sent ', 'danger')
     }
-  }, [resp ,toast])
+  }, [resp, toast])
 
   return (
     <div>
@@ -135,7 +135,10 @@ const Report = () => {
 
       <div className='mt-2'>
         <Card
-          style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+          style={{
+            boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset',
+            // minHeight: '60vh',
+          }}
         >
           <Card.Body className="text-center py-1">
             <table className="table table-striped bg-white">
@@ -181,8 +184,8 @@ const Report = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center text-muted py-3">
-                      Please select a warehouse and search to view report data.
+                    <td colSpan="6" className="text-center text-danger py-3">
+                      Note : Please select a warehouse and search to view report data.
                     </td>
                   </tr>
                 )}

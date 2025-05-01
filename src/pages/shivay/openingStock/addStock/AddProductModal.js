@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningProducts, selectedWarehouse }) => {
 
     const dispatch = useDispatch();
-    const { handleSubmit, register } = useForm()
+    const { handleSubmit, register, reset } = useForm()
     const store = useSelector((state) => state)
     const ProductSearch = store?.searchProductReducer?.searchProduct?.response;
     const StockCheck = store?.createStockCheckReducer?.createStockCheck;
@@ -45,7 +45,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
 
     const modalOptions = ProductSearch?.map((data) => ({
         value: data?._id,
-        label: data?.modelId?.name + ' - ' + data?.code,
+        label: data?.modelId?.name,
         data: data
     })) || [];
 
@@ -77,7 +77,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
         setSelectedCode(selectedOption);
         setSelectedModal({
             value: selectedOption?.data?._id,
-            label: selectedOption?.data?.modelId?.name + ' - ' + selectedOption?.data?.code,
+            label: selectedOption?.data?.modelId?.name,
             data: selectedOption?.data
         });
         setProductName(selectedOption?.data?.name);
@@ -107,6 +107,10 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
 
             setOpeningProducts(prev => [...prev, productsData]);
             handleClose();
+            reset();
+            setSelectedCode('');
+            setSelectedModal('');
+            setQuantity('');
         }
     }
     console.log(ProductSearch, 'ProductSearch')
@@ -143,13 +147,13 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                             {searchType === 'modelName' ? (
                                 <Col sm={6}>
                                     <Form.Group className="mb-3">
-                                        <Form.Label className="mb-0">Model</Form.Label>
+                                        <Form.Label className="mb-0">Model Name</Form.Label>
                                         <Select
                                             value={selectedModal}
                                             onChange={handleModalChange}
                                             onInputChange={(inputValue) => setSearchTerm(inputValue)}
                                             options={modalOptions}
-                                            placeholder="Select Modal"
+                                            placeholder="Search Modal"
                                             isClearable
                                             isSearchable
                                             isLoading={store?.searchProductReducer?.loading}
@@ -165,7 +169,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                                             onChange={handleCodeChange}
                                             onInputChange={(inputValue) => setSearchTerm(inputValue)}
                                             options={codeOptions}
-                                            placeholder="Select Code"
+                                            placeholder="Search Code"
                                             isClearable
                                             isSearchable
                                             isLoading={store?.searchProductReducer?.loading}
@@ -176,45 +180,51 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                             {searchType === 'modelName' ? (
                                 <Col sm={6}>
                                     <Form.Group className="mb-3">
-                                        <Form.Label className="mb-0">Code</Form.Label>
-                                        <Form.Control type='text' value={selectedCode?.label} />
+                                        <Form.Label className="mb-0" >Code</Form.Label>
+                                        <Form.Control type='text' placeholder="Code" value={selectedCode?.label} />
                                     </Form.Group>
                                 </Col>
                             ) : (
                                 <Col sm={6}>
                                     <Form.Group className="mb-3">
-                                        <Form.Label className="mb-0">Modal</Form.Label>
-                                        <Form.Control type='text' value={selectedModal?.label} />
+                                        <Form.Label className="mb-0" >Model Name</Form.Label>
+                                        <Form.Control type='text' placeholder="Modal Name" value={selectedModal?.label} />
+                                    </Form.Group>
+                                </Col>
+                            )}
+
+                            {(selectedModal || selectedCode) && (
+                                <Col sm={6}>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="mb-0">Product Name</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            value={productName}
+                                            placeholder="Enter Product Name"
+                                            onChange={(e) => setProductName(e.target.value)}
+                                            required
+                                        />
                                     </Form.Group>
                                 </Col>
                             )}
 
                             <Col sm={6}>
                                 <Form.Group className="mb-3">
-                                    <Form.Label className='mb-0'>Product Name </Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        value={productName}
-                                        placeholder="Enter Product Name"
-                                        // value={faq.question}
-                                        onChange={(e) => setProductName(e.target.value)}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col sm={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label className='mb-0'>Quantity</Form.Label>
+                                    <Form.Label className="mb-0">Quantity</Form.Label>
                                     <Form.Control
                                         type="number"
-                                        placeholder="Enter Quantity"
-                                        // value={faq.question}
+                                        placeholder="Enter Number"
                                         value={quantity}
-                                        onChange={(e) => setQuantity(parseInt(e.target.value))}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            setQuantity(val > 0 ? val : '');
+                                        }}
                                         required
+                                        min={1}
                                     />
                                 </Form.Group>
                             </Col>
+
                         </Row>
                         {!StockCheck?.status && location.pathname === '/shivay/addDispatch' && StockCheck?.data?.length > 0 && (
                             <Row className="px-2">

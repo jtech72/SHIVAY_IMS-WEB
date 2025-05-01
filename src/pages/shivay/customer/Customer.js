@@ -110,8 +110,8 @@ const Customer = () => {
                     <tr className="table_header">
                       <th scope="col"><i className="mdi mdi-merge"></i></th>
                       <th scope="col">Customer Name</th>
-                      <th scope="col">Email ID</th>
-                      <th scope="col">Phone Number</th>
+                      <th scope="col">Location</th>
+                      <th scope="col">Billing Address</th>
                       {/* <th scope="col">Location</th> */}
 
                       {/* <th scope="col">Action</th> */}
@@ -136,9 +136,9 @@ const Customer = () => {
                           <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                             <th scope="row">{index + 1}</th>
                             <td className="text-uppercase fw-bold ">
-                              {data?.name || <span className="text-danger">N/A</span>}
+                              {data?.name || <span className="text-black">-</span>}
                             </td>
-                            <td className="fw-bold text-primary">
+                            {/* <td className="fw-bold text-primary">
                               {data?.email ? (
                                 <>
                                   <span>{data.email}</span>
@@ -153,14 +153,18 @@ const Customer = () => {
                                   />
                                 </>
                               ) : (
-                                <span className="text-danger">N/A</span>
+                                <span className="text-black">-</span>
                               )}
+                            </td> */}
+                            <td>{data?.location || <span className="text-black">-</span>}</td>
+                            <td className="fw-bold" title={data?.billingAddress}>
+                              {data?.billingAddress
+                                ? `${data.billingAddress.slice(0, 30)}${data.billingAddress.length > 30 ? '...' : ''}`
+                                : <span className="text-black">-</span>}
                             </td>
-                            <td className="fw-bold">
-                              {data?.primaryPhoneNumber || <span className="text-danger">N/A</span>}
-                            </td>
+
                             {/* <td className="fw-bold">
-                          {data?.location || <span className="text-danger">N/A</span>}
+                          {data?.location || <span className="text-black">-</span>}
                         </td> */}
                             <td></td>
                             <td></td>
