@@ -113,7 +113,8 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
 
     return (
         <div>
-<Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>                <Modal.Header closeButton>
+            <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton>
                     <Modal.Title className='text-black'>Add Product</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -142,7 +143,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                             {searchType === 'modelName' ? (
                                 <Col sm={6}>
                                     <Form.Group className="mb-3">
-                                        <Form.Label className="mb-0">Modal</Form.Label>
+                                        <Form.Label className="mb-0">Model</Form.Label>
                                         <Select
                                             value={selectedModal}
                                             onChange={handleModalChange}
@@ -215,12 +216,14 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                                 </Form.Group>
                             </Col>
                         </Row>
-                        {!StockCheck?.status&&
-                        <Row className='px-2'>
-                            <div className="py-1  text-center border border-primary rounded bg-light text-primary">
-                                {StockCheck}
-                            </div>
-                        </Row>}
+                        {!StockCheck?.status && location.pathname === '/shivay/addDispatch' && StockCheck?.data?.length > 0 && (
+                            <Row className="px-2">
+                                <div className="py-1 text-center border border-primary rounded bg-light text-primary">
+                                    {StockCheck.message || JSON.stringify(StockCheck)}
+                                </div>
+                            </Row>
+                        )}
+
                     </Modal.Body>
                     <Modal.Footer>
                         <Button className='cancel-button' onClick={handleClose}>

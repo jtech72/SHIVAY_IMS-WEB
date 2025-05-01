@@ -379,8 +379,8 @@ const AddStockIn = () => {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="6" className="text-center text-muted py-3">
-                                                    No products added yet. Please add products to add stockIn.
+                                                <td colSpan="6" className="text-center text-danger py-3">
+                                                  Note :  No products added yet. Please add products to add stockIn.
                                                 </td>
                                             </tr>
                                         )
