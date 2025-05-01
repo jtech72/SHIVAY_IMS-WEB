@@ -141,32 +141,32 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>
-                            <Form.Group className="mb-2">
-    <Form.Label className="mb-0">
-        Phone Number <span className="text-danger">*</span>
-    </Form.Label>
-    <InputGroup>
-        <InputGroupText>+91</InputGroupText>
-        <Form.Control
-            type="text"
-            placeholder="Enter 10-digit phone number"
-            maxLength={10}
-            onInput={(e) => {
-                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
-            }}
-            {...register("primaryPhoneNumber", {
-                required: "Phone number is required",
-                pattern: {
-                    value: /^[0-9]{10}$/,
-                    message: "Phone number must be exactly 10 digits"
-                }
-            })}
-        />
-    </InputGroup>
-    {errors.primaryPhoneNumber && (
-        <small className="text-danger">{errors.primaryPhoneNumber.message}</small>
-    )}
-</Form.Group>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className="mb-0">
+                                        Phone Number <span className="text-danger">*</span>
+                                    </Form.Label>
+                                    <InputGroup>
+                                        <InputGroupText>+91</InputGroupText>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Enter 10-digit phone number"
+                                            maxLength={10}
+                                            onInput={(e) => {
+                                                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                            }}
+                                            {...register("primaryPhoneNumber", {
+                                                required: "Phone number is required",
+                                                pattern: {
+                                                    value: /^[0-9]{10}$/,
+                                                    message: "Phone number must be exactly 10 digits"
+                                                }
+                                            })}
+                                        />
+                                    </InputGroup>
+                                    {errors.primaryPhoneNumber && (
+                                        <small className="text-danger">{errors.primaryPhoneNumber.message}</small>
+                                    )}
+                                </Form.Group>
                             </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-2">

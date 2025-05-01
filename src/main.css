@@ -4,3 +4,9 @@ body{
 .active-page{
     background-color: red !important;
 }
+/* This capitalizes dropdown option text */
+.custom-select__single-value,
+.custom-select__placeholder,
+.custom-select__option {
+  text-transform: capitalize !important;
+}

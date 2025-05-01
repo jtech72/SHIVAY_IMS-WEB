@@ -91,8 +91,12 @@ const AddStockIn = () => {
 
     const usersOptions = UsersList?.map((users) => ({
         value: users._id,
-        label: users.name,
+        label: users.name
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' '),
     }));
+    
 
     const supplierOptions = SupplierList?.map((users) => ({
         value: users._id,
