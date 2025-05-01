@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createDispatchActions, getWarehouseListActions, listingCustomerActions, listingUsersActions, updateDispatchActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
+import { PiEye } from 'react-icons/pi';
 
 const AddDispatch = () => {
     const [searchParams] = useSearchParams();
@@ -56,6 +57,7 @@ const AddDispatch = () => {
     const [editedQuantity, setEditedQuantity] = useState('');
     const inputRef = useRef(null);
     console.log(editedQuantity, 'editedQuantity')
+
     const handleQuantityChange = (e) => {
         setEditedQuantity(e.target.value);
     };
@@ -119,7 +121,7 @@ const AddDispatch = () => {
             setValue('invoiceValue', selectedStock?.fright || '');
             setValue('attachmentGRfile', selectedStock?.attachmentGRfile || '');
             setValue('grNumber', selectedStock?.grNumber || '');
-            // setEditedQuantity(selectedStock?.productData?.stockInQty || '');
+            setEditedQuantity(selectedStock?.productData?.[0]?.stockOutQty || '');
         }
 
     }, [stockId, selectedStock])
@@ -162,13 +164,14 @@ const AddDispatch = () => {
         formData.append('warehouseId', selectedWarehouse?.value)
         formData.append('dispatchBy', selectedUser?.value);
         formData.append('customerId', selectedCustomer?.value);
-        
-        formData.append('productDispatchQty', stockId?10:JSON.stringify(cleanedProducts));
+
+        formData.append('quantity', stockId ? editedQuantity : JSON.stringify(cleanedProducts));
         formData.append('description', data?.description);
         formData.append('date', data?.date);
         formData.append('grNumber', data?.grNumber);
         if (stockId) {
             formData.append('_id', stockId);
+            formData.append('productId', selectedStock?.productData?.[0]?._id)
         }
         if (stockId) {
             dispatch(updateDispatchActions(formData))
@@ -275,7 +278,7 @@ const AddDispatch = () => {
                                             <Form.Group className="mb-1">
                                                 <Form.Label className="mb-0">GR Number</Form.Label>
                                                 <Form.Control
-                                                    type="number"
+                                                    type="text"
                                                     placeholder="Enter Invoice Number"
                                                     {...register('grNumber', { required: true })}
                                                 />
@@ -396,7 +399,32 @@ const AddDispatch = () => {
                                                 <td>{data?.name}</td>
                                                 <td>{selectedStock?.modelData?.find((ele) => ele?._id === data?.modelId)?.name}</td>
                                                 <td>{data?.code}</td>
-                                                <td>{data?.stockOutQty}</td>
+                                                <td>
+                                                    {isEditing ? (
+                                                        <input
+                                                            ref={inputRef}
+                                                            type="number"  // or "text" depending on your needs
+                                                            value={editedQuantity}
+                                                            onChange={handleQuantityChange}
+                                                            onKeyPress={handleKeyPress}
+                                                            // autoFocus
+                                                            className="form-control form-control-md"
+                                                            style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
+                                                        />
+                                                    ) : (
+                                                        <span onClick={handleEditClick} > {editedQuantity}</span> || <span className="text-black">-</span>
+                                                    )}
+                                                </td>
+                                                {/* <td>{data?.stockOutQty}</td> */}
+                                                <div className="icon-container d-flex pb-0">
+                                                    <span
+                                                        className="icon-wrapper me-4"
+                                                        title="Edit"
+                                                        onClick={handleEditClick}
+                                                    >
+                                                        <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                    </span>
+                                                </div>
                                             </tr>
                                         ))}
                                     </tbody>
