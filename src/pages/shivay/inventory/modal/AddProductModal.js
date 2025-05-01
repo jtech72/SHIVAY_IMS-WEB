@@ -17,6 +17,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         reset,
         formState: { errors },
         watch,
+        trigger,
     } = useForm();
 
     const [threshold, setThreshold] = useState(100);
@@ -60,6 +61,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
     };
     const modelValue = watch("model");
     const codeValue = watch("code");
+
 
     return (
         <div>
@@ -105,8 +107,11 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                                                 return true;
                                             }
                                         })}
+                                        onKeyUp={() => {
+                                            trigger("code"); // revalidate code when model is typed
+                                        }}
                                     />
-                                    {errors.model && (
+                                    {errors.model && !codeValue && (
                                         <small className="text-danger">{errors.model.message}</small>
                                     )}
                                 </Form.Group>
@@ -126,8 +131,11 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                                                 return true;
                                             }
                                         })}
+                                        onKeyUp={() => {
+                                            trigger("model"); // revalidate model when code is typed
+                                        }}
                                     />
-                                    {errors.code && (
+                                    {errors.code && !modelValue && (
                                         <small className="text-danger">{errors.code.message}</small>
                                     )}
                                 </Form.Group>
