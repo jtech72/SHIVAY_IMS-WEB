@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Form, InputGroup } from 'react-bootstrap';
 import { useForm, useWatch } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { createCustomerActions, getLocationActions, updateCustomerActions } from '../../../../redux/actions';
 import Select from 'react-select';
+import InputGroupText from 'react-bootstrap/esm/InputGroupText';
 
 const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
     console.log(CustomerData, 'CustomerData')
@@ -94,7 +95,7 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
 
     return (
         <div>
-            <Modal show={showModal} centered size='lg' onHide={closeModal}>
+            <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Modal.Header closeButton>
                         <Modal.Title className='text-black'>{type} Customer</Modal.Title>
@@ -103,55 +104,72 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                         {/* Your form or content here */}
                         <Row>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Customer Name</Form.Label>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className='mb-0'>
+                                        Customer Name <span className='text-danger'>*</span>
+                                    </Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Customer Name"
-                                        name="Customer Name"
-                                        {...register("name", { required: true })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Email Id</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter Email Id"
-                                        name="Email Id"
-                                        {...register("email", { required: true })}
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Phone</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter Phone"
-                                        name="Phone"
-                                        maxLength={10}
-                                        onInput={(e) => {
-                                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                        }}
-                                        {...register("primaryPhoneNumber", {
-                                            required: "Phone number is required",
+                                        {...register("name", {
+                                            required: "Customer Name is required",
                                             pattern: {
-                                                value: /^[0-9]{10}$/,
-                                                message: "Phone number must be exactly 10 digits"
+                                                value: /^[A-Za-z\s]+$/, // Only letters and spaces
+                                                message: "Only letters are allowed"
                                             }
                                         })}
+                                        onKeyPress={(e) => {
+                                            if (!/^[a-zA-Z\s]*$/.test(e.key)) {
+                                                e.preventDefault(); // block non-letter keys
+                                            }
+                                        }}
                                     />
-                                    {errors.primaryPhoneNumber && (
-                                        <small className="text-danger">{errors.primaryPhoneNumber.message}</small>
-                                    )}
+                                    {errors.name && <small className="text-danger">{errors.name.message}</small>}
+                                </Form.Group>
+
+
+                            </Col>
+                            <Col sm={6}>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className='mb-0'>Email Id  <span className='text-danger'>*</span></Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        placeholder="Enter Email Id"
+                                        {...register("email", { required: "Email is required" })}
+                                    />
+                                    {errors.email && <small className="text-danger">{errors.email.message}</small>}
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                            <Form.Group className="mb-2">
+    <Form.Label className="mb-0">
+        Phone Number <span className="text-danger">*</span>
+    </Form.Label>
+    <InputGroup>
+        <InputGroupText>+91</InputGroupText>
+        <Form.Control
+            type="text"
+            placeholder="Enter 10-digit phone number"
+            maxLength={10}
+            onInput={(e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+            }}
+            {...register("primaryPhoneNumber", {
+                required: "Phone number is required",
+                pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Phone number must be exactly 10 digits"
+                }
+            })}
+        />
+    </InputGroup>
+    {errors.primaryPhoneNumber && (
+        <small className="text-danger">{errors.primaryPhoneNumber.message}</small>
+    )}
+</Form.Group>
+                            </Col>
+                            <Col sm={6}>
+                                <Form.Group className="mb-2">
                                     <Form.Label className="mb-0">Location</Form.Label>
                                     <Select
                                         options={locationData?.map((loc) => ({
@@ -171,10 +189,10 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <hr className='my-1 text-secondary' />
+                        <hr className='mb-2 mt-1 text-secondary' />
                         <Row>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className="mb-0">Billing Address</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -185,7 +203,7 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                             </Col>
 
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className="mb-0">GST Number</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -194,7 +212,7 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                     />
                                 </Form.Group>
                             </Col>
-                            <div>
+                            <div className='mb-2'>
                                 <Form.Check
                                     type="checkbox"
                                     label="Same as Billing Address"
@@ -203,7 +221,7 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                 />
                             </div>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className="mb-0">Delivery Address</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -214,7 +232,7 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                             </Col>
 
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className="mb-0">GST Number</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -224,10 +242,10 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <hr className='my-1 text-secondary' />
+                        <hr className='mb-2 mt-1 text-secondary' />
                         <Row>
                             <Col sm={12}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className='mb-0'>Full Address</Form.Label>
                                     <Form.Control
                                         as="textarea"
@@ -235,8 +253,8 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                         placeholder="Enter Full Address"
                                         name="Full Address"
                                         {...register("address")}
-                                        // value={faq.question}
-                                        // onChange={handleChange}
+                                    // value={faq.question}
+                                    // onChange={handleChange}
                                     />
                                 </Form.Group>
                             </Col>

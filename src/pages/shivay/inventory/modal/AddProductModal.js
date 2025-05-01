@@ -68,7 +68,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                         {/* Your form or content here */}
                         <Row>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className="mb-0">
                                         Product Name <span className="text-danger">*</span>
                                     </Form.Label>
@@ -77,52 +77,68 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                                         placeholder="Enter Product Name"
                                         {...register('name', {
                                             required: 'Product Name is required',
+                                            validate: value =>
+                                                value.trim() !== '' || 'Product Name cannot be only spaces',
                                         })}
                                     />
                                     {errors.name && (
                                         <small className="text-danger">{errors.name.message}</small>
                                     )}
                                 </Form.Group>
+
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className='mb-0'>Model</Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Model"
                                         name="Model"
-                                        {...register("model", { required: true })}
-                                        required
+                                        {...register("model", {
+                                            required: "Model is required",
+                                            validate: (value) => value.trim() !== "" || "Model cannot be empty or spaces only"
+                                        })}
                                     />
+                                    {errors.model && (
+                                        <small className="text-danger">{errors.model.message}</small>
+                                    )}
                                 </Form.Group>
+
+
 
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
                                     <Form.Label className='mb-0'>Code</Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Code"
-                                        name="Code"
-                                        {...register("code", { required: true })}
-                                        required
+                                        name="code"
+                                        {...register("code", { required: "Code is required",
+                                            validate: (value) => value.trim() !== "" || "Code cannot be empty or spaces only"
+
+                                         })}
                                     />
+                                    {errors.code && (
+                                        <small className="text-danger">{errors.code.message}</small>
+                                    )}
                                 </Form.Group>
-                                <Form.Group className="mb-1">
+
+                                <Form.Group className="mb-2">
                                     <Form.Label className='mb-0'>Description</Form.Label>
                                     <Form.Control
                                         as="textarea"
                                         rows={3}
                                         placeholder="Enter Description"
                                         name="Description"
-                                        // {...register("description", { required: true })}
-                                        // required
+                                    {...register("description")}
+                                    // required
                                     />
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-5'>Low Stock Threshold</Form.Label>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className=''>Low Stock Threshold</Form.Label>
                                     <div className="d-flex justify-content-between">
                                         <span>0</span>
                                         <input
