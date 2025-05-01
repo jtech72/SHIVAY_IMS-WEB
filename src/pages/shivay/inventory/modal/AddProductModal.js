@@ -16,6 +16,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         reset,
         formState: { errors },
         watch,
+        trigger,
     } = useForm();
 
     const [threshold, setThreshold] = useState(100);
@@ -58,7 +59,8 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         closeModal();
     };
     const modelValue = watch("model");
-const codeValue = watch("code");
+    const codeValue = watch("code");
+    
 
     return (
         <div>
@@ -81,7 +83,7 @@ const codeValue = watch("code");
                                         {...register('name', {
                                             required: 'Product Name is required',
                                             validate: value =>
-                                                value.trim() !== '' || 'Product Name cannot be only spaces',
+                                                value?.trim() !== '' || 'Product Name cannot be only spaces',
                                         })}
                                     />
                                     {errors.name && (
@@ -104,8 +106,11 @@ const codeValue = watch("code");
             return true;
           }
         })}
+        onKeyUp={() => {
+          trigger("code"); // revalidate code when model is typed
+        }}
       />
-      {errors.model && (
+      {errors.model && !codeValue && (
         <small className="text-danger">{errors.model.message}</small>
       )}
     </Form.Group>
@@ -125,8 +130,11 @@ const codeValue = watch("code");
             return true;
           }
         })}
+        onKeyUp={() => {
+          trigger("model"); // revalidate model when code is typed
+        }}
       />
-      {errors.code && (
+      {errors.code && !modelValue && (
         <small className="text-danger">{errors.code.message}</small>
       )}
     </Form.Group>
