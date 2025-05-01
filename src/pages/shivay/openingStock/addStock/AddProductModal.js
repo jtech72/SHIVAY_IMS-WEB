@@ -113,8 +113,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
 
     return (
         <div>
-            <Modal show={showModal} centered size='lg' onHide={handleClose}>
-                <Modal.Header closeButton>
+<Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>                <Modal.Header closeButton>
                     <Modal.Title className='text-black'>Add Product</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={handleSubmit(onSubmit)}>
