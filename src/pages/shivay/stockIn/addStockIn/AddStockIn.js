@@ -10,12 +10,14 @@ import AddProductModal from '../../openingStock/addStock/AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStockInActions, getWarehouseListActions, listingSupplierActions, listingUsersActions, updateStockInActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const AddStockIn = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { handleSubmit, register, setValue } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
@@ -31,7 +33,18 @@ const AddStockIn = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState('');
     const inputRef = useRef(null);
-    console.log(editedQuantity, 'editedQuantity')
+
+    const createResponse = store?.createStockInReducer?.createStockIn?.status;
+    // console.log(openingProducts, 'openingProducts')
+
+    const [attachmentType, setAttachmentType] = useState("");
+
+    const handleAttachmentTypeChange = (e) => {
+        const type = e.target.value;
+        setAttachmentType(type);
+        setValue("invoiceAttachmentType", type);
+    };
+
     const handleQuantityChange = (e) => {
         setEditedQuantity(e.target.value);
     };
@@ -40,6 +53,12 @@ const AddStockIn = () => {
             handleSave();
         }
     };
+
+    useEffect(() => {
+        if (createResponse === 200) {
+            navigate("/shivay/stockIn");
+        }
+    }, [createResponse]);
 
     // Handle save (when clicking outside or pressing Enter)
     const handleSave = () => {
@@ -85,7 +104,7 @@ const AddStockIn = () => {
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(' '),
     }));
-    
+
 
     const supplierOptions = SupplierList?.map((users) => ({
         value: users._id,
@@ -150,6 +169,11 @@ const AddStockIn = () => {
         dispatch(listingSupplierActions());
     }, [dispatch]);
 
+    const handleDeleteProduct = (indexToRemove) => {
+        const updatedProducts = openingProducts.filter((_, index) => index !== indexToRemove);
+        setOpeningProducts(updatedProducts);
+    };
+
     const onSubmit = (data) => {
 
         const cleanedProducts = openingProducts.map(({ product, ...rest }) => rest);
@@ -183,9 +207,9 @@ const AddStockIn = () => {
             <PageTitle
                 breadCrumbItems={[
                     { label: "SHIVAY Stock In List", path: "/shivay/stockIn" },
-                    { label: "Add Stock In ", path: "/shivay/stockIn", active: true },
+                    { label: stockId ? "Edit Stock In" : "Add Stock In", path: "/shivay/stockIn", active: true },
                 ]}
-                title={"Add Stock In"}
+                title={stockId ? "Edit Stock In" : "Add Stock In"}
             />
             <Form onSubmit={handleSubmit(onSubmit)}>
 
@@ -201,7 +225,7 @@ const AddStockIn = () => {
                                 aria-controls="collapseOne"
                                 onClick={handleAccordionToggle}  // Toggle the accordion open state
                             >
-                                <div className="flex-grow-1 text-black fw-bold"> Add Stock In Details</div>
+                                <div className="flex-grow-1 text-black fw-bold"> {stockId ? "Edit" : "Add"} Stock In Details</div>
 
                                 {/* Right-aligned buttons */}
                                 <div className="d-flex">
@@ -225,7 +249,7 @@ const AddStockIn = () => {
                                 <Row>
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
-                                            <Form.Label className='mb-0'>Warehouse</Form.Label>
+                                            <Form.Label className='mb-0'>Warehouse {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                             <Select
                                                 value={selectedWarehouse}
                                                 onChange={handleWarehouseChange}
@@ -238,7 +262,7 @@ const AddStockIn = () => {
                                     </Col>
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
-                                            <Form.Label className="mb-0">Received By</Form.Label>
+                                            <Form.Label className="mb-0">Received By {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                             <Select
                                                 value={selectedUser}
                                                 onChange={handleUserChange}
@@ -251,7 +275,7 @@ const AddStockIn = () => {
                                     </Col>
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
-                                            <Form.Label className="mb-0">Supplier</Form.Label>
+                                            <Form.Label className="mb-0">Supplier {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                             <Select
                                                 value={selectedSupplier}
                                                 onChange={handleSupplierChange}
@@ -268,52 +292,72 @@ const AddStockIn = () => {
                                             <Form.Control
                                                 type="date"
                                                 value={today}
-                                                {...register('date', { required: true })}
+                                                {...register('date')}
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col sm={3}>
+                                        <Form.Group className="mb-1">
+                                            <Form.Label className="mb-0">Invoice Number {!stockId && <span className='text-danger'>*</span>}</Form.Label>
+                                            <Form.Control
+                                                type="number"
+                                                placeholder="Enter Invoice Number"
+                                                {...register('invoiceNumber', { required: true })}
                                                 required
                                             />
                                         </Form.Group>
                                     </Col>
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
-                                            <Form.Label className="mb-0">Invoice Number</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                placeholder="Enter Invoice Number"
-                                                {...register('invoiceNumber', { required: true })}
+                                            <Form.Label className="mb-0">
+                                                Attachment {!stockId && <span className="text-danger">*</span>}
+                                            </Form.Label>
 
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col sm={3}>
-                                        <Form.Group className="mb-1">
-                                            <Form.Label className="mb-0">Attach Invoice</Form.Label>
-                                            <Form.Control
-                                                type="file"
-                                                placeholder="Upload file"
-                                                {...register('invoiceAttachment', {
-                                                    required: !selectedStock?.invoiceAttachment, // only require if no existing
-                                                })}
-                                            />
-                                            {selectedStock?.invoiceAttachment && (
-                                                <div className="mt-2">
-                                                    <a
-                                                        href={selectedStock.invoiceAttachment}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        View Existing Invoice
-                                                    </a>
-                                                </div>
+                                            {/* Step 1: Show select until type is chosen */}
+                                            {!attachmentType && (
+                                                <Form.Select
+                                                    className="mb-2"
+                                                    defaultValue=""
+                                                    onChange={handleAttachmentTypeChange}
+                                                >
+                                                    <option value="">Select Attachment Type</option>
+                                                    <option value="invoice">Invoice</option>
+                                                    <option value="deliveryChallan">Delivery Challan</option>
+                                                </Form.Select>
+                                            )}
+
+                                            {/* Step 2: Show file input after type is selected */}
+                                            {attachmentType && (
+                                                <>
+                                                    <Form.Control
+                                                        type="file"
+                                                        placeholder="Upload file"
+                                                        required={!stockId}
+                                                        {...register("invoiceAttachment")}
+                                                    />
+
+                                                    {/* View Existing if editing */}
+                                                    {selectedStock?.invoiceAttachment && (
+                                                        <div className="mt-2">
+                                                            <a
+                                                                href={selectedStock.invoiceAttachment}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                View Existing Attachment
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </Form.Group>
                                     </Col>
-
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
                                             <Form.Label className="mb-0">Invoice Value</Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                {...register('invoiceValue', { required: true })}
+                                                {...register('invoiceValue')}
                                                 placeholder="Enter Invoice Value"
                                             />
                                         </Form.Group>
@@ -324,7 +368,7 @@ const AddStockIn = () => {
                                             <Form.Control
                                                 as="textarea"
                                                 rows={1}
-                                                {...register('description', { required: true })}
+                                                {...register('description')}
                                                 placeholder="Enter Description"
                                             />
                                         </Form.Group>
@@ -335,7 +379,6 @@ const AddStockIn = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className='mt-2'>
                     <Card
                         style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
@@ -346,6 +389,7 @@ const AddStockIn = () => {
                                     <tr className="table_header">
                                         <th scope="col"><i className="mdi mdi-merge"></i></th>
                                         <th scope="col">Product Name</th>
+                                        <th scope="col">Model Name</th>
                                         <th scope="col">Code</th>
                                         <th scope="col">Quantity</th>
                                     </tr>
@@ -360,31 +404,26 @@ const AddStockIn = () => {
                                                         {data?.product?.name || <span className="text-black">-</span>}
                                                     </td>
                                                     <td className="fw-bold">
+                                                        {data?.product?.modelId?.name || <span className="text-black">-</span>}
+                                                    </td>
+                                                    <td className="fw-bold">
                                                         {data?.product?.code || <span className="text-black">-</span>}
                                                     </td>
                                                     <td className="fw-bold">
                                                         {data?.quantity || <span className="text-black">-</span>}
                                                     </td>
                                                     <td></td>
-                                                    <td>
-                                                        <div className="icon-container d-flex pb-0">
-                                                            <span className="icon-wrapper" title="View">
-                                                                <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                            </span>
-                                                            <span className="icon-wrapper" title="Edit">
-                                                                <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                            </span>
-                                                            <span className="icon-wrapper" title="Delete">
-                                                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                            </span>
-                                                        </div>
-                                                    </td>
+                                                    <div className="icon-container d-flex pb-0">
+                                                        <span className="icon-wrapper me-4" title="Delete" onClick={() => handleDeleteProduct(index)}>
+                                                            <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                        </span>
+                                                    </div>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
                                                 <td colSpan="6" className="text-center text-danger py-3">
-                                                  Note :  No products added yet. Please add products to add stockIn.
+                                                    Note :  No products added yet. Please add products to proceed with stock-in.
                                                 </td>
                                             </tr>
                                         )
@@ -393,6 +432,9 @@ const AddStockIn = () => {
                                             <th scope="row">1</th>
                                             <td className="text-uppercase fw-bold">
                                                 {selectedStock?.productData?.name || <span className="text-black">-</span>}
+                                            </td>
+                                            <td className="fw-bold">
+                                                {selectedStock?.modelData?.[0]?.name || <span className="text-black">-</span>}
                                             </td>
                                             <td className="fw-bold">
                                                 {selectedStock?.productData?.code || <span className="text-black">-</span>}
@@ -410,18 +452,18 @@ const AddStockIn = () => {
                                                         style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
                                                     />
                                                 ) : (
-                                                    <span onClick={handleEditClick} > {editedQuantity}</span>
+                                                    <span onClick={handleEditClick} > {editedQuantity} <BsThreeDotsVertical className='table_header cursor' /></span>
                                                 )}
 
                                             </td>
                                             <td></td>
                                             <div className="icon-container d-flex pb-0">
                                                 <span
-                                                    className="icon-wrapper me-4"
+                                                    className="icon-wrapper text-danger me-5 pe-3"
                                                     title="Edit"
                                                     onClick={handleEditClick}
                                                 >
-                                                    <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                    <AiOutlineEdit className="fs-4 text-danger" style={{ cursor: 'pointer' }} />
                                                 </span>
                                             </div>
                                         </tr>
@@ -436,9 +478,11 @@ const AddStockIn = () => {
                     <div className="text-end">
                         <Button
                             className="fw-bold cancel-button me-2"
+                            onClick={() => navigate("/shivay/stockIn")}
                         >
                             Cancel
                         </Button>
+
                         <Button className="fw-bold custom-button" type='submit'>{stockId ? 'Update' : "Submit"}</Button>
                     </div>
                 </div>

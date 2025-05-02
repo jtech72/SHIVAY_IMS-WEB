@@ -26,7 +26,7 @@ const StockIn = () => {
 
   const StockInData = store?.stockInListReducer?.stockInList?.response;
   const deleteResponse = store?.deleteStockInReducer?.deleteStockIn?.status;
-console.log(StockInData,'StockInDataStockInDataStockInData')
+  console.log(StockInData, 'StockInDataStockInDataStockInData')
   useEffect(() => {
     dispatch(getStockInListActions({
       limit: pageSize,
@@ -100,6 +100,7 @@ console.log(StockInData,'StockInDataStockInDataStockInData')
                       <th scope="col">Control No.</th>
                       <th scope="col">Warehouse</th>
                       <th scope="col">Date</th>
+                      <th scope="col">Quantity</th>
 
                       {/* <th scope="col">Action</th> */}
                     </tr>
@@ -138,9 +139,9 @@ console.log(StockInData,'StockInDataStockInDataStockInData')
                                 <span className="text-black">-</span>
                               )}
                             </td>
-                            {/* <td className="fw-bold">
-                                      {data?.location || <span className="text-danger">N/A</span>}
-                                    </td> */}
+                            <td className="fw-bold">
+                              {data?.quantity || <span className="text-danger">N/A</span>}
+                            </td>
                             <td></td>
                             <td></td>
                             <div className="icon-container d-flex  pb-0" >
@@ -148,7 +149,7 @@ console.log(StockInData,'StockInDataStockInDataStockInData')
                             <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                           </span> */}
                               <span className="icon-wrapper" title="Edit">
-                                <AiOutlineEdit onClick={()=>navigate(`/shivay/addStockIn?id=${data?._id}`)} className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                <AiOutlineEdit onClick={() => navigate(`/shivay/addStockIn?id=${data?._id}`)} className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                               </span>
                               <span className="icon-wrapper" title="Delete" onClick={() => { setStockToDelete(data?._id); setShowConfirm(true); }}>
                                 <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />

@@ -9,13 +9,13 @@ import AddProductModal from '../../openingStock/addStock/AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { createDispatchActions, getWarehouseListActions, listingCustomerActions, listingUsersActions, updateDispatchActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PiEye } from 'react-icons/pi';
 
 const AddDispatch = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { handleSubmit, register, setValue } = useForm()
     const [showModal, setShowModal] = useState(false);
@@ -209,7 +209,7 @@ const AddDispatch = () => {
                                     <Button
                                         className="fw-bold custom-button me-2"
                                         onClick={handleShow}
-                                        disabled={!isAccordionOpen}
+                                        disabled={!selectedWarehouse}
                                     >
                                         <IoIosAdd className="fs-3" />&nbsp;Product
                                     </Button>
@@ -226,7 +226,7 @@ const AddDispatch = () => {
                                     <Row>
                                         <Col sm={3}>
                                             <Form.Group className="mb-1">
-                                                <Form.Label className='mb-0'>Warehouse</Form.Label>
+                                                <Form.Label className='mb-0'>Warehouse {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                                 <Select
                                                     value={selectedWarehouse}
                                                     onChange={handleWarehouseChange}
@@ -347,7 +347,7 @@ const AddDispatch = () => {
                                     <tr className="table_header">
                                         <th scope="col"><i className="mdi mdi-merge"></i></th>
                                         <th scope="col">Product Name</th>
-                                        <th scope="col">Modal</th>
+                                        <th scope="col">Model Name</th>
                                         <th scope="col">Code</th>
                                         <th scope="col">Quantity</th>
                                     </tr>
@@ -384,8 +384,8 @@ const AddDispatch = () => {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="6" className="text-center text-muted py-3">
-                                                    No products added yet. Please add products to add dispatch.
+                                                <td colSpan="6" className="text-center text-danger py-3">
+                                                   Note : No products added yet. Please select a warehouse and add products to add dispatch.
                                                 </td>
                                             </tr>
                                         )}
@@ -436,6 +436,7 @@ const AddDispatch = () => {
                     <div className="text-end">
                         <Button
                             className="fw-bold cancel-button me-2"
+                            onClick={() => navigate("/shivay/dispatch")}
                         >
                             Cancel
                         </Button>

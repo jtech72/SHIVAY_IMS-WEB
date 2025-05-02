@@ -290,10 +290,10 @@ console.log(selectedStock?.date,'selectedStock?.date')
                                                         </td>
 
                                                         <div className="icon-container d-flex pb-0">
-                                                            <span className="icon-wrapper" title="Edit">
+                                                            {/* <span className="icon-wrapper" title="Edit">
                                                                 <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                            </span>
-                                                            <span className="icon-wrapper" title="Delete" onClick={() => handleDeleteProduct(index)}>
+                                                            </span> */}
+                                                            <span className="icon-wrapper me-4" title="Delete" onClick={() => handleDeleteProduct(index)}>
                                                                 <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
                                                             </span>
                                                         </div>
@@ -301,8 +301,8 @@ console.log(selectedStock?.date,'selectedStock?.date')
                                                 ))
                                             ) : (
                                                 <tr>
-                                                    <td colSpan="6" className="text-center text-muted py-3">
-                                                        No products added yet. Please add products to add opening stock.
+                                                    <td colSpan="6" className="text-center text-danger py-3">
+                                                       Note : No products added yet. Please add products to add opening stock.
                                                     </td>
                                                 </tr>
                                             )}
@@ -316,6 +316,7 @@ console.log(selectedStock?.date,'selectedStock?.date')
                     <div className="text-end">
                         <Button
                             className="fw-bold cancel-button me-2"
+                            onClick={() => navigate("/shivay/openingStock")}
                         >
                             Cancel
                         </Button>
