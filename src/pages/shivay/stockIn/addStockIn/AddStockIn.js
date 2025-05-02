@@ -12,13 +12,14 @@ import { createStockInActions, getWarehouseListActions, listingSupplierActions, 
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { CgCloseO } from "react-icons/cg";
 
 const AddStockIn = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { handleSubmit, register, setValue } = useForm()
+    const { handleSubmit, register, setValue, resetField, watch } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
@@ -33,16 +34,26 @@ const AddStockIn = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState('');
     const inputRef = useRef(null);
+    const xyz = watch('invoiceAttachment');
+    console.log(xyz, "xyz")
 
     const createResponse = store?.createStockInReducer?.createStockIn?.status;
     // console.log(openingProducts, 'openingProducts')
-
     const [attachmentType, setAttachmentType] = useState("");
+
+    const fileInputRef = useRef();
 
     const handleAttachmentTypeChange = (e) => {
         const type = e.target.value;
         setAttachmentType(type);
         setValue("invoiceAttachmentType", type);
+    };
+
+    const resetAttachmentType = () => {
+        setAttachmentType("");
+        setValue("invoiceAttachmentType", "");
+        resetField("invoiceAttachment");
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     const handleQuantityChange = (e) => {
@@ -175,11 +186,11 @@ const AddStockIn = () => {
     };
 
     const onSubmit = (data) => {
-
+        // console.log(data,'ouiyuttdfghjk',fileInputRef)
         const cleanedProducts = openingProducts.map(({ product, ...rest }) => rest);
         const formData = new FormData();
         if (data?.invoiceAttachment?.[0] instanceof File) {
-            formData.append('invoiceAttachment', data.invoiceAttachment[0]);
+            formData.append('invoiceAttachment', data.invoiceAttachment?.[0]);
         }
 
         formData.append('warehouseId', selectedWarehouse?.value)
@@ -190,16 +201,17 @@ const AddStockIn = () => {
         formData.append('date', data?.date);
         formData.append('invoiceNumber', data?.invoiceNumber);
         formData.append('fright', data?.invoiceValue);
+        formData.append('invoiceAttachmentType', attachmentType);
+
         if (stockId) {
             formData.append('_id', stockId);
         }
         if (stockId) {
-            alert('update')
             dispatch(updateStockInActions(formData))
         } else {
             dispatch(createStockInActions(formData));
+            // console.log(formData, 'formData');
         }
-        // console.log(formData, 'formData');
     };
 
     return (
@@ -231,18 +243,21 @@ const AddStockIn = () => {
                                 <div className="d-flex">
                                     <Button
                                         className="fw-bold custom-button me-2"
-                                        onClick={handleShow}
-                                        disabled={!isAccordionOpen}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // ⛔️ stop click bubbling to accordion
+                                            handleShow();        // ✅ trigger your function
+                                        }}
                                     >
                                         <IoIosAdd className="fs-3" />&nbsp;Product
                                     </Button>
+
                                 </div>
                             </button>
                         </h2>
 
                         <div
                             id="collapseOne"
-                            className={`accordion-collapse collapse ${isAccordionOpen ? "show" : ""}`}
+                            className={`accordion-collapse collapse ${isAccordionOpen ? "" : "show"}`}
                             data-bs-parent="#accordionExample"
                         >
                             <div className="accordion-body py-1">
@@ -310,45 +325,52 @@ const AddStockIn = () => {
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
                                             <Form.Label className="mb-0">
-                                                Attachment {!stockId && <span className="text-danger">*</span>}
+                                                Attachment
+                                                {attachmentType && (
+                                                    <span className="text-capitalize"> ({attachmentType})</span>
+                                                )}
+                                                {!stockId && <span className="text-danger"> *</span>}
                                             </Form.Label>
 
-                                            {/* Step 1: Show select until type is chosen */}
-                                            {!attachmentType && (
+                                            {!attachmentType ? (
                                                 <Form.Select
-                                                    className="mb-2"
+                                                    className="mb-0"
                                                     defaultValue=""
                                                     onChange={handleAttachmentTypeChange}
                                                 >
                                                     <option value="">Select Attachment Type</option>
-                                                    <option value="invoice">Invoice</option>
-                                                    <option value="deliveryChallan">Delivery Challan</option>
+                                                    <option value="Invoice">Invoice</option>
+                                                    <option value="Delivery Challan">Delivery Challan</option>
                                                 </Form.Select>
-                                            )}
-
-                                            {/* Step 2: Show file input after type is selected */}
-                                            {attachmentType && (
-                                                <>
+                                            ) : (
+                                                <div className="d-flex align-items-center gap-2">
                                                     <Form.Control
                                                         type="file"
                                                         placeholder="Upload file"
-                                                        required={!stockId}
+                                                        // required={!stockId}
                                                         {...register("invoiceAttachment")}
+                                                    // ref={fileInputRef}
                                                     />
+                                                    <CgCloseO
+                                                        size={20}
+                                                        className='text-danger'
+                                                        style={{ cursor: "pointer" }}
+                                                        onClick={resetAttachmentType}
+                                                        title="Change attachment type"
+                                                    />
+                                                </div>
+                                            )}
 
-                                                    {/* View Existing if editing */}
-                                                    {selectedStock?.invoiceAttachment && (
-                                                        <div className="mt-2">
-                                                            <a
-                                                                href={selectedStock.invoiceAttachment}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                            >
-                                                                View Existing Attachment
-                                                            </a>
-                                                        </div>
-                                                    )}
-                                                </>
+                                            {selectedStock?.invoiceAttachment && (
+                                                <div className="mt-2">
+                                                    <a
+                                                        href={selectedStock?.invoiceAttachment}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        View Existing Attachment
+                                                    </a>
+                                                </div>
                                             )}
                                         </Form.Group>
                                     </Col>
