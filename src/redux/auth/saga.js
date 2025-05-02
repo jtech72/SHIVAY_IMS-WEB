@@ -12,6 +12,7 @@ import {
 import { APICore, setAuthorization } from '../../helpers/api/apiCore';
 import { authApiResponseSuccess, authApiResponseError } from './actions';
 import { AuthActionTypes } from './constants';
+import ToastContainer from '../../helpers/toast/ToastContainer';
 
 const api = new APICore();
 
@@ -37,6 +38,7 @@ function* login({ payload: data }) {
         setAuthorization(user?.token);
         yield put(authApiResponseSuccess(AuthActionTypes.LOGIN_USER, userData));
     } catch (error) {
+        ToastContainer(error,'danger')
         yield put(authApiResponseError(AuthActionTypes.LOGIN_USER, error));
         api.setLoggedInUser(null);
         setAuthorization(null);
