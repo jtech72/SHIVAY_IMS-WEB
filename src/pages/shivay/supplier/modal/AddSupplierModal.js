@@ -87,8 +87,8 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Supplier Name"
-                                        name="warehouse"
-                                        {...register('warehouse', {
+                                        name="name"
+                                        {...register('name', {
                                             required: 'Supplier name is required',
                                             validate: value => value.trim() !== '' || 'Supplier name cannot be empty spaces'
                                         })}
@@ -127,7 +127,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                             placeholder="Enter Phone Number"
                                             name="Phone"
                                             maxLength={10} // Only for the 10 digits after +91
-                                            {...register('Phone', {
+                                            {...register('phoneNumber', {
                                                 required: 'Phone is required',
                                                 pattern: {
                                                     value: /^\d{10}$/, // Only 10 digits allowed after +91

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PageTitle from '../../../../helpers/PageTitle'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
-import Select from 'react-select'; // Import React Select
+import Select from 'react-select';
 import { IoIosAdd } from 'react-icons/io';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
@@ -10,19 +10,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createDispatchActions, getWarehouseListActions, listingCustomerActions, listingUsersActions, updateDispatchActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { PiEye } from 'react-icons/pi';
+import { CgCloseO } from "react-icons/cg";
+import { HiOutlineFolderDownload } from "react-icons/hi";
 
 const AddDispatch = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { handleSubmit, register, setValue } = useForm()
+    const { handleSubmit, register, setValue, resetField } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const store = useSelector((state) => state)
     const [today, setToday] = useState(new Date().toISOString().split('T')[0]);
+    const [attachmentType, setAttachmentType] = useState("");
+    const fileInputRef = useRef();
     const [openingProducts, setOpeningProducts] = useState([])
     console.log(openingProducts, 'openingProducts')
     const DispatchData = store?.getDispatchDataReducer?.dispatchList?.response;
@@ -57,7 +60,7 @@ const AddDispatch = () => {
     const [editedQuantity, setEditedQuantity] = useState('');
     const inputRef = useRef(null);
     console.log(editedQuantity, 'editedQuantity')
-
+    const createResponse = store?.createDispatchReducer?.createDispatch?.status;
     const handleQuantityChange = (e) => {
         setEditedQuantity(e.target.value);
     };
@@ -66,8 +69,26 @@ const AddDispatch = () => {
             handleSave();
         }
     };
-    console.log(selectedStock, 'selectedStock34534r')
+    // console.log(selectedStock, 'selectedStock34534r')
 
+    useEffect(() => {
+        if (createResponse === 200) {
+            navigate("/shivay/dispatch");
+        }
+    }, [createResponse]);
+
+    const handleAttachmentTypeChange = (e) => {
+        const type = e.target.value;
+        setAttachmentType(type);
+        setValue("invoiceAttachmentType", type);
+    };
+
+    const resetAttachmentType = () => {
+        setAttachmentType("");
+        setValue("invoiceAttachmentType", "");
+        resetField("invoiceAttachment");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
     // Handle save (when clicking outside or pressing Enter)
     const handleSave = () => {
         setIsEditing(false);
@@ -120,8 +141,10 @@ const AddDispatch = () => {
             setValue('description', selectedStock?.description || '');
             setValue('invoiceValue', selectedStock?.fright || '');
             setValue('attachmentGRfile', selectedStock?.attachmentGRfile || '');
+            setValue('invoiceAttachment', selectedStock?.invoiceAttachment || '');
             setValue('grNumber', selectedStock?.grNumber || '');
             setEditedQuantity(selectedStock?.productData?.[0]?.stockOutQty || '');
+            setAttachmentType(selectedStock?.invoiceAttachmentType || '')
         }
 
     }, [stockId, selectedStock])
@@ -160,15 +183,23 @@ const AddDispatch = () => {
         if (data?.attachmentGRfile?.[0] instanceof File) {
             formData.append('attachmentGRfile', data.attachmentGRfile[0]);
         }
+        if (data?.invoiceAttachment?.[0] instanceof File) {
+            formData.append('invoiceAttachment', data.invoiceAttachment?.[0]);
+        }
 
         formData.append('warehouseId', selectedWarehouse?.value)
         formData.append('dispatchBy', selectedUser?.value);
         formData.append('customerId', selectedCustomer?.value);
-
-        formData.append('quantity', stockId ? editedQuantity : JSON.stringify(cleanedProducts));
         formData.append('description', data?.description);
         formData.append('date', data?.date);
         formData.append('grNumber', data?.grNumber);
+        formData.append('invoiceAttachmentType', data?.invoiceAttachmentType);
+
+        if (stockId) {
+            formData.append('quantity', stockId ? editedQuantity : JSON.stringify(cleanedProducts));
+        }else{
+            formData.append('productDispatchQty', stockId ? editedQuantity : JSON.stringify(cleanedProducts));
+        }
         if (stockId) {
             formData.append('_id', stockId);
             formData.append('productId', selectedStock?.productData?.[0]?._id)
@@ -218,7 +249,7 @@ const AddDispatch = () => {
                         </h2>
                         <div
                             id="collapseOne"
-                            className={`accordion-collapse collapse ${isAccordionOpen ? "show" : ""}`}
+                            className={`accordion-collapse collapse ${isAccordionOpen ? "" : "show"}`}
                             data-bs-parent="#accordionExample"
                         >
                             <div className="accordion-body py-1">
@@ -239,7 +270,7 @@ const AddDispatch = () => {
                                         </Col>
                                         <Col sm={3}>
                                             <Form.Group className="mb-1">
-                                                <Form.Label className="mb-0">Customer</Form.Label>
+                                                <Form.Label className="mb-0">Customer {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                                 <Select
                                                     value={selectedCustomer}
                                                     onChange={handleCustomerChange}
@@ -252,7 +283,7 @@ const AddDispatch = () => {
                                         </Col>
                                         <Col sm={3}>
                                             <Form.Group className="mb-1">
-                                                <Form.Label className="mb-0">Dispatch By</Form.Label>
+                                                <Form.Label className="mb-0">Dispatch By {!stockId && <span className='text-danger'>*</span>}</Form.Label>
                                                 <Select
                                                     value={selectedUser}
                                                     onChange={handleUserChange}
@@ -269,8 +300,7 @@ const AddDispatch = () => {
                                                 <Form.Control
                                                     type="date"
                                                     defaultValue={today}
-                                                    {...register('date', { required: true })}
-                                                    required
+                                                    {...register('date')}
                                                 />
                                             </Form.Group>
                                         </Col>
@@ -280,13 +310,79 @@ const AddDispatch = () => {
                                                 <Form.Control
                                                     type="text"
                                                     placeholder="Enter Invoice Number"
-                                                    {...register('grNumber', { required: true })}
+                                                    {...register('grNumber')}
                                                 />
                                             </Form.Group>
                                         </Col>
                                         <Col sm={3}>
                                             <Form.Group className="mb-1">
-                                                <Form.Label className="mb-0">Attach GR File</Form.Label>
+                                                <Form.Label className="mb-0">
+                                                    Attachment 
+                                                    {attachmentType && (
+                                                        <span className="text-capitalize"> ({attachmentType})</span>
+                                                    )}
+                                                    {selectedStock?.invoiceAttachment && (
+                                                        <a
+                                                            href={selectedStock?.invoiceAttachment}
+                                                            target="_blank"
+                                                            title='Download Attachment'
+                                                            rel="noopener noreferrer"
+                                                        // style={{position:'absolute', top:'20px'}}
+                                                        >
+                                                            <HiOutlineFolderDownload className='ms-1 fs-4' />
+                                                        </a>
+                                                    )}
+                                                    {!stockId && <span className="text-danger"> *</span>}
+                                                </Form.Label>
+
+                                                {!attachmentType ? (
+                                                    <Form.Select
+                                                        className="mb-0"
+                                                        // defaultValue=""
+                                                        value={attachmentType}
+                                                        onChange={handleAttachmentTypeChange}
+
+                                                    >
+                                                        <option value="">Select Attachment Type</option>
+                                                        <option value="Invoice">Invoice</option>
+                                                        <option value="Delivery Challan">Delivery Challan</option>
+                                                    </Form.Select>
+                                                ) : (
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <Form.Control
+                                                            type="file"
+                                                            placeholder="Upload file"
+                                                            // required={!stockId}
+                                                            {...register("invoiceAttachment")}
+                                                        // ref={fileInputRef}
+                                                        />
+                                                        <CgCloseO
+                                                            size={20}
+                                                            className='text-danger'
+                                                            style={{ cursor: "pointer" }}
+                                                            onClick={resetAttachmentType}
+                                                            title="Change attachment type"
+                                                        />
+                                                    </div>
+                                                )}
+
+
+                                            </Form.Group>
+                                        </Col>
+                                        <Col sm={3}>
+                                            <Form.Group className="mb-1">
+                                                <Form.Label className="mb-0">Attach GR File {!stockId && <span className='text-danger'>*</span>}
+                                                    {selectedStock?.attachmentGRfile && (
+                                                        <a
+                                                            href={selectedStock.attachmentGRfile}
+                                                            target="_blank"
+                                                            title='Download GR File'
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            <HiOutlineFolderDownload className='ms-1 fs-4' />
+                                                        </a>
+                                                    )}
+                                                </Form.Label>
                                                 <Form.Control
                                                     type="file"
                                                     placeholder="Upload file"
@@ -294,38 +390,17 @@ const AddDispatch = () => {
                                                         required: !selectedStock?.attachmentGRfile, // only require if no existing
                                                     })}
                                                 />
-                                                {selectedStock?.attachmentGRfile && (
-                                                    <div className="mt-2">
-                                                        <a
-                                                            href={selectedStock.attachmentGRfile}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            View Existing Invoice
-                                                        </a>
-                                                    </div>
-                                                )}
+
                                             </Form.Group>
                                         </Col>
-                                        {/* <Col sm={3}>
-                                            <Form.Group className="mb-1">
-                                                <Form.Label className="mb-0">Attach GR File</Form.Label>
-                                                <Form.Control
-                                                    type="file"
-                                                    placeholder="Upload file"
-                                                    required
-                                                    {...register('attachmentGRfile', { required: true })}
-                                                />
-                                            </Form.Group>
-                                        </Col> */}
-                                        <Col sm={6}>
+                                        <Col sm={3}>
                                             <Form.Group className="mb-1">
                                                 <Form.Label className="mb-0">Description</Form.Label>
                                                 <Form.Control
                                                     as="textarea"
                                                     rows={1}
                                                     placeholder="Enter Description"
-                                                    {...register('description', { required: true })}
+                                                    {...register('description')}
                                                 />
                                             </Form.Group>
                                         </Col>
@@ -385,7 +460,7 @@ const AddDispatch = () => {
                                         ) : (
                                             <tr>
                                                 <td colSpan="6" className="text-center text-danger py-3">
-                                                   Note : No products added yet. Please select a warehouse and add products to add dispatch.
+                                                    Note : No products added yet. Please select a warehouse and add products to add dispatch.
                                                 </td>
                                             </tr>
                                         )}

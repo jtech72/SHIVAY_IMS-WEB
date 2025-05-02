@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PageTitle from '../../../../helpers/PageTitle'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
-import Select from 'react-select'; // Import React Select
+import Select from 'react-select'; 
 import { IoIosAdd } from 'react-icons/io';
-import { PiEye } from 'react-icons/pi';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import AddProductModal from '../../openingStock/addStock/AddProductModal';
@@ -13,13 +12,15 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { CgCloseO } from "react-icons/cg";
+import { HiOutlineFolderDownload } from "react-icons/hi";
+
 
 const AddStockIn = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { handleSubmit, register, setValue, resetField, watch } = useForm()
+    const { handleSubmit, register, setValue, resetField,watch } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
@@ -33,9 +34,10 @@ const AddStockIn = () => {
     const SupplierList = store?.listingSupplierReducer?.listingSupplier?.response;
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState('');
+    const [productId, setProductId] = useState('');
     const inputRef = useRef(null);
     const xyz = watch('invoiceAttachment');
-    console.log(xyz, "xyz")
+    console.log(xyz,"xyz")
 
     const createResponse = store?.createStockInReducer?.createStockIn?.status;
     // console.log(openingProducts, 'openingProducts')
@@ -148,7 +150,9 @@ const AddStockIn = () => {
             setValue('description', selectedStock?.description || '');
             setValue('invoiceValue', selectedStock?.fright || '');
             setValue('invoiceAttachment', selectedStock?.invoiceAttachment || '');
+            setAttachmentType(selectedStock?.invoiceAttachmentType || '');
             setEditedQuantity(selectedStock?.productData?.stockInQty || '');
+            setProductId(selectedStock?.productData?._id)
         }
 
     }, [stockId, selectedStock])
@@ -186,7 +190,7 @@ const AddStockIn = () => {
     };
 
     const onSubmit = (data) => {
-        // console.log(data,'ouiyuttdfghjk',fileInputRef)
+console.log(data,'ouiyuttdfghjk',fileInputRef)
         const cleanedProducts = openingProducts.map(({ product, ...rest }) => rest);
         const formData = new FormData();
         if (data?.invoiceAttachment?.[0] instanceof File) {
@@ -196,15 +200,27 @@ const AddStockIn = () => {
         formData.append('warehouseId', selectedWarehouse?.value)
         formData.append('receivedBy', selectedUser?.value);
         formData.append('supplierId', selectedSupplier?.value);
-        formData.append('stockInQty', stockId ? parseInt(editedQuantity) : JSON.stringify(cleanedProducts));
         formData.append('description', data?.description);
-        formData.append('date', data?.date);
         formData.append('invoiceNumber', data?.invoiceNumber);
         formData.append('fright', data?.invoiceValue);
         formData.append('invoiceAttachmentType', attachmentType);
 
+        if (!stockId) {
+            formData.append('date', data?.date);
+        }
+
         if (stockId) {
             formData.append('_id', stockId);
+        }
+        if (stockId) {
+            formData.append('productId', productId);
+        }
+
+        if (stockId) {
+            formData.append('quantity', stockId ? parseInt(editedQuantity) : JSON.stringify(cleanedProducts));
+        }else{
+            formData.append('stockInQty', stockId ? parseInt(editedQuantity) : JSON.stringify(cleanedProducts));
+
         }
         if (stockId) {
             dispatch(updateStockInActions(formData))
@@ -243,14 +259,11 @@ const AddStockIn = () => {
                                 <div className="d-flex">
                                     <Button
                                         className="fw-bold custom-button me-2"
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // ⛔️ stop click bubbling to accordion
-                                            handleShow();        // ✅ trigger your function
-                                        }}
+                                        onClick={handleShow}
+                                        // disabled={!isAccordionOpen}
                                     >
                                         <IoIosAdd className="fs-3" />&nbsp;Product
                                     </Button>
-
                                 </div>
                             </button>
                         </h2>
@@ -329,14 +342,27 @@ const AddStockIn = () => {
                                                 {attachmentType && (
                                                     <span className="text-capitalize"> ({attachmentType})</span>
                                                 )}
+                                                 {selectedStock?.invoiceAttachment && (
+                                                    <a
+                                                        href={selectedStock?.invoiceAttachment}
+                                                        target="_blank"
+                                                        title='Download Attachment'
+                                                        rel="noopener noreferrer"
+                                                        // style={{position:'absolute', top:'20px'}}
+                                                    >
+                                                       <HiOutlineFolderDownload className='ms-1 fs-4'/>
+                                                    </a>
+                                            )}
                                                 {!stockId && <span className="text-danger"> *</span>}
                                             </Form.Label>
 
                                             {!attachmentType ? (
                                                 <Form.Select
                                                     className="mb-0"
-                                                    defaultValue=""
+                                                    // defaultValue=""
+                                                    value={attachmentType}
                                                     onChange={handleAttachmentTypeChange}
+                                                    
                                                 >
                                                     <option value="">Select Attachment Type</option>
                                                     <option value="Invoice">Invoice</option>
@@ -349,7 +375,7 @@ const AddStockIn = () => {
                                                         placeholder="Upload file"
                                                         // required={!stockId}
                                                         {...register("invoiceAttachment")}
-                                                    // ref={fileInputRef}
+                                                        // ref={fileInputRef}
                                                     />
                                                     <CgCloseO
                                                         size={20}
@@ -361,17 +387,7 @@ const AddStockIn = () => {
                                                 </div>
                                             )}
 
-                                            {selectedStock?.invoiceAttachment && (
-                                                <div className="mt-2">
-                                                    <a
-                                                        href={selectedStock?.invoiceAttachment}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        View Existing Attachment
-                                                    </a>
-                                                </div>
-                                            )}
+                                           
                                         </Form.Group>
                                     </Col>
                                     <Col sm={3}>

@@ -24,8 +24,8 @@ const AddOpeningStock = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('Id');
     const isEditMode = Boolean(stockId);
-    const StockInData = store?.stockInListReducer;
-console.log(StockInData,'StockInDataStockInDataStockInData')
+    const StockInData = store?.stockListReducer?.stockList?.response;
+console.log(StockInData,'1232232')
     const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
     const warehouseOptions = Warehouse?.map((warehouse) => ({
         value: warehouse._id,
@@ -34,8 +34,7 @@ console.log(StockInData,'StockInDataStockInDataStockInData')
 
     const [openingProducts, setOpeningProducts] = useState([])
     const [selectedStock, setSelectedStock] = useState(null);
-    console.log(selectedStock, 'selectedStock')
-    // console.log(openingProducts, 'openingProducts')
+    console.log(openingProducts, 'openingProducts')
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedQuantity, setEditedQuantity] = useState(selectedStock?.quantity || '');
@@ -74,7 +73,7 @@ console.log(StockInData,'StockInDataStockInDataStockInData')
         }
     }, [stockId, StockInData]);
 
-    console.log(selectedStock, 'selectedStock')
+    console.log(StockInData, 'StockInData')
 
     const onSubmit = (data) => {
         const cleanedProducts = openingProducts.map(({ product, ...rest }) => rest);

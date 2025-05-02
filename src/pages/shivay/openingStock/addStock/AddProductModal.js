@@ -19,7 +19,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
     const [productName, setProductName] = useState('');
     const [quantity, setQuantity] = useState()
     const location = useLocation()
-    // console.log(location.pathname)
+    console.log(ProductSearch,'ProductSearch')
 
     const [searchType, setSearchType] = useState('modelName'); // default search type
     useEffect(() => {
@@ -114,7 +114,7 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
         }
     }
     console.log(ProductSearch, 'ProductSearch')
-
+    console.log(StockCheck, '0987')
     return (
         <div>
             <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
@@ -226,10 +226,10 @@ const AddProductModal = ({ showModal, handleClose, openingProducts, setOpeningPr
                             </Col>
 
                         </Row>
-                        {!StockCheck?.status && location.pathname === '/shivay/addDispatch' && StockCheck?.data?.length > 0 && (
+                        {StockCheck?.status==400 && location.pathname === '/shivay/addDispatch' && (
                             <Row className="px-2">
                                 <div className="py-1 text-center border border-primary rounded bg-light text-primary">
-                                    {StockCheck.message || JSON.stringify(StockCheck)}
+                                    {StockCheck?.error || JSON.stringify(StockCheck)}
                                 </div>
                             </Row>
                         )}

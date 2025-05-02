@@ -150,7 +150,7 @@ function* createStockCheckFunction(data) {
     } catch (error) {
         yield put({
             type: DispatchActionTypes.CREATE_STOCK_CHECK_ERROR,
-            payload: error,
+            payload: {error,status:400},
         });
     }
 }
