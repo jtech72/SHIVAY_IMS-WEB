@@ -316,6 +316,7 @@ console.log(selectedStock?.date,'selectedStock?.date')
                     <div className="text-end">
                         <Button
                             className="fw-bold cancel-button me-2"
+                            onClick={() => navigate("/shivay/openingStock")}
                         >
                             Cancel
                         </Button>

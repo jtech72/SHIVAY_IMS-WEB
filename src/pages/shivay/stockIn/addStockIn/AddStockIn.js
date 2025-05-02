@@ -35,7 +35,15 @@ const AddStockIn = () => {
     const inputRef = useRef(null);
 
     const createResponse = store?.createStockInReducer?.createStockIn?.status;
-    console.log(openingProducts, 'openingProducts')
+    // console.log(openingProducts, 'openingProducts')
+
+    const [attachmentType, setAttachmentType] = useState("");
+
+    const handleAttachmentTypeChange = (e) => {
+        const type = e.target.value;
+        setAttachmentType(type);
+        setValue("invoiceAttachmentType", type);
+    };
 
     const handleQuantityChange = (e) => {
         setEditedQuantity(e.target.value);
@@ -96,7 +104,7 @@ const AddStockIn = () => {
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(' '),
     }));
-    
+
 
     const supplierOptions = SupplierList?.map((users) => ({
         value: users._id,
@@ -301,27 +309,49 @@ const AddStockIn = () => {
                                     </Col>
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
-                                            <Form.Label className="mb-0">Attach Invoice {!stockId && <span className='text-danger'>*</span>}</Form.Label>
-                                            <Form.Control
-                                                type="file"
-                                                placeholder="Upload file"
-                                                required
-                                                {...register('invoiceAttachment')}
-                                            />
-                                            {selectedStock?.invoiceAttachment && (
-                                                <div className="mt-2">
-                                                    <a
-                                                        href={selectedStock.invoiceAttachment}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        View Existing Invoice
-                                                    </a>
-                                                </div>
+                                            <Form.Label className="mb-0">
+                                                Attachment {!stockId && <span className="text-danger">*</span>}
+                                            </Form.Label>
+
+                                            {/* Step 1: Show select until type is chosen */}
+                                            {!attachmentType && (
+                                                <Form.Select
+                                                    className="mb-2"
+                                                    defaultValue=""
+                                                    onChange={handleAttachmentTypeChange}
+                                                >
+                                                    <option value="">Select Attachment Type</option>
+                                                    <option value="invoice">Invoice</option>
+                                                    <option value="deliveryChallan">Delivery Challan</option>
+                                                </Form.Select>
+                                            )}
+
+                                            {/* Step 2: Show file input after type is selected */}
+                                            {attachmentType && (
+                                                <>
+                                                    <Form.Control
+                                                        type="file"
+                                                        placeholder="Upload file"
+                                                        required={!stockId}
+                                                        {...register("invoiceAttachment")}
+                                                    />
+
+                                                    {/* View Existing if editing */}
+                                                    {selectedStock?.invoiceAttachment && (
+                                                        <div className="mt-2">
+                                                            <a
+                                                                href={selectedStock.invoiceAttachment}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                View Existing Attachment
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                         </Form.Group>
                                     </Col>
-
                                     <Col sm={3}>
                                         <Form.Group className="mb-1">
                                             <Form.Label className="mb-0">Invoice Value</Form.Label>
@@ -349,7 +379,6 @@ const AddStockIn = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className='mt-2'>
                     <Card
                         style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
@@ -423,7 +452,7 @@ const AddStockIn = () => {
                                                         style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
                                                     />
                                                 ) : (
-                                                    <span onClick={handleEditClick} > {editedQuantity} <BsThreeDotsVertical className='table_header cursor'/></span>
+                                                    <span onClick={handleEditClick} > {editedQuantity} <BsThreeDotsVertical className='table_header cursor' /></span>
                                                 )}
 
                                             </td>

@@ -9,13 +9,13 @@ import AddProductModal from '../../openingStock/addStock/AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { createDispatchActions, getWarehouseListActions, listingCustomerActions, listingUsersActions, updateDispatchActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PiEye } from 'react-icons/pi';
 
 const AddDispatch = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { handleSubmit, register, setValue } = useForm()
     const [showModal, setShowModal] = useState(false);
@@ -436,6 +436,7 @@ const AddDispatch = () => {
                     <div className="text-end">
                         <Button
                             className="fw-bold cancel-button me-2"
+                            onClick={() => navigate("/shivay/dispatch")}
                         >
                             Cancel
                         </Button>
