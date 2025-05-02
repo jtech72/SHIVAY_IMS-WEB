@@ -156,14 +156,12 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                         }))}
                                         placeholder="Select Location"
                                         onChange={(selectedOption) => {
-                                            console.log(selectedOption, 'gfxdcghbjk')
                                             setLocationSelected(selectedOption);
                                             setValue('location', selectedOption?.value);
                                         }}
                                         value={locationSelected}
                                         isSearchable
                                     />
-                                    {errors.location && <small className="text-danger">Location is required</small>}
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>

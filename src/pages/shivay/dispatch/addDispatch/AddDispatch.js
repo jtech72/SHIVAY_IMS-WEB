@@ -217,9 +217,9 @@ const AddDispatch = () => {
             <PageTitle
                 breadCrumbItems={[
                     { label: "SHIVAY Dispatch List", path: "/shivay/dispatch" },
-                    { label: "Add Dispatch ", path: "/shivay/dispatch", active: true },
+                    { label: stockId ? "Edit Dispatch" : "Add Dispatch", path: "/shivay/dispatch", active: true },
                 ]}
-                title={"Add Dispatch"}
+                title={stockId ? "Edit Dispatch" : "Add Dispatch"}
             />
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <div className="accordion mb-3" id="accordionExample">
@@ -234,7 +234,7 @@ const AddDispatch = () => {
                                 aria-controls="collapseOne"
                                 onClick={handleAccordionToggle}
                             >
-                                <div className="flex-grow-1 text-black fw-bold"> Add Dispatch Details</div>
+                                <div className="flex-grow-1 text-black fw-bold"> {stockId ? "Edit" : "Add"} Dispatch Details</div>
 
                                 <div className="d-flex">
                                     <Button
@@ -515,7 +515,7 @@ const AddDispatch = () => {
                         >
                             Cancel
                         </Button>
-                        <Button className="fw-bold custom-button" type='submit'>Submit</Button>
+                        <Button className="fw-bold custom-button" type='submit'>{stockId ? 'Update' : "Submit"}</Button>
                     </div>
                 </div>
             </Form>
