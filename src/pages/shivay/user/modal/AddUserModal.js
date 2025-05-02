@@ -196,7 +196,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Phone {!UserData?.data && <span className="text-danger">*</span>}
+                                <Form.Label className='mb-0'>Phone Number {!UserData?.data && <span className="text-danger">*</span>}
                                 </Form.Label>
 
                                 <InputGroup>

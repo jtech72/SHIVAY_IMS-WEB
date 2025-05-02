@@ -74,11 +74,11 @@ const Login = (): React$Element<any> => {
                     </p>
                 </div>
 
-                {error && (
+                {/* {error && (
                     <Alert variant="danger" className="my-2">
                         {error}
                     </Alert>
-                )}
+                )} */}
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Form.Group className="mb-3" controlId="role">

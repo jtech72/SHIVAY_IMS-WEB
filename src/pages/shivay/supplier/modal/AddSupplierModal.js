@@ -101,7 +101,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                             </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Email Id</Form.Label>
+                                    <Form.Label className='mb-0'>Email Id <span className='text-danger'>*</span></Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Email Id"
@@ -118,29 +118,29 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
 
                             </Col>
                             <Col sm={6}>
-                            <Form.Group className="mb-1">
-  <Form.Label className="mb-0">Phone</Form.Label>
-  <InputGroup>
-    <InputGroup.Text>+91</InputGroup.Text>
-    <Form.Control
-      type="text"
-      placeholder="Enter Phone"
-      name="Phone"
-      maxLength={10} // Only for the 10 digits after +91
-      {...register('Phone', {
-        required: 'Phone is required',
-        pattern: {
-          value: /^\d{10}$/, // Only 10 digits allowed after +91
-          message: 'Phone must be exactly 10 digits'
-        },
-        validate: value => value.trim() !== '' || 'Phone cannot be only empty spaces'
-      })}
-    />
-  </InputGroup>
-  {errors.Phone && (
-    <small className="text-danger">{errors.Phone.message}</small>
-  )}
-</Form.Group>
+                                <Form.Group className="mb-1">
+                                    <Form.Label className="mb-0">Phone Number<span className='text-danger'>*</span></Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text>+91</InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Enter Phone Number"
+                                            name="Phone"
+                                            maxLength={10} // Only for the 10 digits after +91
+                                            {...register('Phone', {
+                                                required: 'Phone is required',
+                                                pattern: {
+                                                    value: /^\d{10}$/, // Only 10 digits allowed after +91
+                                                    message: 'Phone must be exactly 10 digits'
+                                                },
+                                                validate: value => value.trim() !== '' || 'Phone cannot be only empty spaces'
+                                            })}
+                                        />
+                                    </InputGroup>
+                                    {errors.Phone && (
+                                        <small className="text-danger">{errors.Phone.message}</small>
+                                    )}
+                                </Form.Group>
 
 
 
