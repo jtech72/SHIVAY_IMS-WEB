@@ -3,7 +3,6 @@ import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { createProductActions, updateProductActions } from '../../../../redux/actions';
-import StockIn from '../../stockIn/StockIn';
 
 const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
@@ -46,7 +45,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
             lowestStock: threshold,
         };
 
-        if (StockIn) {
+        if (ProductData?.data?._id) {
             const updatedData = {
                 ...payload,
                 productId: ProductData?.data?._id,
@@ -65,7 +64,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
     return (
         <div>
-            <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
+            <Modal show={showModal} centered size='lg' onHide={closeModal} backdrop="static" keyboard={false}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Modal.Header closeButton>
                         <Modal.Title className='text-black'>{type} Product</Modal.Title>
@@ -180,7 +179,7 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                         </Row>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button className='cancel-button' onClick={handleClose}>
+                        <Button className='cancel-button' onClick={closeModal}>
                             Close
                         </Button>
                         <Button className='custom-button' type='submit'>
