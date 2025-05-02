@@ -7,7 +7,7 @@ const DISPATCH_LIST_INITIAL_STATE = {
 }
 
 const getDispatchDataReducer = (state = DISPATCH_LIST_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case DispatchActionTypes.GET_DISPATCH_LIST_LOADING:
             return {
@@ -34,7 +34,7 @@ const CREATE_DISPATCH_INITIAL_STATE = {
 }
 
 const createDispatchReducer = (state = CREATE_DISPATCH_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case DispatchActionTypes.CREATE_DISPATCH_LOADING:
             return {
@@ -46,6 +46,11 @@ const createDispatchReducer = (state = CREATE_DISPATCH_INITIAL_STATE, action) =>
                 createDispatch: action.payload,
                 loading: false
             }
+        case DispatchActionTypes.CREATE_DISPATCH_RESET:
+            return {
+                createDispatch: [],
+                loading: false,
+            };
         case DispatchActionTypes.CREATE_DISPATCH_ERROR:
             return {
                 createDispatch: action.payload,
@@ -61,7 +66,7 @@ const UPDATE_DISPATCH_INITIAL_STATE = {
 }
 
 const updateDispatchReducer = (state = UPDATE_DISPATCH_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case DispatchActionTypes.UPDATE_DISPATCH_LOADING:
             return {
@@ -73,6 +78,11 @@ const updateDispatchReducer = (state = UPDATE_DISPATCH_INITIAL_STATE, action) =>
                 updateDispatch: action.payload,
                 loading: false
             }
+        case DispatchActionTypes.UPDATE_DISPATCH_RESET:
+            return {
+                updateDispatch: [],
+                loading: false,
+            };
         case DispatchActionTypes.UPDATE_DISPATCH_ERROR:
             return {
                 updateDispatch: action.payload,
@@ -88,7 +98,7 @@ const DELETE_DISPATCH_INITIAL_STATE = {
 }
 
 const deleteDispatchReducer = (state = DELETE_DISPATCH_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case DispatchActionTypes.DELETE_DISPATCH_LOADING:
             return {
@@ -105,6 +115,11 @@ const deleteDispatchReducer = (state = DELETE_DISPATCH_INITIAL_STATE, action) =>
                 deleteDispatch: action.payload,
                 loading: false
             }
+        case DispatchActionTypes.DELETE_DISPATCH_RESET:
+            return {
+                deleteDispatch: [],
+                loading: false
+            }
         default: return state
     }
 }
@@ -115,7 +130,7 @@ const CREATE_STOCK_CHECK_INITIAL_STATE = {
 }
 
 const createStockCheckReducer = (state = CREATE_STOCK_CHECK_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case DispatchActionTypes.CREATE_STOCK_CHECK_LOADING:
             return {

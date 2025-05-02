@@ -10,6 +10,7 @@ import { deleteSupplierActions, getSupplierListActions } from '../../../redux/ac
 import { useDispatch, useSelector } from 'react-redux';
 import { MdDeleteOutline } from 'react-icons/md';
 import Pagination from '../../../helpers/Pagination';
+import { Loading } from '../../../helpers/loader/Loading';
 
 const Supplier = () => {
 
@@ -109,55 +110,72 @@ const Supplier = () => {
                     <tr className="table_header">
                       <th scope="col"><i className="mdi mdi-merge"></i></th>
                       <th scope="col">Supplier Name</th>
-                      <th scope="col">Email ID</th>
-                      <th scope="col">Phone Number</th>
+                      <th scope="col">Location</th>
+                      <th scope="col">Address</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {SupplierData?.map((data, index) => (
-                      <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                        <th scope="row">{index + 1}</th>
-                        <td className="text-uppercase fw-bold ">
-                          {data?.name || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td className="fw-bold text-primary">
-                          {data?.email ? (
-                            <>
-                              <span>{data.email}</span>
-                              <FaRegCopy
-                                style={{ cursor: 'pointer' }}
-                                title="Copy Email"
-                                className='text-muted ms-2 fs-6'
-                                onClick={() => {
-                                  navigator.clipboard.writeText(data.email);
-                                  alert('Email copied to clipboard!');
-                                }}
-                              />
-                            </>
-                          ) : (
-                            <span className="text-danger">N/A</span>
-                          )}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.phoneNumber || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <div className="icon-container d-flex  pb-0" >
-                          <span className="icon-wrapper" title="Edit">
-                            <AiOutlineEdit
-                              className="fs-4 text-black"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => handleSupplierModal(data, 'Edit', true)}
-                            />
-                          </span>
-                          <span className="icon-wrapper" title="Delete" onClick={() => { setSupplierToDelete(data?._id); setShowConfirm(true); }}>
-                            <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                          </span>
-                        </div>
-                      </tr>
-                    ))}
-                  </tbody>
+                  {store?.supplierListReducer?.loading ? (
+                    <tr>
+                      <td className='text-center' colSpan={6}>
+                        <Loading />
+                      </td>
+                    </tr>
+                  ) : (
+                    <tbody>
+                      {SupplierData?.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className='text-center'>
+                            <p className='my-5 py-5 '>No supplier found.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        SupplierData?.map((data, index) => (
+                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                            <th scope="row">{index + 1}</th>
+                            <td className="text-uppercase fw-bold ">
+                              {data?.name || <span className="text-black">-</span>}
+                            </td>
+                            {/* <td className="fw-bold text-primary">
+                              {data?.email ? (
+                                <>
+                                  <span>{data.email}</span>
+                                  <FaRegCopy
+                                    style={{ cursor: 'pointer' }}
+                                    title="Copy Email"
+                                    className='text-muted ms-2 fs-6'
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(data.email);
+                                      alert('Email copied to clipboard!');
+                                    }}
+                                  />
+                                </>
+                              ) : (
+                                <span className="text-black">-</span>
+                              )}
+                            </td> */}
+                            <td>{data?.location || <span className="text-black">-</span>}</td>
+                            <td className="fw-bold" title={data?.address}>
+                              {data?.address
+                                ? `${data.address.slice(0, 30)}${data.address.length > 30 ? '...' : ''}`
+                                : <span className="text-black">-</span>}
+                            </td>
+                            <td></td>
+                            <div className="icon-container d-flex  pb-0" >
+                              <span className="icon-wrapper" title="Edit">
+                                <AiOutlineEdit
+                                  className="fs-4 text-black"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() => handleSupplierModal(data, 'Edit', true)}
+                                />
+                              </span>
+                              <span className="icon-wrapper" title="Delete" onClick={() => { setSupplierToDelete(data?._id); setShowConfirm(true); }}>
+                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                              </span>
+                            </div>
+                          </tr>
+                        )))}
+                    </tbody>
+                  )}
                 </table>
                 <Pagination
                   pageIndex={pageIndex}

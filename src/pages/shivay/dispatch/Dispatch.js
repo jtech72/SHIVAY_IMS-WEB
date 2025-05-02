@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { deleteDispatchActions, getDispatchListActions } from '../../../redux/actions'
 import { MdDeleteOutline } from 'react-icons/md'
 import Pagination from '../../../helpers/Pagination'
+import { Loading } from '../../../helpers/loader/Loading'
 
 const Dispatch = () => {
 
@@ -102,39 +103,54 @@ const Dispatch = () => {
                       <th scope="col">Quantity</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {DispatchData?.map((data, index) => (
-                      <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                        <th scope="row">{index + 1}</th>
-                        <td className="text-uppercase fw-bold ">
-                          {data?.customerData?.[0]?.name || <span className="text-black">-</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.customerData?.[0]?.location || <span className="text-black">-</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.createdAt ? (
-                            new Date(data?.createdAt).toLocaleDateString('en-GB')
-                          ) : (
-                            <span className="text-black">-</span>
-                          )}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.quantity || <span className="text-black">-</span>}
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <div className="icon-container d-flex pb-0" >
-                          <span className="icon-wrapper" title="Edit">
-                            <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                          </span>
-                          <span className="icon-wrapper" title="Delete" onClick={() => { setDispatchToDelete(data?._id); setShowConfirm(true); }}>
-                            <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                          </span>
-                        </div>
-                      </tr>
-                    ))}
-                  </tbody>
+                  {store?.getDispatchDataReducer?.loading ? (
+                    <tr>
+                      <td className='text-center' colSpan={6}>
+                        <Loading />
+                      </td>
+                    </tr>
+                  ) : (
+                    <tbody>
+                      {DispatchData?.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className='text-center'>
+                            <p className='my-5 py-5 '>No data found in dispatch.</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        DispatchData?.map((data, index) => (
+                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                            <th scope="row">{index + 1}</th>
+                            <td className="text-uppercase fw-bold ">
+                              {data?.customerData?.[0]?.name || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.customerData?.[0]?.location || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.createdAt ? (
+                                new Date(data?.createdAt).toLocaleDateString('en-GB')
+                              ) : (
+                                <span className="text-black">-</span>
+                              )}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.quantity || <span className="text-black">-</span>}
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <div className="icon-container d-flex pb-0" >
+                              <span className="icon-wrapper" title="Edit">
+                                <AiOutlineEdit onClick={()=>navigate(`/shivay/addDispatch?id=${data?._id}`)} className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                              </span>
+                              <span className="icon-wrapper" title="Delete" onClick={() => { setDispatchToDelete(data?._id); setShowConfirm(true); }}>
+                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                              </span>
+                            </div>
+                          </tr>
+                        )))}
+                    </tbody>
+                  )}
                 </table>
                 <Pagination
                   pageIndex={pageIndex}

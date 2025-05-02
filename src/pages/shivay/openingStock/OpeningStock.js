@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStockListActions } from '../../../redux/actions';
 import Pagination from '../../../helpers/Pagination';
+import { Loading } from '../../../helpers/loader/Loading';
 
 const OpeningStock = () => {
 
@@ -19,6 +20,8 @@ const OpeningStock = () => {
   const [totalPages, setTotalPages] = useState(Math.ceil(totalRecords / pageSize));
   const store = useSelector((state) => state);
   const OpeningStockData = store?.stockListReducer?.stockList?.response
+  const NoStockData = store?.stockListReducer?.stockList;
+  console.log(OpeningStockData, 'OpeningStockData')
 
   useEffect(() => {
     dispatch(getStockListActions({
@@ -79,32 +82,55 @@ const OpeningStock = () => {
                       <th scope="col">Quantity</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {OpeningStockData?.map((data, index) => (
-                      <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                        <th scope="row">{index + 1}</th>
-                        <td className="text-uppercase fw-bold ">
-                          {data?.warehouseData?.name || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.productData?.code || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.description || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td className="fw-bold">
-                          {data?.productData?.quantity || <span className="text-danger">N/A</span>}
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <div className="icon-container d-flex  pb-0" >
-                          <span className="icon-wrapper" title="Edit">
-                            <AiOutlineEdit className="fs-4 text-black me-4" style={{ cursor: 'pointer' }} />
-                          </span>
-                        </div>
-                      </tr>
-                    ))}
-                  </tbody>
+                  {store?.stockListReducer?.loading ? (
+                    <tr>
+                      <td className='text-center' colSpan={6}>
+                        <Loading />
+                      </td>
+                    </tr>
+                  ) : (
+                    <tbody>
+                      {OpeningStockData && OpeningStockData.length > 0 ? (
+                        OpeningStockData.map((data, index) => (
+                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                            <th scope="row">{index + 1}</th>
+                            <td className="text-uppercase fw-bold">
+                              {data?.warehouseData?.name || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.productData?.code || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.description || <span className="text-black">-</span>}
+                            </td>
+                            <td className="fw-bold">
+                              {data?.quantity || <span className="text-black">-</span>}
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <div className="icon-container d-flex  pb-0" >
+                              <span className="icon-wrapper me-4" title="Edit">
+                                <AiOutlineEdit
+                                  className="fs-4 text-black"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() => {
+                                    navigate(`/shivay/addOpeningStock?Id=${data?._id}`);
+                                  }}
+                                />
+                              </span>
+
+                            </div>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="py-5 text-center">
+                            No stock records found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  )}
                 </table>
                 <Pagination
                   pageIndex={pageIndex}

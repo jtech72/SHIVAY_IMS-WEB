@@ -28,3 +28,8 @@ export const listingUsersActions = (data) => ({
     type: UsersActionTypes.LISTING_USERS_FIRST,
     data
 });
+
+export const UsersStateEmptyActions = (data) => ({
+    type: UsersActionTypes.USERS_DATA_RESET,
+    data
+});

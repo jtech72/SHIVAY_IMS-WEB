@@ -24,11 +24,13 @@ axios.interceptors.response.use(
             case 400:
                 console.error("Bad Request:", data);
                 break;
-            case 403:
-                window.location.href = "/access-denied";
-                return;
+                case 403:
+                    message = "Access Denied";
+                    break;
+                
             case 404:
-                message = "Sorry! The data you are looking for could not be found.";
+                message = data?.message;
+                // message = "Sorry! The data you are looking for could not be found.";
                 break;
             case 500:
                 message = "Internal Server Error. Please try again later.";

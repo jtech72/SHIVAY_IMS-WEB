@@ -9,6 +9,7 @@ import { getWarehouseActions, deleteWarehouseActions } from '../../../redux/acti
 import { useDispatch, useSelector } from 'react-redux';
 import { MdDeleteOutline } from "react-icons/md";
 import Pagination from '../../../helpers/Pagination';
+import { Loading } from '../../../helpers/loader/Loading';
 
 const Warehouse = () => {
     const dispatch = useDispatch();
@@ -109,30 +110,45 @@ const Warehouse = () => {
                                             <th scope="col">Location</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        {warehouseData?.map((data, index) => (
-                                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                                                <th scope="row">{index + 1}</th>
-                                                <td className="text-uppercase fw-bold ">
-                                                    {data?.name || <span className="text-danger">-</span>}
-                                                </td>
-                                                <td className="fw-bold">
-                                                    {data?.locationId?.name || <span className="text-danger">-</span>}
-                                                </td>
-                                                <div className="icon-container d-flex  pb-0" >
-                                                    <span className="icon-wrapper" title="Edit">
-                                                        <AiOutlineEdit className="fs-4 text-black"
-                                                            style={{ cursor: 'pointer' }}
-                                                            onClick={() => handleWarehouseModal(data, 'Edit', true)}
-                                                        />
-                                                    </span>
-                                                    <span className="icon-wrapper" title="Delete" onClick={() => { setWarehouseToDelete(data?._id); setShowConfirm(true); }}>
-                                                        <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                </div>
-                                            </tr>
-                                        ))}
-                                    </tbody>
+                                    {store?.getWarehouseReducer?.loading ? (
+                                        <tr>
+                                            <td className='text-center' colSpan={6}>
+                                                <Loading />
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        <tbody>
+                                            {warehouseData?.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan={3} className='text-center'>
+                                                        <p className='my-5 py-5 '>No Warehouse Added Yet.</p>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                warehouseData?.map((data, index) => (
+                                                    <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                                        <th scope="row">{index + 1}</th>
+                                                        <td className="text-uppercase fw-bold ">
+                                                            {data?.name || <span className="text-danger">-</span>}
+                                                        </td>
+                                                        <td className="fw-bold">
+                                                            {data?.locationId?.name || <span className="text-danger">-</span>}
+                                                        </td>
+                                                        <div className="icon-container d-flex  pb-0" >
+                                                            <span className="icon-wrapper" title="Edit">
+                                                                <AiOutlineEdit className="fs-4 text-black"
+                                                                    style={{ cursor: 'pointer' }}
+                                                                    onClick={() => handleWarehouseModal(data, 'Edit', true)}
+                                                                />
+                                                            </span>
+                                                            <span className="icon-wrapper" title="Delete" onClick={() => { setWarehouseToDelete(data?._id); setShowConfirm(true); }}>
+                                                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                            </span>
+                                                        </div>
+                                                    </tr>
+                                                )))}
+                                        </tbody>
+                                    )}
                                 </table>
                                 <Pagination
                                     pageIndex={pageIndex}

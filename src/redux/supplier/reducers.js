@@ -7,7 +7,7 @@ const SUPPLIER_LIST_INITIAL_STATE = {
 }
 
 const supplierListReducer = (state = SUPPLIER_LIST_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case SupplierActionTypes.SUPPLIER_LIST_LOADING:
             return {
@@ -34,7 +34,7 @@ const CREATE_SUPPLIER_INITIAL_STATE = {
 }
 
 const createSupplierReducer = (state = CREATE_SUPPLIER_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case SupplierActionTypes.CREATE_SUPPLIER_LOADING:
             return {
@@ -46,6 +46,11 @@ const createSupplierReducer = (state = CREATE_SUPPLIER_INITIAL_STATE, action) =>
                 createSupplier: action.payload,
                 loading: false
             }
+        case SupplierActionTypes.CREATE_SUPPLIER_RESET:
+            return {
+                createSupplier: [],
+                loading: false,
+            };
         case SupplierActionTypes.CREATE_SUPPLIER_ERROR:
             return {
                 createSupplier: action.payload,
@@ -61,7 +66,7 @@ const UPDATE_SUPPLIER_INITIAL_STATE = {
 }
 
 const updateSupplierReducer = (state = UPDATE_SUPPLIER_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case SupplierActionTypes.UPDATE_SUPPLIER_LOADING:
             return {
@@ -73,6 +78,11 @@ const updateSupplierReducer = (state = UPDATE_SUPPLIER_INITIAL_STATE, action) =>
                 updateSupplier: action.payload,
                 loading: false
             }
+        case SupplierActionTypes.UPDATE_SUPPLIER_RESET:
+            return {
+                updateSupplier: [],
+                loading: false,
+            };
         case SupplierActionTypes.UPDATE_SUPPLIER_ERROR:
             return {
                 updateSupplier: action.payload,
@@ -88,7 +98,7 @@ const DELETE_SUPPLIER_INITIAL_STATE = {
 }
 
 const deleteSupplierReducer = (state = DELETE_SUPPLIER_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case SupplierActionTypes.DELETE_SUPPLIER_LOADING:
             return {
@@ -105,6 +115,11 @@ const deleteSupplierReducer = (state = DELETE_SUPPLIER_INITIAL_STATE, action) =>
                 deleteSupplier: action.payload,
                 loading: false
             }
+        case SupplierActionTypes.DELETE_SUPPLIER_RESET:
+            return {
+                deleteSupplier: [],
+                loading: false
+            }
         default: return state
     }
 }
@@ -115,7 +130,7 @@ const LISTING_SUPPLIER_INITIAL_STATE = {
 }
 
 const listingSupplierReducer = (state = LISTING_SUPPLIER_INITIAL_STATE, action) => {
-    
+
     switch (action.type) {
         case SupplierActionTypes.LISTING_SUPPLIER_LOADING:
             return {

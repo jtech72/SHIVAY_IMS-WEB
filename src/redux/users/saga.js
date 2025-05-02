@@ -47,6 +47,10 @@ function* createUsersFunction(data) {
                 type: UsersActionTypes.CREATE_USERS_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: UsersActionTypes.CREATE_USERS_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: UsersActionTypes.CREATE_USERS_ERROR,
@@ -54,6 +58,7 @@ function* createUsersFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: UsersActionTypes.CREATE_USERS_ERROR,
             payload: error,
@@ -74,6 +79,10 @@ function* updateUsersFunction(data) {
                 type: UsersActionTypes.UPDATE_USERS_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: UsersActionTypes.UPDATE_USERS_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: UsersActionTypes.UPDATE_USERS_ERROR,
@@ -81,6 +90,7 @@ function* updateUsersFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: UsersActionTypes.UPDATE_USERS_ERROR,
             payload: error,
@@ -100,6 +110,10 @@ function* deleteUsersFunction(data) {
             yield put({
                 type: UsersActionTypes.DELETE_USERS_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: UsersActionTypes.DELETE_USERS_RESET,
+                payload: {},
             });
         } else {
             yield put({

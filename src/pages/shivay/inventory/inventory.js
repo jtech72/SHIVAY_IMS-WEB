@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { MdDeleteOutline } from 'react-icons/md';
 import Pagination from '../../../helpers/Pagination';
+import { Loading } from '../../../helpers/loader/Loading';
 
 const Inventory = () => {
 
@@ -93,7 +94,7 @@ const Inventory = () => {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
-                            <Button className="mt-2 fw-bold custom-button" onClick={handleShow}>
+                            <Button className="mt-2 fw-bold custom-button" onClick={() => handleUserModal(null, 'Add', true)}>
                                 <IoIosAdd className="fs-3" />&nbsp;Product
                             </Button>
                         </div>
@@ -114,38 +115,53 @@ const Inventory = () => {
                                             <th scope="col">Qty</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        {ProductData?.map((data, index) => (
-                                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                                                <th scope="row">{index + 1}</th>
-                                                <td className="text-uppercase fw-bold ">
-                                                    {data?.name || <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td className="text-uppercase fw-bold ">
-                                                    {data?.modelData?.name || <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td className="text-uppercase fw-bold ">
-                                                    {data?.code || <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td className="text-uppercase fw-bold ">
-                                                    {data?.quantity !== undefined ? data.quantity : <span className="text-danger">N/A</span>}
-                                                </td>
-                                                <td ></td>
-                                                <div className="icon-container d-flex  pb-0" >
-                                                    <span className="icon-wrapper" title="Edit">
-                                                        <AiOutlineEdit
-                                                            className="fs-4 text-black"
-                                                            style={{ cursor: 'pointer' }}
-                                                            onClick={() => handleUserModal(data, 'Edit', true)}
-                                                        />
-                                                    </span>
-                                                    <span className="icon-wrapper" title="Delete" onClick={() => { setProductToDelete(data?._id); setShowConfirm(true); }}>
-                                                        <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                                    </span>
-                                                </div>
-                                            </tr>
-                                        ))}
-                                    </tbody>
+                                    {store?.productListReducer?.loading ? (
+                                        <tr>
+                                            <td className='text-center' colSpan={6}>
+                                                <Loading />
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        <tbody>
+                                            {ProductData?.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan={6} className='text-center'>
+                                                        <p className='my-5 py-5 '>No Products to show.</p>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                ProductData?.map((data, index) => (
+                                                    <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                                        <th scope="row">{index + 1}</th>
+                                                        <td className="text-uppercase fw-bold ">
+                                                            {data?.name || <span className="text-black">-</span>}
+                                                        </td>
+                                                        <td className="text-uppercase fw-bold ">
+                                                            {data?.modelData?.name || <span className="text-black">-</span>}
+                                                        </td>
+                                                        <td className="text-uppercase fw-bold ">
+                                                            {data?.code || <span className="text-black">-</span>}
+                                                        </td>
+                                                        <td className="text-uppercase fw-bold ">
+                                                            {data?.lowestStock !== undefined ? data?.lowestStock : <span className="text-black">-</span>}
+                                                        </td>
+                                                        <td ></td>
+                                                        <div className="icon-container d-flex  pb-0" >
+                                                            <span className="icon-wrapper" title="Edit">
+                                                                <AiOutlineEdit
+                                                                    className="fs-4 text-black"
+                                                                    style={{ cursor: 'pointer' }}
+                                                                    onClick={() => handleUserModal(data, 'Edit', true)}
+                                                                />
+                                                            </span>
+                                                            <span className="icon-wrapper" title="Delete" onClick={() => { setProductToDelete(data?._id); setShowConfirm(true); }}>
+                                                                <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                            </span>
+                                                        </div>
+                                                    </tr>
+                                                )))}
+                                        </tbody>
+                                    )}
                                 </table>
                                 <Pagination
                                     pageIndex={pageIndex}

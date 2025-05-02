@@ -42,18 +42,22 @@ const Login = (): React$Element<any> => {
     } = useForm({
         resolver: yupResolver(
             yup.object().shape({
-                // role: yup.string().required(t('Please select a role')),
-                email: yup.string().required(t('Please enter email')),
+                roleId: yup.string().required(t('Please select a role')),
+                email: yup
+                    .string()
+                    .required(t('Please enter email'))
+                    .email(t('Please enter a valid email address')),
                 password: yup.string().required(t('Please enter Password')),
             })
-        ),
+        )
+
     });
 
     const onSubmit = (data) => {
         console.log('Submitted:', data);
-        const payload={
+        const payload = {
             ...data,
-            fireBaseId:''
+            fireBaseId: ''
         }
         dispatch(loginUser(payload));
     };
@@ -70,11 +74,11 @@ const Login = (): React$Element<any> => {
                     </p>
                 </div>
 
-                {error && (
+                {/* {error && (
                     <Alert variant="danger" className="my-2">
                         {error}
                     </Alert>
-                )}
+                )} */}
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Form.Group className="mb-3" controlId="role">
@@ -89,10 +93,11 @@ const Login = (): React$Element<any> => {
                                 </option>
                             ))}
                         </Form.Select>
-                        {errors.role && (
-                            <div className="text-danger mt-1">{errors.role.message}</div>
+                        {errors.roleId && (
+                            <div className="text-danger mt-1">{errors.roleId.message}</div>
                         )}
                     </Form.Group>
+
 
                     <FormInput
                         label={t('Email')}
@@ -103,6 +108,7 @@ const Login = (): React$Element<any> => {
                         placeholder={t('Enter your email')}
                         containerClass="mb-3"
                     />
+
 
                     <FormInput
                         label={t('Password')}

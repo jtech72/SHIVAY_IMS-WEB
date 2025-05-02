@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { createUsersActions, getLocationActions, getWarehouseActions, updateUsersActions } from '../../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { Controller } from "react-hook-form";
+import InputGroupText from 'react-bootstrap/esm/InputGroupText';
 
 const AddUserModal = ({ showModal, handleClose, UserData }) => {
-    
+
     const { type } = UserData;
     const dispatch = useDispatch();
     const {
         handleSubmit,
         register,
+        control,
         setValue,
         reset,
         formState: { errors },
@@ -36,12 +40,20 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
 
     const closeModal = () => {
         reset();
-        handleClose()
+        handleClose();
+        setSelectedWarehouse(null);
+        setLocationSelected(null);
     }
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(prev => !prev);
+    };
 
     useEffect(() => {
 
-        if (UserData.data) {
+        if (UserData?.data) {
             const updateWarehouses = UserData?.data?.warehouseData?.map((data) => (
                 {
                     value: data?._id, label: data?.name
@@ -67,9 +79,9 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
             name: data?.name,
             email: data?.email,
             password: data?.password,
-            phoneNumber: data?.phoneNumber,
-            address: data?.address,
-            location: locationSelected?.value,
+            phoneNumber: String(data?.phoneNumber || ''),
+            address: data?.address || '',
+            location: locationSelected ? locationSelected.value : '',
             warehouseIds: selectedWarehouse?.map((item) => item.value),
         };
         if (UserData?.data?._id) {
@@ -86,7 +98,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
     };
 
     return (
-        <Modal show={showModal} centered size='lg' onHide={handleClose}>
+        <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header closeButton>
                     <Modal.Title className='text-black'>{type} User</Modal.Title>
@@ -95,7 +107,8 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                     <Row>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className="mb-0">Warehouse</Form.Label>
+                                <Form.Label className="mb-0">Warehouse {!UserData?.data && <span className="text-danger">*</span>}
+                                </Form.Label>
                                 <Select
                                     value={selectedWarehouse}
                                     onChange={(selectedOption) => setSelectedWarehouse(selectedOption)}
@@ -103,26 +116,43 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                                         label: data.name,
                                         value: data._id,
                                     }))}
-                                    placeholder="Select a warehouse"
+                                    placeholder="Select warehouse"
                                     isClearable
                                     isMulti
+                                    required
                                 />
+
+                                {errors.warehouse && (
+                                    <small className="text-danger">{errors.warehouse.message}</small>
+                                )}
                             </Form.Group>
+
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>User Name</Form.Label>
+                                <Form.Label className='mb-0'>User Name {!UserData?.data && <span className="text-danger">*</span>}
+                                </Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter User Name"
-                                    {...register("name", { required: true })}
+                                    {...register("name", {
+                                        required: "User Name is required",
+                                        validate: (value) => {
+                                            const trimmed = value.trim();
+                                            if (trimmed === "") return "User Name cannot be empty or spaces only";
+                                            if (/\d/.test(trimmed)) return "User Name should not contain numbers";
+                                            return true;
+                                        }
+                                    })}
                                 />
-                                {errors.name && <small className="text-danger">User Name is required</small>}
+                                {errors.name && <small className="text-danger">{errors.name.message}</small>}
                             </Form.Group>
+
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Email Id</Form.Label>
+                                <Form.Label className='mb-0'>Email Id {!UserData?.data && <span className="text-danger">*</span>}
+                                </Form.Label>
                                 <Form.Control
                                     type="email"
                                     placeholder="Enter Email Id"
@@ -132,25 +162,64 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                             </Form.Group>
                         </Col>
                         <Col sm={6}>
-                            <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Password</Form.Label>
-                                <Form.Control
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    {...register("password", { required: true })}
-                                />
-                                {errors.password && <small className="text-danger">Password is required</small>}
+                            <Form.Group className="mb-1 position-relative">
+                                <Form.Label className='mb-0'>Password {!UserData?.data && <span className="text-danger">*</span>}
+                                </Form.Label>
+                                <div className="position-relative">
+                                    <Form.Control
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter Password"
+                                        {...register("password", {
+                                            required: "Password is required",
+                                            minLength: {
+                                                value: 8,
+                                                message: "Minimum 8 characters"
+                                            },
+                                            pattern: {
+                                                value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                                message: "Must include uppercase, number, and special character"
+                                            }
+                                        })}
+                                    />
+                                    <span
+                                        onClick={togglePasswordVisibility}
+                                        className="position-absolute end-0 top-50 translate-middle-y me-2"
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        {showPassword ? <FiEyeOff /> : <FiEye />}
+                                    </span>
+                                </div>
+                                {errors.password && (
+                                    <small className="text-danger">{errors.password.message}</small>
+                                )}
                             </Form.Group>
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Phone</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Enter Phone"
-                                    {...register("phoneNumber", { required: true })}
-                                />
-                                {errors.phoneNumber && <small className="text-danger">Phone is required</small>}
+                                <Form.Label className='mb-0'>Phone Number {!UserData?.data && <span className="text-danger">*</span>}
+                                </Form.Label>
+
+                                <InputGroup>
+                                    <InputGroupText>+91</InputGroupText>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Phone Number"
+                                        maxLength={10}
+                                        onInput={(e) => {
+                                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                        }}
+                                        {...register("phoneNumber", {
+                                            required: "Phone number is required",
+                                            pattern: {
+                                                value: /^[0-9]{10}$/,
+                                                message: "Phone number must be exactly 10 digits"
+                                            }
+                                        })}
+                                    />
+                                </InputGroup>
+                                {errors.phoneNumber && (
+                                    <small className="text-danger">{errors.phoneNumber.message}</small>
+                                )}
                             </Form.Group>
                         </Col>
                         <Col sm={6}>
@@ -170,9 +239,9 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                                     value={locationSelected}
                                     isSearchable
                                 />
-                                {errors.location && <small className="text-danger">Location is required</small>}
                             </Form.Group>
                         </Col>
+
                         <Col sm={12}>
                             <Form.Group className="mb-1">
                                 <Form.Label className='mb-0'>Full Address</Form.Label>
@@ -180,15 +249,14 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                                     as="textarea"
                                     rows={3}
                                     placeholder="Enter Full Address"
-                                    {...register("address", { required: true })}
+                                    {...register("address")}
                                 />
-                                {errors.address && <small className="text-danger">Address is required</small>}
                             </Form.Group>
                         </Col>
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button className='cancel-button' onClick={handleClose}>
+                    <Button className='cancel-button' onClick={closeModal}>
                         Close
                     </Button>
                     <Button className='custom-button' type='submit'>

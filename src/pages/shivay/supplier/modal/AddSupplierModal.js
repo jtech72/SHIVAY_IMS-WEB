@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Form, InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,7 +26,8 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
 
     const closeModal = () => {
         reset();
-        handleClose()
+        handleClose();
+        setLocationSelected(null);
     }
 
     useEffect(() => {
@@ -36,6 +37,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
             setValue('name', SupplierData.data?.name)
             setValue('email', SupplierData.data?.email)
             setValue('phoneNumber', SupplierData.data?.phoneNumber)
+            setValue('gstNumber', SupplierData.data?.gstNumber)
             setValue('address', SupplierData.data?.address)
 
             setLocationSelected({
@@ -50,6 +52,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
             name: data?.name,
             email: data?.email,
             phoneNumber: data?.phoneNumber,
+            gstNumber: data?.gstNumber,
             address: data?.address,
             location: locationSelected?.value,
         };
@@ -68,7 +71,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
 
     return (
         <div>
-            <Modal show={showModal} centered size='lg' onHide={handleClose}>
+            <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Modal.Header closeButton>
                         <Modal.Title className='text-black'>{type} Supplier</Modal.Title>
@@ -78,39 +81,70 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                         <Row>
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Supplier Name</Form.Label>
+                                    <Form.Label className='mb-0'>
+                                        Supplier Name <span className='text-danger'> *</span>
+                                    </Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter Customer Name"
-                                        name="Customer Name"
-                                        {...register("name", { required: true })}
-                                        required
+                                        placeholder="Enter Supplier Name"
+                                        name="name"
+                                        {...register('name', {
+                                            required: 'Supplier name is required',
+                                            validate: value => value.trim() !== '' || 'Supplier name cannot be empty spaces'
+                                        })}
                                     />
+                                    {errors.warehouse && (
+                                        <small className="text-danger">{errors.warehouse.message}</small>
+                                    )}
                                 </Form.Group>
+
                             </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Email Id</Form.Label>
+                                    <Form.Label className='mb-0'>Email Id <span className='text-danger'>*</span></Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Email Id"
-                                        name="Email Id"
-                                        {...register("email", { required: true })}
-                                        required
+                                        name="email"
+                                        {...register('email', {
+                                            required: 'Email Id is required',
+                                            validate: value => value.trim() !== '' || 'Email Id cannot be empty spaces'
+                                        })}
                                     />
+                                    {errors.email && (
+                                        <small className="text-danger">{errors.email.message}</small>
+                                    )}
                                 </Form.Group>
+
                             </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Phone </Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter Phone"
-                                        name="Phone"
-                                        {...register("phoneNumber", { required: true })}
-                                        required
-                                    />
+                                    <Form.Label className="mb-0">Phone Number<span className='text-danger'>*</span></Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text>+91</InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Enter Phone Number"
+                                            name="Phone"
+                                            maxLength={10} // Only for the 10 digits after +91
+                                            {...register('phoneNumber', {
+                                                required: 'Phone is required',
+                                                pattern: {
+                                                    value: /^\d{10}$/, // Only 10 digits allowed after +91
+                                                    message: 'Phone must be exactly 10 digits'
+                                                },
+                                                validate: value => value.trim() !== '' || 'Phone cannot be only empty spaces'
+                                            })}
+                                        />
+                                    </InputGroup>
+                                    {errors.Phone && (
+                                        <small className="text-danger">{errors.Phone.message}</small>
+                                    )}
                                 </Form.Group>
+
+
+
+
                             </Col>
                             <Col sm={6}>
                                 <Form.Group className="mb-1">
@@ -122,17 +156,26 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                         }))}
                                         placeholder="Select Location"
                                         onChange={(selectedOption) => {
-                                            console.log(selectedOption, 'gfxdcghbjk')
                                             setLocationSelected(selectedOption);
                                             setValue('location', selectedOption?.value);
                                         }}
                                         value={locationSelected}
                                         isSearchable
                                     />
-                                    {errors.location && <small className="text-danger">Location is required</small>}
                                 </Form.Group>
                             </Col>
-                            <Col sm={12}>
+                            <Col sm={6}>
+                                <Form.Group className="mb-1">
+                                    <Form.Label className='mb-0'>GST Number</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter GST Number"
+                                        name="GST Number"
+                                        {...register("gstNumber")}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col sm={6}>
                                 <Form.Group className="mb-1">
                                     <Form.Label className='mb-0'>Full Address</Form.Label>
                                     <Form.Control
@@ -140,8 +183,7 @@ const AddSupplierModal = ({ showModal, handleClose, SupplierData }) => {
                                         rows={3}
                                         placeholder="Enter Full Address"
                                         name="Full Address"
-                                        {...register("address", { required: true })}
-                                        required
+                                        {...register("address")}
                                     />
                                 </Form.Group>
                             </Col>

@@ -47,6 +47,10 @@ function* createProductFunction(data) {
                 type: InventoryActionTypes.CREATE_PRODUCT_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: InventoryActionTypes.CREATE_PRODUCT_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: InventoryActionTypes.CREATE_PRODUCT_ERROR,
@@ -54,6 +58,7 @@ function* createProductFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: InventoryActionTypes.CREATE_PRODUCT_ERROR,
             payload: error,
@@ -74,6 +79,10 @@ function* updateProductFunction(data) {
                 type: InventoryActionTypes.UPDATE_PRODUCT_SUCCESS,
                 payload: response.data,
             });
+            yield put({
+                type: InventoryActionTypes.UPDATE_PRODUCT_RESET,
+                payload: {},
+            });
         } else {
             yield put({
                 type: InventoryActionTypes.UPDATE_PRODUCT_ERROR,
@@ -81,6 +90,7 @@ function* updateProductFunction(data) {
             });
         }
     } catch (error) {
+        ToastContainer(error, 'danger')
         yield put({
             type: InventoryActionTypes.UPDATE_PRODUCT_ERROR,
             payload: error,
@@ -100,6 +110,10 @@ function* deleteProductFunction(data) {
             yield put({
                 type: InventoryActionTypes.DELETE_PRODUCT_SUCCESS,
                 payload: response.data,
+            });
+            yield put({
+                type: InventoryActionTypes.DELETE_PRODUCT_RESET,
+                payload: {},
             });
         } else {
             yield put({

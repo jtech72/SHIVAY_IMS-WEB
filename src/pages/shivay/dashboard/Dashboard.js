@@ -6,7 +6,7 @@ import { getDashboardActions, getDispatchActions, getStockinActions } from "../.
 import { FaLayerGroup, FaUsers, } from "react-icons/fa";
 import { MdOutlineSell } from "react-icons/md";
 import { MdOutlineStoreMallDirectory } from "react-icons/md";
-// import { Loading } from "../../../helpers/loader/Loading";
+import { DashboardLoading } from "../../../helpers/loader/Loading";
 import { MdFilterList } from "react-icons/md";
 import Tab from "./tabs/Tab";
 import { PiEye } from "react-icons/pi";
@@ -24,9 +24,10 @@ const Dashboard = () => {
   const handleShow = () => setShow(true);
   const [search, setSearch] = useState('')
   const store = useSelector((state) => state)
-  
+
   const StockinData = store?.stockinTransListReducer?.stockinList?.data;
   const DispatchData = store?.dispatchListReducer?.dispatchList?.data;
+  const DashboardCount = store?.dashboardDataReducer?.dashboardData?.response;
 
   useEffect(() => {
     dispatch(getDashboardActions());
@@ -51,28 +52,28 @@ const Dashboard = () => {
   const dashboardItems = [
     {
       title: "Total Warehouse",
-      value: 56,
+      value: DashboardCount?.totalWarehouse,
       icon: <MdOutlineStoreMallDirectory />,
       background: "https://img.freepik.com/free-photo/factory-workers-walking-through-large-production-hall-having-conversation_342744-167.jpg?t=st=1744610960~exp=1744614560~hmac=3a9848632fe4c06c84e920765cca04c97132034c3fd6238bfa595be131e5d0ca&w=996",
       link: "/shivay/warehouse"
     },
     {
       title: "Total Products",
-      value: 1200,
+      value: DashboardCount?.productCount,
       icon: <FaLayerGroup />,
       background: "https://img.freepik.com/premium-photo/woman-warehouse-using-computer-manage-inventory_239711-30274.jpg?w=1380",
       link: "/shivay/inventory"
     },
     {
       title: "Total User",
-      value: 200,
+      value: DashboardCount?.userCount,
       icon: <FaUsers />,
       background: "https://img.freepik.com/premium-photo/businessman-showing-virtual-graphic-human-icon-human-development-recruitment-leadership-human-resource-management_55710-1797.jpg?w=996",
       link: "/shivay/user"
     },
     {
       title: "Total Dispatch ",
-      value: 56,
+      value: DashboardCount?.dispatchCount,
       icon: <MdOutlineSell />,
       background: "https://img.freepik.com/premium-photo/manager-coordinating-with-truck-drivers-delivery-focus-streamlined-operations-vibrant-composite-organized-receiving-dock_35669-9100.jpg?w=1380",
       link: "/shivay/dispatch"
@@ -145,13 +146,16 @@ const Dashboard = () => {
 
           <div>
             <Card
-              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+              style={{
+                boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset',
+                // height: '40vh'
+              }}
             >
               <Card.Body className="text-center py-1">
 
                 {activeTab === 0 &&
                   <div>
-                    <table className="table table-striped bg-white mb-0">
+                    <table className="table table-striped bg-white ">
                       <thead>
                         <tr className="table_header">
                           <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -160,37 +164,52 @@ const Dashboard = () => {
                           <th scope="col">Stock</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {StockinData?.map((data, index) => (
-                          <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                            <th scope="row">{index + 1}</th>
-                            <td className="text-uppercase fw-bold">
-                              {data?.productName || <span className="text-danger">N/A</span>}
-                            </td>
-                            <td className="text-uppercase fw-bold">
-                              {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}
-                            </td>
-                            <td className="text-uppercase fw-bold ">
-                              {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
-                            </td>
-                            <td></td> {/* maintain table structure */}
+                      {store?.stockinTransListReducer?.loading ? (
+                        <tr>
+                          <td className='text-center' colSpan={4}>
+                            <DashboardLoading />
+                          </td>
+                        </tr>
+                      ) : (
+                        <tbody>
+                          {StockinData?.length === 0 ? (
+                            <tr>
+                              <td colSpan={6} className='text-center'>
+                                <p className='my-4 py-5'>No stock-in data to show.</p>
+                              </td>
+                            </tr>
+                          ) : (
+                            StockinData?.map((data, index) => (
+                              <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                <th scope="row">{index + 1}</th>
+                                <td className="text-uppercase fw-bold">
+                                  {data?.productName || <span className="text-danger">N/A</span>}
+                                </td>
+                                <td className="text-uppercase fw-bold">
+                                  {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}
+                                </td>
+                                <td className="text-uppercase fw-bold ">
+                                  {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
+                                </td>
+                                <td></td> {/* maintain table structure */}
 
-                            {/* Horizontally centered icons */}
-                            <div className="icon-container d-flex  pb-0" >
-                              <span className="icon-wrapper me-4" title="View">
-                                <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                              </span>
-                            </div>
-                          </tr>
-                        ))}
-                      </tbody>
+                                {/* Horizontally centered icons */}
+                                <div className="icon-container d-flex  pb-0" >
+                                  <span className="icon-wrapper me-4" title="View">
+                                    <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                  </span>
+                                </div>
+                              </tr>
+                            )))}
+                        </tbody>
+                      )}
                     </table>
                   </div>
                 }
                 {activeTab === 1 &&
                   <div>
                     <div>
-                      <table className="table table-striped bg-white mb-0">
+                      <table className="table table-striped bg-white ">
                         <thead>
                           <tr className="table_header">
                             <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -200,34 +219,43 @@ const Dashboard = () => {
                             {/* <th scope="col">View</th> */}
                           </tr>
                         </thead>
-                        <tbody>
-                          {DispatchData?.map((data, index) => (
-                            <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
-                              <th scope="row">{index + 1}</th>
-                              <td className="text-uppercase fw-bold ">
-                                {data?.productName || <span className="text-danger">N/A</span>}
-                              </td>
-                              <td className="text-uppercase fw-bold ">
-                                {data?.stockOut !== undefined ? data.stockOut : <span className="text-danger">N/A</span>}
-                              </td>
-                              <td className="text-uppercase fw-bold ">
-                                {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
-                              </td>
-                              <td ></td>
-                              <div className="icon-container d-flex  pb-0" >
-                                <span className="icon-wrapper me-4" title="View">
-                                  <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                                </span>
-                                {/* <span className="icon-wrapper">
-                                <PiEye className="fs-4 text-warning" style={{ cursor: 'pointer' }} />
-                              </span>
-                              <span className="icon-wrapper">
-                                <PiEye className="fs-4 text-danger" style={{ cursor: 'pointer' }} />
-                              </span> */}
-                              </div>
-                            </tr>
-                          ))}
-                        </tbody>
+                        {store?.dispatchListReducer?.loading ? (
+                          <tr>
+                            <td className='text-center' colSpan={4}>
+                              <DashboardLoading />
+                            </td>
+                          </tr>
+                        ) : (
+                          <tbody>
+                            {DispatchData?.length === 0 ? (
+                              <tr>
+                                <td colSpan={6} className='text-center'>
+                                  <p className='my-4 py-5'>No dispatch data to show.</p>
+                                </td>
+                              </tr>
+                            ) : (
+                              DispatchData?.map((data, index) => (
+                                <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
+                                  <th scope="row">{index + 1}</th>
+                                  <td className="text-uppercase fw-bold ">
+                                    {data?.productName || <span className="text-danger">N/A</span>}
+                                  </td>
+                                  <td className="text-uppercase fw-bold ">
+                                    {data?.stockOut !== undefined ? data.stockOut : <span className="text-danger">N/A</span>}
+                                  </td>
+                                  <td className="text-uppercase fw-bold ">
+                                    {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
+                                  </td>
+                                  <td ></td>
+                                  <div className="icon-container d-flex  pb-0" >
+                                    <span className="icon-wrapper me-4" title="View">
+                                      <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                    </span>
+                                  </div>
+                                </tr>
+                              )))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>

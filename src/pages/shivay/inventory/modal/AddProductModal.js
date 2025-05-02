@@ -3,39 +3,39 @@ import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { createProductActions, updateProductActions } from '../../../../redux/actions';
+import StockIn from '../../stockIn/StockIn';
 
 const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
     const { type } = ProductData;
     const dispatch = useDispatch();
+
     const {
         handleSubmit,
         register,
         setValue,
         reset,
         formState: { errors },
+        watch,
+        trigger,
     } = useForm();
 
     const [threshold, setThreshold] = useState(100);
 
     const closeModal = () => {
         reset();
-        handleClose()
-    }
+        handleClose();
+    };
 
     useEffect(() => {
-
         if (ProductData?.data) {
-
-            setValue('name', ProductData.data?.name)
-            setValue('model', ProductData.data?.modelData?.name)
-            setValue('code', ProductData.data?.code)
-            setValue('description', ProductData.data?.description)
-
+            setValue('name', ProductData.data?.name);
+            setValue('model', ProductData.data?.modelData?.name);
+            setValue('code', ProductData.data?.code);
+            setValue('description', ProductData.data?.description);
             setThreshold(Number(ProductData?.data?.lowestStock));
-
         }
-    }, [ProductData]);
+    }, [ProductData, setValue]);
 
     const onSubmit = (data) => {
         const payload = {
@@ -45,22 +45,27 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
             description: data?.description,
             lowestStock: threshold,
         };
-        if (ProductData?.data?._id) {
+
+        if (StockIn) {
             const updatedData = {
                 ...payload,
                 productId: ProductData?.data?._id,
             };
             dispatch(updateProductActions(updatedData));
         } else {
-        dispatch(createProductActions(payload));
+            dispatch(createProductActions(payload));
         }
-        console.log(payload, 'payload')
+
+        console.log(payload, 'payload');
         closeModal();
     };
+    const modelValue = watch("model");
+    const codeValue = watch("code");
+
 
     return (
         <div>
-            <Modal show={showModal} centered size='lg' onHide={handleClose}>
+            <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Modal.Header closeButton>
                         <Modal.Title className='text-black'>{type} Product</Modal.Title>
@@ -69,56 +74,75 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                         {/* Your form or content here */}
                         <Row>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Product Name</Form.Label>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className="mb-0">
+                                        Product Name <span className="text-danger">*</span>
+                                    </Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Product Name"
-                                        name="Product Name"
-                                        {...register("name", { required: true })}
-                                        required
+                                        {...register('name', {
+                                            required: 'Product Name is required',
+                                            validate: value =>
+                                                value?.trim() !== '' || 'Product Name cannot be only spaces',
+                                        })}
                                     />
-                                </Form.Group>
-                            </Col>
-                            <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Model</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter Model"
-                                        name="Model"
-                                        {...register("model", { required: true })}
-                                        required
-                                    />
+                                    {errors.name && (
+                                        <small className="text-danger">{errors.name.message}</small>
+                                    )}
                                 </Form.Group>
 
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
+                                <Form.Group className="mb-2">
+                                    <Form.Label className='mb-0'>Model</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Model"
+                                        {...register("model", {
+                                            validate: (value) => {
+                                                if (!value?.trim() && !codeValue?.trim()) {
+                                                    return "Either Model or Code is required";
+                                                }
+                                                return true;
+                                            }
+                                        })}
+                                        onKeyUp={() => {
+                                            trigger("code"); // revalidate code when model is typed
+                                        }}
+                                    />
+                                    {errors.model && !codeValue && (
+                                        <small className="text-danger">{errors.model.message}</small>
+                                    )}
+                                </Form.Group>
+                            </Col>
+
+                            <Col sm={6}>
+                                <Form.Group className="mb-2">
                                     <Form.Label className='mb-0'>Code</Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter Code"
-                                        name="Code"
-                                        {...register("code", { required: true })}
-                                        required
+                                        {...register("code", {
+                                            validate: (value) => {
+                                                if (!value?.trim() && !modelValue?.trim()) {
+                                                    return "Either Code or Model is required";
+                                                }
+                                                return true;
+                                            }
+                                        })}
+                                        onKeyUp={() => {
+                                            trigger("model"); // revalidate model when code is typed
+                                        }}
                                     />
-                                </Form.Group>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-0'>Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Enter Description"
-                                        name="Description"
-                                        {...register("description", { required: true })}
-                                        required
-                                    />
+                                    {errors.code && !modelValue && (
+                                        <small className="text-danger">{errors.code.message}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
                             <Col sm={6}>
-                                <Form.Group className="mb-1">
-                                    <Form.Label className='mb-5'>Low Stock Threshold</Form.Label>
+                                <Form.Group className="mb-2">
+                                    <Form.Label className=''>Low Stock Threshold</Form.Label>
                                     <div className="d-flex justify-content-between">
                                         <span>0</span>
                                         <input
@@ -136,6 +160,20 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                                     <div className="text-center mt-2">
                                         <strong>Current Threshold: {threshold}</strong>
                                     </div>
+                                </Form.Group>
+                            </Col>
+                            <Col sm={12}>
+
+                                <Form.Group className="">
+                                    <Form.Label className='mb-0'>Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={2}
+                                        placeholder="Enter Description"
+                                        name="Description"
+                                        {...register("description")}
+                                    // required
+                                    />
                                 </Form.Group>
                             </Col>
 
