@@ -160,6 +160,8 @@ const Dashboard = () => {
                         <tr className="table_header">
                           <th scope="col"><i className="mdi mdi-merge"></i></th>
                           <th scope="col">Product Name</th>
+                          <th scope="col">Supplier Name</th>
+                          <th scope="col">Code</th>
                           <th scope="col">Stock In</th>
                           <th scope="col">Stock</th>
                         </tr>
@@ -184,6 +186,12 @@ const Dashboard = () => {
                                 <th scope="row">{index + 1}</th>
                                 <td className="text-uppercase fw-bold">
                                   {data?.productName || <span className="text-danger">N/A</span>}
+                                </td>
+                                <td className="text-uppercase fw-bold">
+                                  {data?.supplierName !== undefined ? data.supplierName : <span className="text-danger">N/A</span>}
+                                </td>
+                                <td className="text-uppercase fw-bold">
+                                  {data?.code !== undefined ? data.code : <span className="text-danger">N/A</span>}
                                 </td>
                                 <td className="text-uppercase fw-bold">
                                   {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}

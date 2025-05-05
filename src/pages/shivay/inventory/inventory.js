@@ -143,7 +143,7 @@ const Inventory = () => {
                                                             {data?.code || <span className="text-black">-</span>}
                                                         </td>
                                                         <td className="text-uppercase fw-bold ">
-                                                            {data?.lowestStock !== undefined ? data?.lowestStock : <span className="text-black">-</span>}
+                                                            {data?.quantity !== undefined ? data?.quantity : <span className="text-black">-</span>}
                                                         </td>
                                                         <td ></td>
                                                         <div className="icon-container d-flex  pb-0" >

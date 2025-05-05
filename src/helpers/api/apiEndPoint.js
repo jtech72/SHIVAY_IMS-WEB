@@ -66,3 +66,6 @@ export const STOCK_CHECK = '/api/dispatch/stock-check'
 
 // report 
 export const GET_REPORT = 'api/report/send'
+
+// notifications 
+export const GET_NOTIFICATION = 'api/notification/list'
