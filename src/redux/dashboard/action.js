@@ -17,3 +17,18 @@ export const getDispatchActions = (data) => ({
     type: DashboardActionTypes.DISPATCH_LIST_FIRST,
     data
 });
+
+export const getStockReportActions = (data) => ({
+    type: DashboardActionTypes.GET_STOCK_REPORT_FIRST,
+    data
+});
+
+export const getRecentTransactionActions = (data) => ({
+    type: DashboardActionTypes.GET_RECENT_TRANS_FIRST,
+    data
+});
+
+export const getLowStockActions = (data) => ({
+    type: DashboardActionTypes.GET_LOW_STOCK_FIRST,
+    data
+});

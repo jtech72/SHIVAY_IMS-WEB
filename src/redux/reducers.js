@@ -5,7 +5,7 @@ import Auth from './auth/reducers';
 
 import Layout from './layout/reducers';
 
-import { dashboardDataReducer, dispatchListReducer, stockinTransListReducer } from './dashboard/reducers';
+import { dashboardDataReducer, dispatchListReducer, lowStockReducer, recentTransactionReducer, stockinTransListReducer, stockReportReducer } from './dashboard/reducers';
 import { rolesListReducer } from './roles/reducers';
 import { createWarehouseReducer, deleteWarehouseReducer, getWarehouseListReducer, getWarehouseReducer, updateWarehouseReducer } from './warehouse/reducers';
 import { locationReducer } from './location/reducers';
@@ -23,7 +23,7 @@ export default (combineReducers({
   Auth,
   Layout,
   // dashboard 
-  dashboardDataReducer, stockinTransListReducer, dispatchListReducer,
+  dashboardDataReducer, stockinTransListReducer, dispatchListReducer, stockReportReducer, recentTransactionReducer, lowStockReducer,
   // Roles 
   rolesListReducer,
   // warehouse 
@@ -48,5 +48,5 @@ export default (combineReducers({
   reportReducer,
   // notification
   getNotificationDataReducer,
-  
+
 }): any);

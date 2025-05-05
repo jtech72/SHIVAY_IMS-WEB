@@ -2,6 +2,9 @@
 export const GET_DASHBOARD_DATA = '/api/dashboard/get'
 export const GET_STOCKIN_LIST = '/api/transaction/stockin/list'
 export const GET_DISPATCH_TRANS_LIST = '/api/transaction/dispatch/list'
+export const GET_STOCK_REPORT ='/api/dashboard/stockreport'
+export const GET_RECENT_TRANSACTION ='/api/dashboard/topselling-recenttransaction/list'
+export const GET_LOW_STOCK ='/api/dashboard/lowstock-dispatchcount'
 
 //roles
 export const GET_ROLES_LIST = '/api/role/get/list'
@@ -12,7 +15,6 @@ export const GET_WAREHOUSE_LIST = 'api/warehouse/get'
 export const UPDATE_WAREHOUSE = '/api/warehouse/edit'
 export const DELETE_WAREHOUSE = '/api/warehouse/delete'
 export const SEARCH_WAREHOUSE = '/api/warehouse/list'
-
 
 // inventory 
 export const GET_PRODUCT_LIST = '/api/product/get'

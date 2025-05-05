@@ -14,6 +14,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import { TiArrowLeft } from "react-icons/ti";
 import Filter from "./filterSection/Filter";
 import { Link } from "react-router-dom";
+import Pagination from "../../../helpers/Pagination";
 
 const Dashboard = () => {
 
@@ -23,6 +24,15 @@ const Dashboard = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [search, setSearch] = useState('')
+  const totalRecords = '0';
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(Math.ceil(totalRecords / pageSize));
+  const [dispatchSearch, setDispatchSearch] = useState('')
+  const dispatchTotalRecords = '0';
+  const [dispatchPageIndex, setDispatchPageIndex] = useState(1);
+  const [dispatchPageSize, setDispatchPageSize] = useState(10);
+  const [dispatchTotalPages, setDispatchTotalPages] = useState(Math.ceil(dispatchTotalRecords / dispatchPageSize));
   const store = useSelector((state) => state)
 
   const StockinData = store?.stockinTransListReducer?.stockinList?.data;
@@ -35,19 +45,29 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getStockinActions({
-      limit: '',
-      page: '',
+      limit: pageSize,
+      page: pageIndex,
       search: search,
     }));
-  }, [dispatch, search]);
+  }, [dispatch, search, pageSize, pageIndex]);
 
   useEffect(() => {
     dispatch(getDispatchActions({
-      limit: '',
-      page: '',
-      search: '',
+      limit: dispatchPageSize,
+      page: dispatchPageIndex,
+      search: dispatchSearch,
     }));
-  }, [dispatch]);
+  }, [dispatch, dispatchSearch, dispatchPageSize, dispatchPageIndex]);
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(totalRecords / pageSize));
+  },
+    [totalRecords, pageSize]);
+
+  useEffect(() => {
+    setDispatchTotalPages(Math.ceil(dispatchTotalRecords / dispatchPageSize));
+  },
+    [dispatchTotalRecords, dispatchPageSize]);
 
   const dashboardItems = [
     {
@@ -129,14 +149,27 @@ const Dashboard = () => {
 
             {/* Search input aligned to the end */}
             <div className="d-flex align-items-center">
-              <input
-                type="text"
-                className="form-control w-auto me-2"
-                style={{ height: '42px', marginTop: '10px' }}
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+              {activeTab === 0 &&
+                <input
+                  type="text"
+                  className="form-control w-auto me-2"
+                  style={{ height: '42px', marginTop: '10px' }}
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              }
+              {activeTab === 1 &&
+                <input
+                  type="text"
+                  className="form-control w-auto me-2"
+                  style={{ height: '42px', marginTop: '10px' }}
+                  placeholder="Search..."
+                  value={dispatchSearch}
+                  onChange={(e) => setDispatchSearch(e.target.value)}
+                />
+              }
+
               <Button className="mt-2 custom-button" onClick={handleShow}>
                 <MdFilterList className="fs-3" />
               </Button>
@@ -155,7 +188,7 @@ const Dashboard = () => {
 
                 {activeTab === 0 &&
                   <div>
-                    <table className="table table-striped bg-white ">
+                    <table className="table table-striped bg-white mb-0">
                       <thead>
                         <tr className="table_header">
                           <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -168,7 +201,7 @@ const Dashboard = () => {
                       </thead>
                       {store?.stockinTransListReducer?.loading ? (
                         <tr>
-                          <td className='text-center' colSpan={4}>
+                          <td className='text-center' colSpan={6}>
                             <DashboardLoading />
                           </td>
                         </tr>
@@ -212,12 +245,19 @@ const Dashboard = () => {
                         </tbody>
                       )}
                     </table>
+                    <Pagination
+                      pageIndex={pageIndex}
+                      pageSize={pageSize}
+                      totalPages={store?.stockinTransListReducer?.stockinList?.totalPages}
+                      setPageIndex={setPageIndex}
+                      onChangePageSize={setPageSize}
+                    />
                   </div>
                 }
                 {activeTab === 1 &&
                   <div>
                     <div>
-                      <table className="table table-striped bg-white ">
+                      <table className="table table-striped bg-white mb-0">
                         <thead>
                           <tr className="table_header">
                             <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -265,6 +305,13 @@ const Dashboard = () => {
                           </tbody>
                         )}
                       </table>
+                      <Pagination
+                        pageIndex={dispatchPageIndex}
+                        pageSize={dispatchPageSize}
+                        totalPages={store?.dispatchListReducer?.dispatchList?.totalPages}
+                        setPageIndex={setDispatchPageIndex}
+                        onChangePageSize={setDispatchPageSize}
+                      />
                     </div>
                   </div>
                 }
