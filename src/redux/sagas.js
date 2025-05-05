@@ -15,6 +15,7 @@ import stockSaga from './openingStock/saga';
 import stockInSaga from './stockIn/saga';
 import dispatchSaga from './dispatch/saga';
 import reportSaga from './report/saga';
+import notificationSaga from './notification/saga';
 
 
 export default function* rootSaga(): any {
@@ -33,6 +34,7 @@ export default function* rootSaga(): any {
         stockInSaga(),
         dispatchSaga(),
         reportSaga(),
+        notificationSaga(),
     ]);
 
 }

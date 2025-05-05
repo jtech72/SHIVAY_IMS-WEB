@@ -17,6 +17,7 @@ import { createStockReducer, stockListReducer, updateStockReducer } from './open
 import { createStockInReducer, deleteStockInReducer, stockInListReducer, updateStockInReducer } from './stockIn/reducers';
 import { createDispatchReducer, createStockCheckReducer, deleteDispatchReducer, getDispatchDataReducer, updateDispatchReducer } from './dispatch/reducers';
 import { reportReducer } from './report/reducers';
+import { getNotificationDataReducer } from './notification/reducers';
 
 export default (combineReducers({
   Auth,
@@ -45,5 +46,7 @@ export default (combineReducers({
   getDispatchDataReducer, createDispatchReducer, updateDispatchReducer, deleteDispatchReducer, createStockCheckReducer,
   // report
   reportReducer,
+  // notification
+  getNotificationDataReducer,
   
 }): any);

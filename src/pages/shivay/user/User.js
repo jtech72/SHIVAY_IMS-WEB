@@ -7,7 +7,6 @@ import AddUserModal from './modal/AddUserModal';
 import { RiDeleteBinLine } from "react-icons/ri";
 import { deleteUsersActions, getUsersListActions, UsersStateEmptyActions } from '../../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaRegCopy } from 'react-icons/fa';
 import { MdDeleteOutline } from 'react-icons/md';
 import Pagination from '../../../helpers/Pagination';
 import { Loading } from '../../../helpers/loader/Loading';
@@ -133,28 +132,13 @@ const User = () => {
                                                     <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                                                         <th scope="row">{index + 1}</th>
                                                         <td className="text-uppercase fw-bold ">
-                                                            {data?.name || <span className="text-danger">N/A</span>}
+                                                            {data?.name || <span className="text-black">-</span>}
                                                         </td>
-                                                        <td className="fw-bold text-primary">
-                                                            {data?.email ? (
-                                                                <>
-                                                                    <span>{data.email}</span>
-                                                                    <FaRegCopy
-                                                                        style={{ cursor: 'pointer' }}
-                                                                        title="Copy Email"
-                                                                        className='text-muted ms-2 fs-6'
-                                                                        onClick={() => {
-                                                                            navigator.clipboard.writeText(data.email);
-                                                                            alert('Email copied to clipboard!');
-                                                                        }}
-                                                                    />
-                                                                </>
-                                                            ) : (
-                                                                <span className="text-danger">N/A</span>
-                                                            )}
+                                                        <td className="fw-bold">
+                                                            {data?.email || <span className="text-black">-</span>}
                                                         </td>
                                                         <td className=" fw-bold">
-                                                            {data?.password || <span className="text-danger">N/A</span>}
+                                                            {data?.password || <span className="text-black">-</span>}
                                                         </td>
                                                         <td></td>
                                                         <div className="icon-container d-flex pb-0" >
