@@ -23,6 +23,11 @@ const reportReducer = (state = REPORT_INITIAL_STATE, action) => {
                 report: action.payload,
                 loading: false
             }
+        case ReportActionTypes.REPORT_RESET:
+            return {
+                report: [],
+                loading: false
+            }
         default: return state
     }
 }

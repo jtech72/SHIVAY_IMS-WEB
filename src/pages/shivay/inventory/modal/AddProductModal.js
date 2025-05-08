@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Form, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createProductActions, updateProductActions } from '../../../../redux/actions';
+import { ButtonLoading } from '../../../../helpers/loader/Loading';
 
 const AddProductModal = ({ showModal, handleClose, ProductData }) => {
 
     const { type } = ProductData;
     const dispatch = useDispatch();
-
     const {
         handleSubmit,
         register,
@@ -18,9 +18,8 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         watch,
         trigger,
     } = useForm();
-
     const [threshold, setThreshold] = useState(100);
-
+    const store = useSelector((state) => state)
     const closeModal = () => {
         reset();
         handleClose();
@@ -54,13 +53,17 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
         } else {
             dispatch(createProductActions(payload));
         }
-
-        console.log(payload, 'payload');
-        closeModal();
     };
     const modelValue = watch("model");
     const codeValue = watch("code");
 
+    const createResponse = store?.createProductReducer?.createProduct?.status;
+
+    useEffect(() => {
+        if (createResponse === 200) {
+            closeModal();
+        }
+    }, [createResponse]);
 
     return (
         <div>
@@ -182,8 +185,20 @@ const AddProductModal = ({ showModal, handleClose, ProductData }) => {
                         <Button className='cancel-button' onClick={closeModal}>
                             Close
                         </Button>
-                        <Button className='custom-button' type='submit'>
-                            {type === 'Add' ? 'Save' : 'Update'}
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            className="custom-button"
+                            disabled={store?.createProductReducer?.loading}
+                            style={{ width: '70px !important' }}
+                            >
+                            {store?.createProductReducer?.loading ? (
+                                <ButtonLoading color="white" />
+                            ) : type === 'Add' ? (
+                                'Save'
+                            ) : (
+                                'Update'
+                            )}
                         </Button>
                     </Modal.Footer>
                 </Form>

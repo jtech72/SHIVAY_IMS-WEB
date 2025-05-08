@@ -20,6 +20,20 @@ function updateStockApi(params) {
     return api.create(URL.UPDATE_STOCK, data);
 }
 
+function updateStockProductApi(params) {
+    const { data } = params
+    return api.create(URL.EDIT_STOCK_PRODUCT, data);
+}
+
+function deleteStockProductApi(params) {
+    const { data } = params
+    return api.create(URL.DELETE_STOCK_PRODUCT, data);
+}
+
 export {
-    getStockListApi, createStockApi, updateStockApi, 
+    getStockListApi,
+    createStockApi,
+    updateStockApi,
+    updateStockProductApi,
+    deleteStockProductApi,
 };

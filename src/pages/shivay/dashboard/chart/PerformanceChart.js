@@ -2,81 +2,66 @@
 import React from 'react';
 import Chart from 'react-apexcharts';
 import { Card } from 'react-bootstrap';
-
-// component
 import CardTitle from './CardTitle';
 
-const PerformanceChart = (): React$Element<any> => {
+const PerformanceChart = ({ chartData = [] }): React$Element<any> => {
+    const categories = chartData?.map(item => item?.date);
+    const stockInSeries = chartData?.map(item => item?.totalStockInQty);
+    const stockOutSeries = chartData?.map(item => item?.totalStockOutQty);
+
     const apexBarChartOpts = {
         chart: {
             height: 230,
             type: 'bar',
-            stacked: true,
+            stacked: false,
             parentHeightOffset: 0,
-            toolbar: {
-                show: false,
-            },
+            toolbar: { show: false },
         },
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '20%',
+                columnWidth: '40%',
             },
         },
-        dataLabels: {
-            enabled: false,
-        },
+        dataLabels: { enabled: false },
         stroke: {
             show: true,
             width: 2,
             colors: ['transparent'],
         },
-        zoom: {
-            enabled: false,
-        },
-        legend: {
-            show: false,
-        },
-        colors: ['#727cf5', '#e3eaef'],
+        legend: { show: true },
+        colors: ['#727cf5', '#fa5c7c'],
         xaxis: {
-            categories: [10, 11, 12, 13, 14, 15, 16,],
-            axisBorder: {
-                show: false,
-            },
+            categories,
+            axisBorder: { show: false },
         },
         yaxis: {
             labels: {
-                formatter: function (val) {
-                    return val ;
-                },
+                formatter: val => val,
             },
         },
-        fill: {
-            opacity: 1,
-        },
+        fill: { opacity: 1 },
         tooltip: {
             y: {
-                formatter: function (val) {
-                    return '$' + val + 'k';
-                },
+                formatter: val => `${val}`,
             },
         },
     };
 
     const apexBarChartData = [
         {
-            name: 'Actual',
-            data: [65, 59, 80, 81, 56, 89, 40,],
+            name: 'Stock In',
+            data: stockInSeries,
         },
         {
-            name: 'Projection',
-            data: [89, 40, 32, 65, 59, 80, 81,],
+            name: 'Stock Out',
+            data: stockOutSeries,
         },
     ];
 
     return (
-        <Card className=" mb-0" style={{boxShadow:'none'}}>
-            <Card.Body className='p-0'>
+        <Card className="mb-0" style={{ boxShadow: 'none' }}>
+            <Card.Body className="p-0">
                 <CardTitle
                     containerClass="d-flex align-items-center justify-content-between fs-6"
                     title="Stock In VS Dispatch"

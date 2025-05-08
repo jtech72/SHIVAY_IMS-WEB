@@ -25,6 +25,28 @@ function deleteStockInApi(params) {
     return api.create(URL.DELETE_STOCKIN, data);
 }
 
+function getStockInByIdApi(params) {
+    const { data } = params
+    console.log(data,"====api")
+    return api.get(`${URL.GET_STOCKIN_BY_ID}/${data}`);
+}
+
+function updateStockInProductApi(params) {
+    const { data } = params
+    return api.update(URL.EDIT_STOCKIN_PRODUCT, data);
+}
+
+function deleteStockInProductApi(params) {
+    const { data } = params
+    return api.create(URL.DELETE_STOCKIN_PRODUCT, data);
+}
+
 export {
-    getStockInDataApi, createStockInApi, updateStockInApi, deleteStockInApi
+    getStockInDataApi,
+    createStockInApi,
+    updateStockInApi,
+    deleteStockInApi,
+    getStockInByIdApi,
+    updateStockInProductApi,
+    deleteStockInProductApi,
 };

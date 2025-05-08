@@ -6,7 +6,7 @@ const api = new APICore();
 
 
 function getProductListApi(params) {
-    const {search ,page,limit}=params?.data
+    const { search, page, limit } = params?.data
     return api.get(`${URL.GET_PRODUCT_LIST}?search=${search}&page=${page}&limit=${limit}`);
 }
 
@@ -30,10 +30,16 @@ function searchProductApi(params) {
     return api.create(URL.SEARCH_PRODUCT, data);
 }
 
+function viewProductApi(params) {
+    const { productId, page, limit, startDate, endDate, warehouseId } = params?.data
+    return api.get(`${URL.VIEW_PRODUCT}?productId=${productId}&page=${page}&limit=${limit}&warehouseId=${warehouseId}&startDate=${startDate}&endDate=${endDate}`);
+}
+
 export {
     getProductListApi,
     createProductApi,
     updateProductApi,
     deleteProductApi,
     searchProductApi,
+    viewProductApi,
 };

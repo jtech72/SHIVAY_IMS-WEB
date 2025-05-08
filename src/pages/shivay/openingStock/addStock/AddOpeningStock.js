@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createStockActions, getStockListActions, getWarehouseListActions, updateStockActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ButtonLoading } from '../../../../helpers/loader/Loading';
 
 const AddOpeningStock = () => {
 
@@ -167,20 +168,20 @@ const AddOpeningStock = () => {
                 <Row>
                     <Col sm={3}>
                         <Form.Group className="mb-1">
-                            <Form.Label className='mb-0'>Warehouse</Form.Label>
+                            <Form.Label className='mb-0'>Warehouse <span className='text-danger'>*</span></Form.Label>
                             <Select
                                 value={selectedWarehouse}
                                 onChange={handleWarehouseChange}
                                 options={warehouseOptions}
                                 placeholder="Select a warehouse"
-                                isClearable
+                                noOptionsMessage={() => "No warehouse found..."}
                                 required
                             />
                         </Form.Group>
                     </Col>
                     <Col sm={3}>
                         <Form.Group className="mb-1">
-                            <Form.Label className='mb-0'>Date Range</Form.Label>
+                            <Form.Label className='mb-0'>Date Range <span className='text-danger'>*</span></Form.Label>
                             <Form.Control
                                 type="date"
                                 value={today}
@@ -197,7 +198,7 @@ const AddOpeningStock = () => {
                             <Form.Control
                                 as='textarea'
                                 rows={1}
-                                {...register('description', { required: true })}
+                                {...register('description')}
                                 placeholder='Enter Description'
                             />
                         </Form.Group>
@@ -319,8 +320,19 @@ const AddOpeningStock = () => {
                         >
                             Cancel
                         </Button>
-                        <Button className="fw-bold custom-button" type='submit'>
-                            {isEditMode ? "Update" : "Submit"}
+                        <Button
+                            type="submit"
+                            className="custom-button fw-bold"
+                            disabled={store?.createStockReducer?.loading}
+                            style={{ width: '100px' }}
+                        >
+                            {store?.createStockReducer?.loading ? (
+                                <ButtonLoading color="white" />
+                            ) : isEditMode ? (
+                                'Update'
+                            ) : (
+                                'Submit'
+                            )}
                         </Button>
                     </div>
                 </div>

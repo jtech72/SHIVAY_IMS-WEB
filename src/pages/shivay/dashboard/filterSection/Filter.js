@@ -2,23 +2,32 @@ import React, { useEffect, useState } from 'react'
 import { Badge, Button, Col, Form, Row } from 'react-bootstrap'
 import { TiArrowRight } from 'react-icons/ti'
 import PerformanceChart from '../chart/PerformanceChart';
-import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLowStockActions, getRecentTransactionActions, getStockReportActions, getWarehouseListActions } from '../../../../redux/actions';
 import Select from 'react-select';
+import DatePicker from 'react-datepicker';
 
 const Filter = () => {
 
   const dispatch = useDispatch();
-  const { handleSubmit, register, setValue } = useForm();
   const store = useSelector((state) => state);
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
+  const [transactionType, setTransactionType] = useState('');
+  const [productSearch, setProductSearch] = useState('');
+
   const StockReport = store?.stockReportReducer?.stockReport;
+  const ChartData = store?.stockReportReducer?.stockReport?.chartData;
   const TopSelling = store?.recentTransactionReducer?.recentTransaction?.getTopSellingProduct;
-  console.log(TopSelling, 'TopSelling')
   const RecentTransaction = store?.recentTransactionReducer?.recentTransaction?.recentTransaction;
-  console.log(RecentTransaction, 'RecentTransaction')
+  // console.log(RecentTransaction, 'RecentTransaction')
+  const TodaysDispatch = store?.lowStockReducer?.lowStock;
+  const LowStock = store?.lowStockReducer?.lowStock?.response;
+  // console.log(LowStock,'LowStock')
   const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
+
+
   const warehouseOptions = Warehouse?.map((warehouse) => ({
     value: warehouse._id,
     label: warehouse.name,
@@ -32,28 +41,33 @@ const Filter = () => {
     setSelectedWarehouse(selectedOption);
   };
 
+  const formatDateToDDMMYYYY = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const handleProductsSearch = () => {
     const payload = {
       warehouseId: selectedWarehouse?.value,
-      search: '',
+      search: productSearch,
       page: 1,
       limit: 10,
-      type: "",
-      startDate: '',
-      endDate: '',
-      stockFilter: '',
+      startDate: formatDateToDDMMYYYY(startDate),
+      endDate: formatDateToDDMMYYYY(endDate),
+      stockFilter: transactionType,
     }
     dispatch(getLowStockActions(payload));
     dispatch(getStockReportActions(payload));
     dispatch(getRecentTransactionActions(payload));
   }
 
-  const SellingProducts = [
-    { productName: 'Smartphone', stockIn: 150 },
-    { productName: 'Laptop', stockIn: 75 },
-    { productName: 'Tablet', stockIn: 120 },
-    { productName: 'Smartwatch', stockIn: 200 },
-  ];
+  const handleSelectChange = (e) => {
+    setTransactionType(e.target.value);
+  };
 
   return (
     <div>
@@ -75,31 +89,44 @@ const Filter = () => {
           <Col sm={6}>
             <Form.Group className="mb-1">
               <Form.Label className='mb-0'>Date Range</Form.Label>
-              <Form.Control
-                type="date"
+              <DatePicker
+                selected={startDate}
+                onChange={(update) => setDateRange(update)}
+                startDate={startDate}
+                endDate={endDate}
+                selectsRange
+                className="form-control"
+                placeholderText="Select date range"
+                dateFormat="yyyy-MM-dd"
               />
             </Form.Group>
           </Col>
           <Col sm={6}>
             <Form.Group className="mb-1">
-              <Form.Label className='mb-0'>Product </Form.Label>
+              <Form.Label className='mb-0'>Product</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter Product Name"
-                name="Product Search"
+                name="productSearch"
+                value={productSearch}
+                onChange={(e) => setProductSearch(e.target.value)}
               />
             </Form.Group>
           </Col>
+
           <Col sm={6}>
             <Form.Group className="mb-1">
               <Form.Label className='mb-0'>Transaction Type</Form.Label>
               <Form.Select
                 name="transactionType"
+                value={transactionType}
+                onChange={handleSelectChange}
               >
                 <option value="">Select a transaction type</option>
-                <option value="purchase">Purchase</option>
-                <option value="refund">Refund</option>
-                <option value="transfer">Transfer</option>
+                <option value="All">All</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Low on Stock">Low on Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
               </Form.Select>
             </Form.Group>
           </Col>
@@ -145,7 +172,7 @@ const Filter = () => {
               >
                 <h5>Total Stock Summary</h5>
                 <div>
-                  <PerformanceChart />
+                  <PerformanceChart chartData={ChartData} />
                 </div>
               </div>
             </Col>
@@ -177,21 +204,25 @@ const Filter = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {TopSelling?.map((data, index) => (
-                          <tr key={index} className="text-dark fw-bold text-nowrap">
-                            <th scope="row" className="fs-6">{index + 1}</th>
-
-                            <td className="text-uppercase fw-bold fs-6 text-primary">
-                              {data?.name || <span className="text-black">-</span>}
-                            </td>
-
-                            <td className="text-uppercase fw-bold fs-6 text-success">
-                              {data?.unitsSold || <span className="text-black">-</span>}
-                            </td>
+                        {TopSelling && TopSelling.length > 0 ? (
+                          TopSelling.map((data, index) => (
+                            <tr key={index} className="text-dark fw-bold text-nowrap">
+                              <th scope="row" className="fs-6">{index + 1}</th>
+                              <td className="text-uppercase fw-bold fs-6 text-primary">
+                                {data?.name || <span className="text-black">-</span>}
+                              </td>
+                              <td className="text-uppercase fw-bold fs-6 text-success">
+                                {data?.unitsSold || <span className="text-black">-</span>}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={3} className="text-center text-danger fw-bold">No product found</td>
                           </tr>
-                        ))}
-
+                        )}
                       </tbody>
+
                     </table>
                   </div>
                 </div>
@@ -225,22 +256,27 @@ const Filter = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {RecentTransaction?.slice(0, 4).map((data, index) => (
-                          <tr key={index} className="text-dark fw-bold text-nowrap">
-                            <td className="text-uppercase text-success fs-6">
-                              {data?.date || <span className="text-danger">-</span>}
-                            </td>
-                            <td className="text-primary fs-6" title={data?.invoiceAttachment}>
-                              {data?.invoiceAttachment
-                                ? `${data.invoiceAttachment.slice(0, 20)}${data.invoiceAttachment.length > 20 ? '...' : ''}`
-                                : <span className="text-danger">-</span>}
-                            </td>
-                            <td className="text-uppercase fw-bold text-primary fs-6">
-                              {data?.location || <span className="text-danger">-</span>}
-                            </td>
+                        {RecentTransaction?.length > 0 ? (
+                          RecentTransaction.slice(0, 4).map((data, index) => (
+                            <tr key={index} className="text-dark fw-bold text-nowrap">
+                              <td className="text-uppercase text-success fs-6">
+                                {data?.date || <span className="text-danger">-</span>}
+                              </td>
+                              <td className="text-primary fs-6" title={data?.invoiceAttachment}>
+                                {data?.invoiceAttachment
+                                  ? `${data.invoiceAttachment.slice(0, 20)}${data.invoiceAttachment.length > 20 ? '...' : ''}`
+                                  : <span className="text-danger">-</span>}
+                              </td>
+                              <td className="text-uppercase fw-bold text-primary fs-6">
+                                {data?.location || <span className="text-danger">-</span>}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3" className="text-center text-danger fw-bold">No transaction found</td>
                           </tr>
-                        ))}
-
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -271,24 +307,31 @@ const Filter = () => {
                         <tr style={{ color: '#703133' }}>
                           <th scope="col"><i className="mdi mdi-merge"></i></th>
                           <th scope="col">Name</th>
-                          <th scope="col">Units</th>
+                          <th scope="col">Quantity</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {SellingProducts?.map((data, index) => (
-                          <tr key={index} className="text-dark fw-bold text-nowrap">
-                            <th scope="row" className="fs-6">{index + 1}</th>
-                            <td className="text-uppercase fw-bold text-primary fs-6">
-                              {data?.productName || <span className="text-danger">N/A</span>}
-                            </td>
-                            <td className="text-uppercase fw-bold text-success fs-5">
-                              <Badge className="bg-danger text-white" style={{ width: '2rem' }}>
-                                {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}
-                              </Badge>
-                            </td>
+                        {LowStock?.length > 0 ? (
+                          LowStock.slice(0, 4).map((data, index) => (
+                            <tr key={index} className="text-dark fw-bold text-nowrap">
+                              <th scope="row" className="fs-6">{index + 1}</th>
+                              <td className="text-uppercase fw-bold text-primary fs-6">
+                                {data?.name || <span className="text-black">-</span>}
+                              </td>
+                              <td className="text-uppercase fw-bold text-success fs-5">
+                                <Badge className="bg-danger text-white" style={{ width: '2rem' }}>
+                                  {data?.quantity !== undefined ? data.quantity : <span className="text-white">-</span>}
+                                </Badge>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3" className="text-center text-danger fw-bold">No stock found</td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
+
                     </table>
                   </div>
                 </div>
@@ -303,7 +346,7 @@ const Filter = () => {
                 }}
               >
                 <h5 className="text-secondary mb-0">Today’s Dispatch</h5>
-                <p className="mb-0 fs-6">20 Orders Dispatch Today.</p>
+                <p className="mb-0 fs-6">{TodaysDispatch?.todayDispatch} Orders Dispatch Today.</p>
               </div>
             </Col>
           </div>

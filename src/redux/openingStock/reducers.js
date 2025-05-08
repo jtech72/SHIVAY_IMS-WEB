@@ -87,9 +87,74 @@ const updateStockReducer = (state = UPDATE_STOCK_INITIAL_STATE, action) => {
     }
 }
 
+const UPDATE_STOCK_PRODUCT_INITIAL_STATE = {
+    updateStockProduct: [],
+    loading: false
+}
+
+const updateStockProductReducer = (state = UPDATE_STOCK_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case StockActionTypes.UPDATE_STOCK_PRODUCT_LOADING:
+            return {
+                updateStockProduct: state.updateStockProduct,
+                loading: true
+            }
+        case StockActionTypes.UPDATE_STOCK_PRODUCT_SUCCESS:
+            return {
+                updateStockProduct: action.payload,
+                loading: false
+            }
+        case StockActionTypes.UPDATE_STOCK_PRODUCT_RESET:
+            return {
+                updateStockProduct: [],
+                loading: false,
+            };
+        case StockActionTypes.UPDATE_STOCK_PRODUCT_ERROR:
+            return {
+                updateStockProduct: action.payload,
+                loading: false
+            }
+        default: return state
+    }
+}
+
+const DELETE_STOCK_PRODUCT_INITIAL_STATE = {
+    deleteStockProduct: [],
+    loading: false
+}
+
+const deleteStockProductReducer = (state = DELETE_STOCK_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case StockActionTypes.DELETE_STOCK_PRODUCT_LOADING:
+            return {
+                deleteStockProduct: state.deleteStockProduct,
+                loading: true
+            }
+        case StockActionTypes.DELETE_STOCK_PRODUCT_SUCCESS:
+            return {
+                deleteStockProduct: action.payload,
+                loading: false
+            }
+        case StockActionTypes.DELETE_STOCK_PRODUCT_ERROR:
+            return {
+                deleteStockProduct: action.payload,
+                loading: false
+            }
+        case StockActionTypes.DELETE_STOCK_PRODUCT_RESET:
+            return {
+                deleteStockProduct: [],
+                loading: false
+            }
+        default: return state
+    }
+}
 
 export {
     stockListReducer,
     createStockReducer,
     updateStockReducer,
+    updateStockProductReducer,
+    deleteStockProductReducer,
 }

@@ -28,3 +28,13 @@ export const createStockCheckActions = (data) => ({
     type: DispatchActionTypes.CREATE_STOCK_CHECK_FIRST,
     data
 });
+
+export const updateDispatchProductActions = (data) => ({
+    type: DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_FIRST,
+    data
+});
+
+export const deleteDispatchProductActions = (data) => ({
+    type: DispatchActionTypes.DELETE_DISPATCH_PRODUCT_FIRST,
+    data
+});

@@ -98,7 +98,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
     };
 
     return (
-        <Modal show={showModal} centered size='lg' onHide={handleClose} backdrop="static" keyboard={false}>
+        <Modal show={showModal} centered size='lg' onHide={closeModal} backdrop="static" keyboard={false}>
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header closeButton>
                     <Modal.Title className='text-black'>{type} User</Modal.Title>
@@ -107,7 +107,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                     <Row>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className="mb-0">Warehouse {!UserData?.data && <span className="text-danger">*</span>}
+                                <Form.Label className="mb-0">Warehouse <span className="text-danger">*</span>
                                 </Form.Label>
                                 <Select
                                     value={selectedWarehouse}
@@ -130,7 +130,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>User Name {!UserData?.data && <span className="text-danger">*</span>}
+                                <Form.Label className='mb-0'>User Name <span className="text-danger">*</span>
                                 </Form.Label>
                                 <Form.Control
                                     type="text"
@@ -151,7 +151,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Email Id {!UserData?.data && <span className="text-danger">*</span>}
+                                <Form.Label className='mb-0'>Email Id <span className="text-danger">*</span>
                                 </Form.Label>
                                 <Form.Control
                                     type="email"
@@ -163,7 +163,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1 position-relative">
-                                <Form.Label className='mb-0'>Password {!UserData?.data && <span className="text-danger">*</span>}
+                                <Form.Label className='mb-0'>Password <span className="text-danger">*</span>
                                 </Form.Label>
                                 <div className="position-relative">
                                     <Form.Control
@@ -196,7 +196,7 @@ const AddUserModal = ({ showModal, handleClose, UserData }) => {
                         </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Phone Number {!UserData?.data && <span className="text-danger">*</span>}
+                                <Form.Label className='mb-0'>Phone Number <span className="text-danger">*</span>
                                 </Form.Label>
 
                                 <InputGroup>

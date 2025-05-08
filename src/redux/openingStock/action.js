@@ -19,3 +19,12 @@ export const updateStockActions = (data) => ({
     data
 });
 
+export const updateStockProductActions = (data) => ({
+    type: StockActionTypes.UPDATE_STOCK_PRODUCT_FIRST,
+    data
+});
+
+export const deleteStockProductActions = (data) => ({
+    type: StockActionTypes.DELETE_STOCK_PRODUCT_FIRST,
+    data
+});

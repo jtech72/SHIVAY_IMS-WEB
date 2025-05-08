@@ -1,6 +1,6 @@
 // @flow
-import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import classNames from 'classnames';
 
@@ -10,7 +10,8 @@ import { getMenuItems } from '../helpers/menu';
 import AppMenu from './Menu';
 
 // images
-import { Logo, Shivay_Logo,  } from '../helpers/image';
+import { Logo, Shivay_Logo, } from '../helpers/image';
+import LogoutModal from '../pages/account/LogoutModal';
 
 type SideBarContentProps = {
     hideUserProfile: boolean,
@@ -45,6 +46,7 @@ type LeftSidebarProps = {
 const LeftSidebar = ({ isCondensed, isLight, hideLogo, hideUserProfile }: LeftSidebarProps): React$Element<any> => {
     const menuNodeRef: any = useRef(null);
 
+    const navigate = useNavigate();
     /**
      * Handle the click anywhere in doc
      */
@@ -64,9 +66,55 @@ const LeftSidebar = ({ isCondensed, isLight, hideLogo, hideUserProfile }: LeftSi
         };
     }, []);
 
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+    const MENU_ITEMS_END = [
+
+        {
+            label: 'Help & Support',
+            icon: "mdi-help-circle-outline",
+            redirectTo: "#",
+        },
+        {
+            label: 'Privacy Policy',
+            icon: "mdi-shield-lock-outline",
+            redirectTo: "#",
+            // url: "/dashboard/account",
+        },
+        {
+            label: 'Terms & Conditions',
+            icon: "mdi-file-document-edit-outline",
+            redirectTo: "#",
+        },
+        {
+            key: 'logout',
+            label: 'Logout',
+            icon: 'mdi-logout',
+            // url: '/account/logout',
+        },
+    ];
+
+    const handleCheckLogout = (data) => {
+        if (data === 'Logout') {
+            setShowLogoutModal(true);
+        }
+    };
+
+    const handleLogoutConfirm = () => {
+        setShowLogoutModal(false);
+        navigate('/account/logout')
+    };
+
+    const handleLogoutCancel = () => {
+        setShowLogoutModal(false);
+    };
+
+
     return (
         <>
             <div className="leftside-menu" ref={menuNodeRef}>
+
+
                 {!hideLogo && (
                     <>
                         <Link to="/" className="logo text-center logo-light">
@@ -89,19 +137,65 @@ const LeftSidebar = ({ isCondensed, isLight, hideLogo, hideUserProfile }: LeftSi
                     </>
                 )}
 
-                <div className="mt-2">
-                    {!isCondensed && (
-                        <SimpleBar style={{ maxHeight: '100%' }} timeout={500} scrollbarMaxSize={320}>
-                            <SideBarContent
-                                menuClickHandler={() => { }}
-                                isLight={isLight}
-                                hideUserProfile={hideUserProfile}
-                            />
-                        </SimpleBar>
-                    )}
-                    {isCondensed && <SideBarContent isLight={isLight} hideUserProfile={hideUserProfile} />}
+                <div className="d-flex flex-column h-100 mt-2">
+                    {/* Sidebar content (main scrollable area) */}
+                    <div className="flex-grow-1 overflow-hidden">
+                        {!isCondensed ? (
+                            <SimpleBar style={{ maxHeight: '100%' }} timeout={500} scrollbarMaxSize={320}>
+                                <SideBarContent
+                                    menuClickHandler={() => { }}
+                                    isLight={isLight}
+                                    hideUserProfile={hideUserProfile}
+                                />
+                            </SimpleBar>
+                        ) : (
+                            <SideBarContent isLight={isLight} hideUserProfile={hideUserProfile} />
+                        )}
+                    </div>
+
+                    {/* Bottom fixed content */}
+                    <div className="pt-2 border-top">
+                        {MENU_ITEMS_END.map((ele, index) => {
+                            const isLogout = ele.label === 'Logout';
+
+                            return (
+                                <div className='' key={index}>
+                                    {isCondensed ? (
+                                        <button
+                                            onClick={() => isLogout ? handleCheckLogout(ele.label) : navigate(ele.redirectTo)}
+                                            className="px-3 py-2 w-100 d-flex justify-content-center align-items-center bg-transparent border-0"
+                                        >
+                                            <span
+                                                className={`${ele.icon?.startsWith('mdi') ? 'mdi' : ''} ${ele.icon} mdi-18px textLeftSidebar`}
+                                            ></span>
+                                        </button>
+                                    ) : (
+                                        <div className="info-color px-2 py-1 align-items-center">
+                                            <button
+                                                data-toggle={['Tasks', 'Billing', 'Help & Support'].includes(ele.label) ? "tooltip" : ''}
+                                                data-placement="top"
+                                                title={['Tasks', 'Billing', 'Help & Support'].includes(ele.label) ? "In Progress" : ''}
+                                                onClick={() => isLogout ? handleCheckLogout(ele.label) : navigate(ele.redirectTo)}
+                                                className="px-2 textLeftSidebar bg-transparent border-0"
+                                            >
+                                                <span className={`mdi ${ele.icon} mdi-18px px-1 iconsLeftSidebar`}></span>
+                                                <span className="px-2 sidebar_listItems notranslate">{ele.label}</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
+
+                <LogoutModal
+                    show={showLogoutModal}
+                    onConfirm={handleLogoutConfirm}
+                    onCancel={handleLogoutCancel}
+                />
             </div>
+
         </>
     );
 };
