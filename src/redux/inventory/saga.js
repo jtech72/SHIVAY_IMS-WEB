@@ -2,7 +2,7 @@
 import { all, fork, put, takeEvery, call } from 'redux-saga/effects';
 import { InventoryActionTypes } from './constants';
 
-import { createProductApi, deleteProductApi, getProductListApi, searchProductApi, updateProductApi } from './api';
+import { createProductApi, deleteProductApi, getProductListApi, searchProductApi, updateProductApi, viewProductApi } from './api';
 import ToastContainer from '../../helpers/toast/ToastContainer';
 
 
@@ -156,6 +156,32 @@ function* searchProductFunction(data) {
     }
 }
 
+function* viewProductFunction(data) {
+    try {
+        yield put({
+            type: InventoryActionTypes.VIEW_PRODUCT_LOADING,
+            payload: {},
+        });
+        const response = yield call(viewProductApi, data);
+        if (response?.status === 200) {
+            yield put({
+                type: InventoryActionTypes.VIEW_PRODUCT_SUCCESS,
+                payload: response.data,
+            });
+        } else {
+            yield put({
+                type: InventoryActionTypes.VIEW_PRODUCT_ERROR,
+                payload: response.data,
+            });
+        }
+    } catch (error) {
+        yield put({
+            type: InventoryActionTypes.VIEW_PRODUCT_ERROR,
+            payload: error,
+        });
+    }
+}
+
 export function* watchProductListData() {
     yield takeEvery(InventoryActionTypes.PRODUCT_LIST_FIRST, getProductListFunction);
 }
@@ -176,6 +202,10 @@ export function* watchSearchProductData() {
     yield takeEvery(InventoryActionTypes.SEARCH_PRODUCT_FIRST, searchProductFunction);
 }
 
+export function* watchViewProductData() {
+    yield takeEvery(InventoryActionTypes.VIEW_PRODUCT_FIRST, viewProductFunction);
+}
+
 function* inventorySaga() {
     yield all([
         fork(watchProductListData),
@@ -183,6 +213,7 @@ function* inventorySaga() {
         fork(watchUpdateProductData),
         fork(watchDeleteProductData),
         fork(watchSearchProductData),
+        fork(watchViewProductData),
 
     ]);
 }

@@ -29,3 +29,8 @@ export const searchProductActions = (data) => ({
     data
 });
 
+export const viewProductActions = (data) => ({
+    type: InventoryActionTypes.VIEW_PRODUCT_FIRST,
+    data
+});
+

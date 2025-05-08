@@ -13,10 +13,11 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
         register,
         setValue,
         reset,
+        trigger,
         formState: { errors },
     } = useForm();
 
-   
+
 
     const { location } = useSelector((state) => state?.locationReducer || {});
     const [locationSelected, setLocationSelected] = useState(null)
@@ -70,9 +71,13 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
         closeModal();
     };
 
+    useEffect(() => {
+        register('location', { required: 'Location is required' });
+    }, [register]);
+
     return (
-<Modal show={showModal} centered size='lg' onHide={closeModal} backdrop="static" keyboard={false}>
-<Modal.Header closeButton>
+        <Modal show={showModal} centered size='lg' onHide={closeModal} backdrop="static" keyboard={false}>
+            <Modal.Header closeButton>
                 <Modal.Title className='text-black'>{type} Warehouse</Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -80,23 +85,33 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
                     <Row>
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Warehouse <span className='text-danger'>*</span></Form.Label>
-                                  <Form.Control
+                                <Form.Label className="mb-0">
+                                    Warehouse <span className="text-danger">*</span>
+                                </Form.Label>
+                                <Form.Control
                                     type="text"
                                     placeholder="Enter Warehouse"
                                     {...register('warehouse', {
                                         required: 'Warehouse is required',
-                                        validate: value => value.trim() !== '' || 'Warehouse cannot be empty spaces'
+                                        validate: value => {
+                                            const trimmed = value.trim();
+                                            if (!trimmed) return 'Warehouse cannot be empty spaces';
+
+                                            // Better emoji regex that catches surrogate pairs, ZWJ emojis, flags, etc.
+                                            const emojiRegex = /(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+
+                                            if (emojiRegex.test(trimmed)) return 'Emojis are not allowed in warehouse name';
+                                            return true;
+                                        }
                                     })}
                                 />
                                 {errors.warehouse && <small className="text-danger">{errors.warehouse.message}</small>}
-
                             </Form.Group>
                         </Col>
 
                         <Col sm={6}>
                             <Form.Group className="mb-1">
-                                <Form.Label className="mb-0">Location</Form.Label>
+                                <Form.Label className="mb-0">Location  <span className='text-danger'>*</span></Form.Label>
                                 <Select
                                     options={locationData?.map((loc) => ({
                                         label: loc.name,
@@ -106,6 +121,7 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
                                     onChange={(selectedOption) => {
                                         setLocationSelected(selectedOption);
                                         setValue('location', selectedOption?.value);
+                                        trigger('location');
                                     }}
                                     value={locationSelected}
                                     isSearchable
@@ -118,16 +134,28 @@ const AddWarehouseModal = ({ showModal, handleClose, warehouseData }) => {
 
                         <Col sm={12}>
                             <Form.Group className="mb-1">
-                                <Form.Label className='mb-0'>Full Address</Form.Label>
+                                <Form.Label className="mb-0">
+                                    Full Address <span className="text-danger">*</span>
+                                </Form.Label>
                                 <Form.Control
                                     as="textarea"
                                     rows={3}
                                     placeholder="Enter Full Address"
-                                    {...register('address', { required: true })}
+                                    {...register('address', {
+                                        required: 'Full Address is required',
+                                        validate: value => {
+                                            const cleaned = value.replace(/[\n\r\s]/g, '');
+                                            if (!cleaned) return 'Full Address cannot be empty or only new lines';
+                                            return true;
+                                        }
+                                    })}
                                 />
-                                {errors.address && <small className="text-danger">Address is required</small>}
+                                {errors.address && (
+                                    <small className="text-danger">{errors.address.message}</small>
+                                )}
                             </Form.Group>
                         </Col>
+
                     </Row>
 
                     <Modal.Footer>

@@ -78,6 +78,7 @@ const OpeningStock = () => {
                       <th scope="col"><i className="mdi mdi-merge"></i></th>
                       <th scope="col">Warehouse</th>
                       <th scope="col">Code</th>
+                      <th scope="col">Date</th>
                       <th scope="col">Discription</th>
                       <th scope="col">Quantity</th>
                     </tr>
@@ -100,6 +101,10 @@ const OpeningStock = () => {
                             <td className="fw-bold">
                               {data?.productData?.code || <span className="text-black">-</span>}
                             </td>
+                            <td className="fw-bold">
+                              {data?.date ? new Date(data.date).toLocaleDateString('en-GB') : <span className="text-black">-</span>}
+                            </td>
+
                             <td className="fw-bold">
                               {data?.description || <span className="text-black">-</span>}
                             </td>

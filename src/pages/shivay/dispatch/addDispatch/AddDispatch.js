@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CgCloseO } from "react-icons/cg";
 import { HiOutlineFolderDownload } from "react-icons/hi";
+import { ButtonLoading } from '../../../../helpers/loader/Loading';
 
 const AddDispatch = () => {
     const [searchParams] = useSearchParams();
@@ -197,7 +198,7 @@ const AddDispatch = () => {
 
         if (stockId) {
             formData.append('quantity', stockId ? editedQuantity : JSON.stringify(cleanedProducts));
-        }else{
+        } else {
             formData.append('productDispatchQty', stockId ? editedQuantity : JSON.stringify(cleanedProducts));
         }
         if (stockId) {
@@ -316,8 +317,32 @@ const AddDispatch = () => {
                                         </Col>
                                         <Col sm={3}>
                                             <Form.Group className="mb-1">
+                                                <Form.Label className="mb-0">Attach GR File {!stockId && <span className='text-danger'>*</span>}
+                                                    {selectedStock?.attachmentGRfile && (
+                                                        <a
+                                                            href={selectedStock.attachmentGRfile}
+                                                            target="_blank"
+                                                            title='Download GR File'
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            <HiOutlineFolderDownload className='ms-1 fs-4' />
+                                                        </a>
+                                                    )}
+                                                </Form.Label>
+                                                <Form.Control
+                                                    type="file"
+                                                    placeholder="Upload file"
+                                                    {...register('attachmentGRfile', {
+                                                        required: !selectedStock?.attachmentGRfile, // only require if no existing
+                                                    })}
+                                                />
+
+                                            </Form.Group>
+                                        </Col>
+                                        <Col sm={3}>
+                                            <Form.Group className="mb-1">
                                                 <Form.Label className="mb-0">
-                                                    Attachment 
+                                                    Attachment
                                                     {attachmentType && (
                                                         <span className="text-capitalize"> ({attachmentType})</span>
                                                     )}
@@ -366,30 +391,6 @@ const AddDispatch = () => {
                                                     </div>
                                                 )}
 
-
-                                            </Form.Group>
-                                        </Col>
-                                        <Col sm={3}>
-                                            <Form.Group className="mb-1">
-                                                <Form.Label className="mb-0">Attach GR File {!stockId && <span className='text-danger'>*</span>}
-                                                    {selectedStock?.attachmentGRfile && (
-                                                        <a
-                                                            href={selectedStock.attachmentGRfile}
-                                                            target="_blank"
-                                                            title='Download GR File'
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            <HiOutlineFolderDownload className='ms-1 fs-4' />
-                                                        </a>
-                                                    )}
-                                                </Form.Label>
-                                                <Form.Control
-                                                    type="file"
-                                                    placeholder="Upload file"
-                                                    {...register('attachmentGRfile', {
-                                                        required: !selectedStock?.attachmentGRfile, // only require if no existing
-                                                    })}
-                                                />
 
                                             </Form.Group>
                                         </Col>
@@ -515,7 +516,20 @@ const AddDispatch = () => {
                         >
                             Cancel
                         </Button>
-                        <Button className="fw-bold custom-button" type='submit'>{stockId ? 'Update' : "Submit"}</Button>
+                        <Button
+                            type="submit"
+                            className="custom-button fw-bold"
+                            disabled={store?.createDispatchReducer?.loading}
+                            style={{ width: '100px' }}
+                        >
+                            {store?.createDispatchReducer?.loading ? (
+                                <ButtonLoading color="white" />
+                            ) : stockId ? (
+                                'Update'
+                            ) : (
+                                'Submit'
+                            )}
+                        </Button>
                     </div>
                 </div>
             </Form>

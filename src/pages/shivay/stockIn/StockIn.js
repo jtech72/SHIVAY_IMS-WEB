@@ -116,7 +116,7 @@ const StockIn = () => {
                       {StockInData?.length === 0 ? (
                         <tr>
                           <td colSpan={6} className='text-center'>
-                            <p className='my-5 py-5 '>No data found in dispatch.</p>
+                            <p className='my-5 py-5 '>No data found in Stock In.</p>
                           </td>
                         </tr>
                       ) : (
@@ -140,7 +140,7 @@ const StockIn = () => {
                               )}
                             </td>
                             <td className="fw-bold">
-                              {data?.quantity || <span className="text-danger">N/A</span>}
+                              {data?.stockInProducts?.[0]?.quantity || <span className="text-black">-</span>}
                             </td>
                             <td></td>
                             <td></td>

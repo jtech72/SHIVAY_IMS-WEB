@@ -2,7 +2,7 @@
 import { all, fork, put, takeEvery, call } from 'redux-saga/effects';
 import { DispatchActionTypes } from './constants';
 
-import { createDispatchApi, createStockCheckApi, deleteDispatchApi, getDispatchListApi, updateDispatchApi } from './api';
+import { createDispatchApi, createStockCheckApi, deleteDispatchApi, deleteDispatchProductApi, getDispatchListApi, updateDispatchApi, updateDispatchProductApi } from './api';
 import ToastContainer from '../../helpers/toast/ToastContainer';
 
 
@@ -150,7 +150,70 @@ function* createStockCheckFunction(data) {
     } catch (error) {
         yield put({
             type: DispatchActionTypes.CREATE_STOCK_CHECK_ERROR,
-            payload: {error,status:400},
+            payload: { error, status: 400 },
+        });
+    }
+}
+
+function* updateStockProductFunction(data) {
+    try {
+        yield put({
+            type: DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_LOADING,
+            payload: {},
+        });
+        const response = yield call(updateDispatchProductApi, data);
+        if (response?.status === 200) {
+            ToastContainer(response?.data?.message, 'success')
+            yield put({
+                type: DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_SUCCESS,
+                payload: response.data,
+            });
+            yield put({
+                type: DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_RESET,
+                payload: {},
+            });
+        } else {
+            yield put({
+                type: DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_ERROR,
+                payload: response.data,
+            });
+        }
+    } catch (error) {
+        ToastContainer(error, 'danger')
+        yield put({
+            type: DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_ERROR,
+            payload: error,
+        });
+    }
+}
+
+function* deleteStockProductFunction(data) {
+    try {
+        yield put({
+            type: DispatchActionTypes.DELETE_DISPATCH_PRODUCT_LOADING,
+            payload: {},
+        });
+        const response = yield call(deleteDispatchProductApi, data);
+        if (response?.status === 200) {
+            ToastContainer(response?.data?.message, 'danger')
+            yield put({
+                type: DispatchActionTypes.DELETE_DISPATCH_PRODUCT_SUCCESS,
+                payload: response.data,
+            });
+            yield put({
+                type: DispatchActionTypes.DELETE_DISPATCH_PRODUCT_RESET,
+                payload: {},
+            });
+        } else {
+            yield put({
+                type: DispatchActionTypes.DELETE_DISPATCH_PRODUCT_ERROR,
+                payload: response.data,
+            });
+        }
+    } catch (error) {
+        yield put({
+            type: DispatchActionTypes.DELETE_DISPATCH_PRODUCT_ERROR,
+            payload: error,
         });
     }
 }
@@ -175,6 +238,14 @@ export function* watchCreateStockCheckData() {
     yield takeEvery(DispatchActionTypes.CREATE_STOCK_CHECK_FIRST, createStockCheckFunction);
 }
 
+export function* watchUpdateDispatchProductData() {
+    yield takeEvery(DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_FIRST, updateStockProductFunction);
+}
+
+export function* watchDeleteDispatchProductData() {
+    yield takeEvery(DispatchActionTypes.DELETE_DISPATCH_PRODUCT_FIRST, deleteStockProductFunction);
+}
+
 function* dispatchSaga() {
     yield all([
         fork(watchDispatchListData),
@@ -182,6 +253,8 @@ function* dispatchSaga() {
         fork(watchUpdateDispatchData),
         fork(watchDeleteDispatchData),
         fork(watchCreateStockCheckData),
+        fork(watchUpdateDispatchProductData),
+        fork(watchDeleteDispatchProductData),
 
     ]);
 }

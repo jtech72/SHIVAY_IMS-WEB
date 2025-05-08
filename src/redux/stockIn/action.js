@@ -23,3 +23,18 @@ export const deleteStockInActions = (data) => ({
     type: StockInActionTypes.DELETE_STOCKIN_FIRST,
     data
 });
+
+export const getStockInByIdActions = (data) => ({
+    type: StockInActionTypes.GET_STOCKIN_FIRST,
+    data
+});
+
+export const updateStockInProductActions = (data) => ({
+    type: StockInActionTypes.UPDATE_STOCKIN_PRODUCT_FIRST,
+    data
+});
+
+export const deleteStockInProductActions = (data) => ({
+    type: StockInActionTypes.DELETE_STOCKIN_PRODUCT_FIRST,
+    data
+});

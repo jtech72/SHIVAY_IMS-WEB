@@ -123,9 +123,104 @@ const deleteStockInReducer = (state = DELETE_STOCKIN_INITIAL_STATE, action) => {
         default: return state
     }
 }
+
+const GET_STOCKIN_INITIAL_STATE = {
+    stockInById: [],
+    loading: false
+}
+
+const stockInByIdReducer = (state = GET_STOCKIN_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case StockInActionTypes.GET_STOCKIN_LOADING:
+            return {
+                stockInById: state.stockInById,
+                loading: true
+            }
+        case StockInActionTypes.GET_STOCKIN_SUCCESS:
+            return {
+                stockInById: action.payload,
+                loading: false
+            }
+        case StockInActionTypes.GET_STOCKIN_ERROR:
+            return {
+                stockInById: action.payload,
+                loading: false
+            }
+        default: return state
+    }
+}
+
+const UPDATE_STOCKIN_PRODUCT_INITIAL_STATE = {
+    updateStockInProduct: [],
+    loading: false
+}
+
+const updateStockInProductReducer = (state = UPDATE_STOCKIN_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case StockInActionTypes.UPDATE_STOCKIN_PRODUCT_LOADING:
+            return {
+                updateStockInProduct: state.updateStockInProduct,
+                loading: true
+            }
+        case StockInActionTypes.UPDATE_STOCKIN_PRODUCT_SUCCESS:
+            return {
+                updateStockInProduct: action.payload,
+                loading: false
+            }
+        case StockInActionTypes.UPDATE_STOCKIN_PRODUCT_RESET:
+            return {
+                updateStockInProduct: [],
+                loading: false,
+            };
+        case StockInActionTypes.UPDATE_STOCKIN_PRODUCT_ERROR:
+            return {
+                updateStockInProduct: action.payload,
+                loading: false
+            }
+        default: return state
+    }
+}
+
+const DELETE_STOCKIN_PRODUCT_INITIAL_STATE = {
+    deleteStockInProduct: [],
+    loading: false
+}
+
+const deleteStockInProductReducer = (state = DELETE_STOCKIN_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case StockInActionTypes.DELETE_STOCKIN_PRODUCT_LOADING:
+            return {
+                deleteStockInProduct: state.deleteStockInProduct,
+                loading: true
+            }
+        case StockInActionTypes.DELETE_STOCKIN_PRODUCT_SUCCESS:
+            return {
+                deleteStockInProduct: action.payload,
+                loading: false
+            }
+        case StockInActionTypes.DELETE_STOCKIN_PRODUCT_ERROR:
+            return {
+                deleteStockInProduct: action.payload,
+                loading: false
+            }
+        case StockInActionTypes.DELETE_STOCKIN_PRODUCT_RESET:
+            return {
+                deleteStockInProduct: [],
+                loading: false
+            }
+        default: return state
+    }
+}
+
 export {
     stockInListReducer,
     createStockInReducer,
     updateStockInReducer,
     deleteStockInReducer,
+    stockInByIdReducer,
+    updateStockInProductReducer,
+    deleteStockInProductReducer,
 }

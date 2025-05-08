@@ -149,7 +149,7 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                         <InputGroupText>+91</InputGroupText>
                                         <Form.Control
                                             type="text"
-                                            placeholder="Enter 10-digit phone number"
+                                            placeholder="Enter phone number"
                                             maxLength={10}
                                             onInput={(e) => {
                                                 e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
@@ -208,14 +208,36 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter GST Number"
-                                        {...register("billingGstNumber")}
+                                        {...register("billingGstNumber", {
+                                            validate: value => {
+                                                if (!value) return true; // Optional field
+
+                                                const cleanedValue = value.trim();
+
+                                                // GSTIN regex: 2 digits, 5 letters, 4 digits, 1 letter, 1 alphanumeric, 1 Z, 1 alphanumeric
+                                                const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+                                                if (cleanedValue.includes(' ')) return 'GST Number should not contain spaces';
+                                                if (/[^a-zA-Z0-9]/.test(cleanedValue)) return 'GST Number should not contain special characters';
+                                                if (cleanedValue !== cleanedValue.toUpperCase()) return 'GST Number must be in uppercase';
+                                                if (cleanedValue.length !== 15) return 'GST Number must be exactly 15 characters';
+                                                if (!gstinRegex.test(cleanedValue)) return 'Invalid GST Number format';
+
+                                                return true;
+                                            }
+                                        })}
                                     />
+                                    {errors.billingGstNumber && (
+                                        <small className="text-danger">{errors.billingGstNumber.message}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
+
                             <div className='mb-2'>
                                 <Form.Check
                                     type="checkbox"
                                     label="Same as Billing Address"
+                                    className='cursor'
                                     checked={copyChecked}
                                     onChange={(e) => setCopyChecked(e.target.checked)}
                                 />
@@ -237,10 +259,31 @@ const AddCustomerModal = ({ showModal, handleClose, CustomerData }) => {
                                     <Form.Control
                                         type="text"
                                         placeholder="Enter GST Number"
-                                        {...register("deliveryGstNumber")}
+                                        {...register("deliveryGstNumber", {
+                                            validate: value => {
+                                                if (!value) return true; // Optional field
+
+                                                const cleanedValue = value.trim();
+
+                                                // GSTIN regex: 2 digits, 5 letters, 4 digits, 1 letter, 1 alphanumeric, Z, 1 alphanumeric
+                                                const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+                                                if (cleanedValue.includes(' ')) return 'GST Number should not contain spaces';
+                                                if (/[^a-zA-Z0-9]/.test(cleanedValue)) return 'GST Number should not contain special characters';
+                                                if (cleanedValue !== cleanedValue.toUpperCase()) return 'GST Number must be in uppercase';
+                                                if (cleanedValue.length !== 15) return 'GST Number must be exactly 15 characters';
+                                                if (!gstinRegex.test(cleanedValue)) return 'Invalid GST Number format';
+
+                                                return true;
+                                            }
+                                        })}
                                     />
+                                    {errors.deliveryGstNumber && (
+                                        <small className="text-danger">{errors.deliveryGstNumber.message}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
+
                         </Row>
                         <hr className='mb-2 mt-1 text-secondary' />
                         <Row>

@@ -37,7 +37,7 @@ const MENU_ITEMS = [
     },
     {
         key: 'openingStock',
-        label: 'OpeningStock',
+        label: 'Opening Stock',
         isTitle: false,
         icon: ' uil-bell',
         url: '/shivay/openingStock',

@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { Logo, Shivay_Logo } from '../helpers/image'
+import { CgProfile } from "react-icons/cg";
+
 // actions
 import { changeSidebarType } from '../redux/actions';
 
@@ -13,6 +15,7 @@ import NotificationDropdown from '../components/NotificationDropdown';
 
 //constants
 import * as layoutConstants from '../constants/layout';
+import { Dropdown } from 'react-bootstrap';
 const Notifications = []
 // get the profilemenu
 const ProfileMenus = [
@@ -115,7 +118,7 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                         {/* <li className="dropdown notification-list topbar-dropdown d-none d-lg-block">
                             <LanguageDropdown />
                         </li> */}
-                        <li className="dropdown notification-list" title="Notifications">
+                        <li className="dropdown notification-list" title="Notifications" >
                             <NotificationDropdown notifications={Notifications} />
                         </li>
                         {/* <li className="dropdown notification-list d-none d-sm-inline-block">
@@ -129,10 +132,23 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                             </button>
                         </li> */}
 
-                        <li className="dropdown notification-list d-flex align-items-center justify-content-center ps-2 mt-2" style={{borderLeft:'2px solid #E8EAE9'}}>
-                            <i className='mdi mdi-logout fs-3 cursor' title="Log Out" style={{marginTop:'6px'}} onClick={() => navigate('/account/logout')}></i>
-                        </li>
+                        {/* <li className=" ps-1 " >
+                            <Dropdown align="end">
+                                <Dropdown.Toggle
+                                    className="d-flex align-items-center justify-content-center p-2 pe-0 bg-transparent border-0"
+                                    style={{ listStyle: 'none', cursor: 'pointer' }}
+                                >
+                                    <CgProfile className="fs-3 mt-2 text-secondary" />
+                                </Dropdown.Toggle>
 
+                                <Dropdown.Menu>
+                                    <Dropdown.Item className="d-flex align-items-center justify-content-start gap-2 border-bottom pb-2">
+                                        <CgProfile className="fs-4" /> Profile
+                                    </Dropdown.Item>
+                                    <Dropdown.Item className='d-flex align-items-center justify-content-start gap-2' onClick={() => navigate('/account/logout')}> <i className='mdi mdi-logout fs-4 cursor'></i> Logout</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </li> */}
                     </ul>
 
                     {/* toggle for vertical layout */}

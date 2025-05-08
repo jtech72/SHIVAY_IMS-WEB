@@ -1,7 +1,7 @@
 //------------------------------------S A G A---------------------------------------------------------------
 import { all, fork, put, takeEvery, call } from 'redux-saga/effects';
 import { ReportActionTypes } from './constants';
-import {  getReportApi } from './api';
+import { getReportApi } from './api';
 
 
 
@@ -24,6 +24,10 @@ function* getReportFunction(data) {
             yield put({
                 type: ReportActionTypes.REPORT_ERROR,
                 payload: response.data,
+            });
+            yield put({
+                type: ReportActionTypes.REPORT_RESET,
+                payload: {},
             });
         }
     } catch (error) {

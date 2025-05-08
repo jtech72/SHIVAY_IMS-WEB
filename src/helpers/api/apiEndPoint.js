@@ -2,6 +2,9 @@
 export const GET_DASHBOARD_DATA = '/api/dashboard/get'
 export const GET_STOCKIN_LIST = '/api/transaction/stockin/list'
 export const GET_DISPATCH_TRANS_LIST = '/api/transaction/dispatch/list'
+export const GET_STOCK_REPORT ='/api/dashboard/stockreport'
+export const GET_RECENT_TRANSACTION ='/api/dashboard/topselling-recenttransaction/list'
+export const GET_LOW_STOCK ='/api/dashboard/lowstock-dispatchcount'
 
 //roles
 export const GET_ROLES_LIST = '/api/role/get/list'
@@ -13,13 +16,13 @@ export const UPDATE_WAREHOUSE = '/api/warehouse/edit'
 export const DELETE_WAREHOUSE = '/api/warehouse/delete'
 export const SEARCH_WAREHOUSE = '/api/warehouse/list'
 
-
 // inventory 
 export const GET_PRODUCT_LIST = '/api/product/get'
 export const CREATE_PRODUCT = '/api/product/add'
 export const UPDATE_PRODUCT = '/api/product/edit'
 export const DELETE_PRODUCT = '/api/product/delete'
 export const SEARCH_PRODUCT = '/api/product/search'
+export const VIEW_PRODUCT = '/api/product/view'
 
 // location 
 export const GET_LOCATION = '/api/location/get'
@@ -50,12 +53,17 @@ export const LISTING_SUPPLIER = '/api/supplier/list'
 export const GET_STOCK_LIST = '/api/stock/get'
 export const CREATE_STOCK = '/api/stock/add'
 export const UPDATE_STOCK = '/api/stock/edit'
+export const EDIT_STOCK_PRODUCT = '/api'
+export const DELETE_STOCK_PRODUCT = '/api'
 
 // Stock In
 export const GET_STOCKIN_DATA = '/api/stockin/get/supplier-list'
 export const CREATE_STOCKIN = '/api/stockIn/add'
 export const UPDATE_STOCKIN = '/api/stockIn/edit'
 export const DELETE_STOCKIN = '/api/stockIn/delete'
+export const GET_STOCKIN_BY_ID = '/api/stockin'
+export const EDIT_STOCKIN_PRODUCT = '/api'
+export const DELETE_STOCKIN_PRODUCT = '/api'
 
 // Dispatch
 export const GET_DISPATCH = '/api/dispatch/get/customer-list'
@@ -63,6 +71,8 @@ export const CREATE_DISPATCH = '/api/dispatch/add'
 export const UPDATE_DISPATCH = '/api/dispatch/edit'
 export const DELETE_DISPATCH = '/api/dispatch/delete'
 export const STOCK_CHECK = '/api/dispatch/stock-check'
+export const EDIT_DISPATCH_PRODUCT = '/api'
+export const DELETE_DISPATCH_PRODUCT = '/api'
 
 // report 
 export const GET_REPORT = 'api/report/send'

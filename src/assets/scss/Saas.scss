@@ -149,3 +149,12 @@ tbody tr:hover {
 .accordion-button:not(.collapsed) {
   background-color: transparent !important;
 }
+
+.textLeftSidebar {
+    color: #6c757d !important;
+    // font-size: 0.9375rem !important;
+}
+.textLeftSidebar:hover span {
+    color: #6655D9 !important;
+    // transition-duration: 0.5s !important;
+}

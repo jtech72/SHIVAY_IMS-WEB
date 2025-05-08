@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
 import Select from 'react-select';
-import { PiEye } from 'react-icons/pi';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import PageTitle from '../../../helpers/PageTitle';
@@ -21,7 +20,8 @@ const Report = () => {
   }));
 
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
-  const [stockType, setStockType] = useState(null)
+  const [ReportData, setReportData] = useState([])
+  const [stockType, setStockType] = useState('')
   console.log(stockType, selectedWarehouse, 'dbhujiuhyfghuj')
   const handleWarehouseChange = (selectedOption) => {
     setSelectedWarehouse(selectedOption);
@@ -31,25 +31,27 @@ const Report = () => {
     dispatch(getWarehouseListActions());
   }, [dispatch]);
 
-  const ReportData = store?.reportReducer?.report?.response || []
-  console.log({ ReportData })
-
   const resp = store?.reportReducer?.report?.status;
   console.log(resp, 'response')
-
   useEffect(() => {
-    if (stockType && selectedWarehouse?.value) {
-      const payload = {
-        warehouseId: selectedWarehouse?.value,
-        search: '',
-        page: '',
-        limit: '',
-        type: "",
-        stockFilter: stockType
-      }
-      dispatch(getReportActions(payload))
+    if (resp === 200 && selectedWarehouse !== null) {
+      setReportData(store?.reportReducer?.report?.response)
     }
-  }, [stockType])
+  });
+
+  // useEffect(() => {
+  //   if (stockType && selectedWarehouse?.value) {
+  //     const payload = {
+  //       warehouseId: selectedWarehouse?.value,
+  //       search: '',
+  //       page: '',
+  //       limit: 1,
+  //       type: "",
+  //       stockFilter: ""
+  //     }
+  //     dispatch(getReportActions(payload))
+  //   }
+  // }, [stockType])
   const handleProductsSearch = () => {
     const payload = {
       warehouseId: selectedWarehouse?.value,
@@ -57,7 +59,7 @@ const Report = () => {
       page: '',
       limit: '',
       type: "",
-      stockFilter: '',
+      stockFilter: stockType,
     }
     dispatch(getReportActions(payload))
   }
@@ -104,9 +106,10 @@ const Report = () => {
               onChange={handleWarehouseChange}
               options={warehouseOptions}
               placeholder="Select a warehouse"
-              isClearable
+              noOptionsMessage={() => "No warehouse found..."}
               required
             />
+
           </Form.Group>
         </Col>
         <Col sm={3}>
@@ -146,14 +149,14 @@ const Report = () => {
                 <tr className="table_header">
                   <th scope="col"><i className="mdi mdi-merge"></i></th>
                   <th scope="col">Product Name</th>
-                  <th scope="col">Modal</th>
+                  <th scope="col">Model</th>
                   <th scope="col">Code</th>
                   <th scope="col">Quantity</th>
                 </tr>
               </thead>
               <tbody>
                 {ReportData && ReportData.length > 0 ? (
-                  ReportData.map((data, index) => (
+                  ReportData?.map((data, index) => (
                     <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                       <th scope="row">{index + 1}</th>
                       <td className="text-uppercase fw-bold">
@@ -168,18 +171,7 @@ const Report = () => {
                       <td className="fw-bold">
                         {data?.quantity || <span className="text-black">-</span>}
                       </td>
-                      <td className="fw-bold"></td>
-                      <div className="icon-container d-flex pb-0">
-                        {/* <span className="icon-wrapper" title="View">
-                          <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                        </span> */}
-                        <span className="icon-wrapper" title="Edit">
-                          <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                        </span>
-                        <span className="icon-wrapper" title="Delete">
-                          <RiDeleteBinLine className="fs-4 text-black" style={{ cursor: 'pointer' }} />
-                        </span>
-                      </div>
+
                     </tr>
                   ))
                 ) : (

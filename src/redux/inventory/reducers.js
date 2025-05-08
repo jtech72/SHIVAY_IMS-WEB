@@ -151,10 +151,38 @@ const searchProductReducer = (state = SEARCH_PRODUCT_INITIAL_STATE, action) => {
     }
 }
 
+const VIEW_PRODUCT_INITIAL_STATE = {
+    viewProduct: [],
+    loading: false
+}
+
+const viewProductReducer = (state = VIEW_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case InventoryActionTypes.VIEW_PRODUCT_LOADING:
+            return {
+                viewProduct: state.viewProduct,
+                loading: true
+            }
+        case InventoryActionTypes.VIEW_PRODUCT_SUCCESS:
+            return {
+                viewProduct: action.payload,
+                loading: false
+            }
+        case InventoryActionTypes.VIEW_PRODUCT_ERROR:
+            return {
+                viewProduct: action.payload,
+                loading: false
+            }
+        default: return state
+    }
+}
+
 export {
     productListReducer,
     createProductReducer,
     updateProductReducer,
     deleteProductReducer,
     searchProductReducer,
+    viewProductReducer,
 }

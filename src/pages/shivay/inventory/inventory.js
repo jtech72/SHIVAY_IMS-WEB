@@ -110,7 +110,7 @@ const Inventory = () => {
                                         <tr className="table_header">
                                             <th scope="col"><i className="mdi mdi-merge"></i></th>
                                             <th scope="col">Product Name</th>
-                                            <th scope="col">Modal</th>
+                                            <th scope="col">Model</th>
                                             <th scope="col">Code</th>
                                             <th scope="col">Qty</th>
                                         </tr>

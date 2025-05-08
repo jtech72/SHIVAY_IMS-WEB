@@ -13,16 +13,32 @@ import { PiEye } from "react-icons/pi";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { TiArrowLeft } from "react-icons/ti";
 import Filter from "./filterSection/Filter";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Pagination from "../../../helpers/Pagination";
+import { useForm } from "react-hook-form";
 
 const Dashboard = () => {
 
   const dispatch = useDispatch();
+  const { reset } = useForm();
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState(0);
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    reset();
+  };
   const handleShow = () => setShow(true);
   const [search, setSearch] = useState('')
+  const totalRecords = '0';
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(Math.ceil(totalRecords / pageSize));
+  const [dispatchSearch, setDispatchSearch] = useState('')
+  const dispatchTotalRecords = '0';
+  const [dispatchPageIndex, setDispatchPageIndex] = useState(1);
+  const [dispatchPageSize, setDispatchPageSize] = useState(10);
+  const [dispatchTotalPages, setDispatchTotalPages] = useState(Math.ceil(dispatchTotalRecords / dispatchPageSize));
   const store = useSelector((state) => state)
 
   const StockinData = store?.stockinTransListReducer?.stockinList?.data;
@@ -35,50 +51,61 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getStockinActions({
-      limit: '',
-      page: '',
+      limit: pageSize,
+      page: pageIndex,
       search: search,
     }));
-  }, [dispatch, search]);
+  }, [dispatch, search, pageSize, pageIndex]);
 
   useEffect(() => {
     dispatch(getDispatchActions({
-      limit: '',
-      page: '',
-      search: '',
+      limit: dispatchPageSize,
+      page: dispatchPageIndex,
+      search: dispatchSearch,
     }));
-  }, [dispatch]);
+  }, [dispatch, dispatchSearch, dispatchPageSize, dispatchPageIndex]);
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(totalRecords / pageSize));
+  },
+    [totalRecords, pageSize]);
+
+  useEffect(() => {
+    setDispatchTotalPages(Math.ceil(dispatchTotalRecords / dispatchPageSize));
+  },
+    [dispatchTotalRecords, dispatchPageSize]);
 
   const dashboardItems = [
     {
       title: "Total Warehouse",
       value: DashboardCount?.totalWarehouse,
       icon: <MdOutlineStoreMallDirectory />,
-      background: "https://img.freepik.com/free-photo/factory-workers-walking-through-large-production-hall-having-conversation_342744-167.jpg?t=st=1744610960~exp=1744614560~hmac=3a9848632fe4c06c84e920765cca04c97132034c3fd6238bfa595be131e5d0ca&w=996",
+      background: "#5566D9",
       link: "/shivay/warehouse"
     },
     {
       title: "Total Products",
       value: DashboardCount?.productCount,
       icon: <FaLayerGroup />,
-      background: "https://img.freepik.com/premium-photo/woman-warehouse-using-computer-manage-inventory_239711-30274.jpg?w=1380",
+      background: "#5566D9",
       link: "/shivay/inventory"
     },
     {
       title: "Total User",
       value: DashboardCount?.userCount,
       icon: <FaUsers />,
-      background: "https://img.freepik.com/premium-photo/businessman-showing-virtual-graphic-human-icon-human-development-recruitment-leadership-human-resource-management_55710-1797.jpg?w=996",
+      background: "#5566D9",
       link: "/shivay/user"
     },
     {
-      title: "Total Dispatch ",
+      title: "Total Dispatch",
       value: DashboardCount?.dispatchCount,
       icon: <MdOutlineSell />,
-      background: "https://img.freepik.com/premium-photo/manager-coordinating-with-truck-drivers-delivery-focus-streamlined-operations-vibrant-composite-organized-receiving-dock_35669-9100.jpg?w=1380",
+      background: "#5566D9",
       link: "/shivay/dispatch"
     }
   ];
+
 
   const connectTab = (tabIndex) => {
     setActiveTab(tabIndex);
@@ -101,11 +128,15 @@ const Dashboard = () => {
 
               <Card
                 className="border-0 text-white card-hover-effect cursor"
-                style={{
-                  backgroundImage: `url('${item.background}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
+                style={
+                  item.background.startsWith("#")
+                    ? { backgroundColor: item.background }
+                    : {
+                      backgroundImage: `url('${item.background}')`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }
+                }
               >
                 <Card.Body className="d-flex align-items-center justify-content-between card-body-zoom">
                   <div>
@@ -129,14 +160,27 @@ const Dashboard = () => {
 
             {/* Search input aligned to the end */}
             <div className="d-flex align-items-center">
-              <input
-                type="text"
-                className="form-control w-auto me-2"
-                style={{ height: '42px', marginTop: '10px' }}
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+              {activeTab === 0 &&
+                <input
+                  type="text"
+                  className="form-control w-auto me-2"
+                  style={{ height: '42px', marginTop: '10px' }}
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              }
+              {activeTab === 1 &&
+                <input
+                  type="text"
+                  className="form-control w-auto me-2"
+                  style={{ height: '42px', marginTop: '10px' }}
+                  placeholder="Search..."
+                  value={dispatchSearch}
+                  onChange={(e) => setDispatchSearch(e.target.value)}
+                />
+              }
+
               <Button className="mt-2 custom-button" onClick={handleShow}>
                 <MdFilterList className="fs-3" />
               </Button>
@@ -155,7 +199,7 @@ const Dashboard = () => {
 
                 {activeTab === 0 &&
                   <div>
-                    <table className="table table-striped bg-white ">
+                    <table className="table table-striped bg-white mb-0">
                       <thead>
                         <tr className="table_header">
                           <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -168,7 +212,7 @@ const Dashboard = () => {
                       </thead>
                       {store?.stockinTransListReducer?.loading ? (
                         <tr>
-                          <td className='text-center' colSpan={4}>
+                          <td className='text-center' colSpan={6}>
                             <DashboardLoading />
                           </td>
                         </tr>
@@ -185,26 +229,26 @@ const Dashboard = () => {
                               <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                                 <th scope="row">{index + 1}</th>
                                 <td className="text-uppercase fw-bold">
-                                  {data?.productName || <span className="text-danger">N/A</span>}
+                                  {data?.productName || <span className="text-black">-</span>}
                                 </td>
                                 <td className="text-uppercase fw-bold">
-                                  {data?.supplierName !== undefined ? data.supplierName : <span className="text-danger">N/A</span>}
+                                  {data?.supplierName || <span className="text-black">-</span>}
                                 </td>
                                 <td className="text-uppercase fw-bold">
-                                  {data?.code !== undefined ? data.code : <span className="text-danger">N/A</span>}
+                                  {data?.code || <span className="text-black">-</span>}
                                 </td>
                                 <td className="text-uppercase fw-bold">
-                                  {data?.stockIn !== undefined ? data.stockIn : <span className="text-danger">N/A</span>}
+                                  {data?.stockIn || <span className="text-black">-</span>}
                                 </td>
                                 <td className="text-uppercase fw-bold ">
-                                  {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
+                                  {data?.stock || <span className="text-black">-</span>}
                                 </td>
                                 <td></td> {/* maintain table structure */}
 
                                 {/* Horizontally centered icons */}
                                 <div className="icon-container d-flex  pb-0" >
                                   <span className="icon-wrapper me-4" title="View">
-                                    <PiEye className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                    <PiEye className="fs-4 text-black" onClick={() => navigate(`/shivay/addStockIn?id=${data?.productId}`)} style={{ cursor: 'pointer' }} />
                                   </span>
                                 </div>
                               </tr>
@@ -212,12 +256,19 @@ const Dashboard = () => {
                         </tbody>
                       )}
                     </table>
+                    <Pagination
+                      pageIndex={pageIndex}
+                      pageSize={pageSize}
+                      totalPages={store?.stockinTransListReducer?.stockinList?.totalPages}
+                      setPageIndex={setPageIndex}
+                      onChangePageSize={setPageSize}
+                    />
                   </div>
                 }
                 {activeTab === 1 &&
                   <div>
                     <div>
-                      <table className="table table-striped bg-white ">
+                      <table className="table table-striped bg-white mb-0">
                         <thead>
                           <tr className="table_header">
                             <th scope="col"><i className="mdi mdi-merge"></i></th>
@@ -246,13 +297,13 @@ const Dashboard = () => {
                                 <tr key={index} className="text-dark fw-bold text-nowrap highlight-row">
                                   <th scope="row">{index + 1}</th>
                                   <td className="text-uppercase fw-bold ">
-                                    {data?.productName || <span className="text-danger">N/A</span>}
+                                    {data?.productName || <span className="text-black">-</span>}
                                   </td>
                                   <td className="text-uppercase fw-bold ">
-                                    {data?.stockOut !== undefined ? data.stockOut : <span className="text-danger">N/A</span>}
+                                    {data?.stockOut !== undefined ? data.stockOut : <span className="text-black">-</span>}
                                   </td>
                                   <td className="text-uppercase fw-bold ">
-                                    {data?.stock !== undefined ? data.stock : <span className="text-danger">N/A</span>}
+                                    {data?.stock !== undefined ? data.stock : <span className="text-black">-</span>}
                                   </td>
                                   <td ></td>
                                   <div className="icon-container d-flex  pb-0" >
@@ -265,6 +316,13 @@ const Dashboard = () => {
                           </tbody>
                         )}
                       </table>
+                      <Pagination
+                        pageIndex={dispatchPageIndex}
+                        pageSize={dispatchPageSize}
+                        totalPages={store?.dispatchListReducer?.dispatchList?.totalPages}
+                        setPageIndex={setDispatchPageIndex}
+                        onChangePageSize={setDispatchPageSize}
+                      />
                     </div>
                   </div>
                 }

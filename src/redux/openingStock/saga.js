@@ -2,7 +2,7 @@
 import { all, fork, put, takeEvery, call } from 'redux-saga/effects';
 import { StockActionTypes } from './constants';
 
-import { createStockApi, getStockListApi, updateStockApi } from './api';
+import { createStockApi, deleteStockProductApi, getStockListApi, updateStockApi, updateStockProductApi } from './api';
 import ToastContainer from '../../helpers/toast/ToastContainer';
 
 
@@ -94,6 +94,68 @@ function* updateStockFunction(data) {
     }
 }
 
+function* updateStockProductFunction(data) {
+    try {
+        yield put({
+            type: StockActionTypes.UPDATE_STOCK_PRODUCT_LOADING,
+            payload: {},
+        });
+        const response = yield call(updateStockProductApi, data);
+        if (response?.status === 200) {
+            ToastContainer(response?.data?.message, 'success')
+            yield put({
+                type: StockActionTypes.UPDATE_STOCK_PRODUCT_SUCCESS,
+                payload: response.data,
+            });
+            yield put({
+                type: StockActionTypes.UPDATE_STOCK_PRODUCT_RESET,
+                payload: {},
+            });
+        } else {
+            yield put({
+                type: StockActionTypes.UPDATE_STOCK_PRODUCT_ERROR,
+                payload: response.data,
+            });
+        }
+    } catch (error) {
+        // ToastContainer(error?.message || 'Something went wrong', 'danger')
+        yield put({
+            type: StockActionTypes.UPDATE_STOCK_PRODUCT_ERROR,
+            payload: error,
+        });
+    }
+}
+
+function* deleteStockProductFunction(data) {
+    try {
+        yield put({
+            type: StockActionTypes.DELETE_STOCK_PRODUCT_LOADING,
+            payload: {},
+        });
+        const response = yield call(deleteStockProductApi, data);
+        if (response?.status === 200) {
+            ToastContainer(response?.data?.message, 'danger')
+            yield put({
+                type: StockActionTypes.DELETE_STOCK_PRODUCT_SUCCESS,
+                payload: response.data,
+            });
+            yield put({
+                type: StockActionTypes.DELETE_STOCK_PRODUCT_RESET,
+                payload: {},
+            });
+        } else {
+            yield put({
+                type: StockActionTypes.DELETE_STOCK_PRODUCT_ERROR,
+                payload: response.data,
+            });
+        }
+    } catch (error) {
+        yield put({
+            type: StockActionTypes.DELETE_STOCK_PRODUCT_ERROR,
+            payload: error,
+        });
+    }
+}
 
 export function* watchUserListData() {
     yield takeEvery(StockActionTypes.STOCK_LIST_FIRST, getStockListFunction);
@@ -107,13 +169,21 @@ export function* watchUpdateStockData() {
     yield takeEvery(StockActionTypes.UPDATE_STOCK_FIRST, updateStockFunction);
 }
 
+export function* watchUpdateStockProductData() {
+    yield takeEvery(StockActionTypes.UPDATE_STOCK_PRODUCT_FIRST, updateStockProductFunction);
+}
 
+export function* watchDeleteStockproductData() {
+    yield takeEvery(StockActionTypes.DELETE_STOCK_PRODUCT_FIRST, deleteStockProductFunction);
+}
 
 function* stockSaga() {
     yield all([
         fork(watchUserListData),
         fork(watchCreateStockData),
         fork(watchUpdateStockData),
+        fork(updateStockProductFunction),
+        fork(deleteStockProductFunction),
 
     ]);
 }

@@ -1,34 +1,34 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PageTitle from '../../../../helpers/PageTitle'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
-import Select from 'react-select'; 
+import Select from 'react-select';
 import { IoIosAdd } from 'react-icons/io';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import AddProductModal from '../../openingStock/addStock/AddProductModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { createStockInActions, getWarehouseListActions, listingSupplierActions, listingUsersActions, updateStockInActions } from '../../../../redux/actions';
+import { createStockInActions, getStockInByIdActions, getWarehouseListActions, listingSupplierActions, listingUsersActions, updateStockInActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { CgCloseO } from "react-icons/cg";
 import { HiOutlineFolderDownload } from "react-icons/hi";
-
+import { ButtonLoading } from '../../../../helpers/loader/Loading';
 
 const AddStockIn = () => {
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('id')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { handleSubmit, register, setValue, resetField,watch } = useForm()
+    const { handleSubmit, register, setValue, resetField, watch } = useForm()
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const store = useSelector((state) => state)
     const [today, setToday] = useState(new Date().toISOString().split('T')[0]);
     const [openingProducts, setOpeningProducts] = useState([])
-    const StockInData = store?.stockInListReducer?.stockInList?.response;
-    const [selectedStock, setSelectedStock] = useState(null);
+    // const StockInData = store?.stockInListReducer?.stockInList?.response;
+    // const [selectedStock, setSelectedStock] = useState(null);
     const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
     const UsersList = store?.listingUsersReducer?.listingUsers?.response;
     const SupplierList = store?.listingSupplierReducer?.listingSupplier?.response;
@@ -37,10 +37,11 @@ const AddStockIn = () => {
     const [productId, setProductId] = useState('');
     const inputRef = useRef(null);
     const xyz = watch('invoiceAttachment');
-    console.log(xyz,"xyz")
+    // console.log(selectedStock, "selectedStock")
 
     const createResponse = store?.createStockInReducer?.createStockIn?.status;
-    // console.log(openingProducts, 'openingProducts')
+    const stockInData = store?.stockInByIdReducer?.stockInById?.response;
+    console.log(stockInData, 'stockInData')
     const [attachmentType, setAttachmentType] = useState("");
 
     const fileInputRef = useRef();
@@ -59,8 +60,12 @@ const AddStockIn = () => {
     };
 
     const handleQuantityChange = (e) => {
-        setEditedQuantity(e.target.value);
+        const value = Number(e.target.value);
+        if (value >= 0) {
+            setEditedQuantity(value);
+        }
     };
+
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleSave();
@@ -98,12 +103,13 @@ const AddStockIn = () => {
         }
     }, [isEditing]);
 
-    useEffect(() => {
-        if (stockId && StockInData?.length > 0) {
-            const foundStock = StockInData?.find(item => item._id === stockId);
-            setSelectedStock(foundStock);
-        }
-    }, [stockId, StockInData]);
+    // useEffect(() => {
+    //     if (stockId && StockInData?.length > 0) {
+    //         const foundStock = StockInData?.find(item => item._id === stockId);
+    //         setSelectedStock(foundStock);
+    //         console.log(foundStock, 'foundStock')
+    //     }
+    // }, [stockId, StockInData]);
 
     const warehouseOptions = Warehouse?.map((warehouse) => ({
         value: warehouse._id,
@@ -129,34 +135,44 @@ const AddStockIn = () => {
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     console.log(selectedWarehouse, 'selectedWarehouse')
+
     useEffect(() => {
-        if (stockId && selectedStock) {
-            console.log(selectedStock, '2345432')
-            setToday(selectedStock?.createdAt ? new Date(selectedStock?.createdAt).toISOString().split('T')[0] : '')
-            const updateWarehouses = selectedStock?.warehouseData
-                ? { value: selectedStock.warehouseId, label: selectedStock.warehouseData?.find((ele) => ele?._id === selectedStock?.warehouseId)?.name }
+        if (stockId) {
+            dispatch(getStockInByIdActions(stockId));
+        }
+    }, [dispatch, stockId]);
+
+
+    useEffect(() => {
+        if (stockId && stockInData) {
+            console.log(stockInData, '2345432')
+            setToday(stockInData?.[0]?.createdAt ? new Date(stockInData?.[0]?.createdAt).toISOString().split('T')[0] : '')
+            const updateWarehouses = stockInData?.[0]?.warehouseData
+                ? { value: stockInData?.[0].warehouseId, label: stockInData?.[0].warehouseData?.find((ele) => ele?._id === stockInData?.[0]?.warehouseId)?.name }
                 : {};
             setSelectedWarehouse(updateWarehouses)
 
-            const updatedUser = selectedStock?.receivedByData ? { value: selectedStock?.receivedBy, label: selectedStock.receivedByData?.find((ele) => ele?._id === selectedStock?.receivedBy)?.name }
+            const updatedUser = stockInData?.[0]?.receivedByData ? { value: stockInData?.[0]?.receivedBy, label: stockInData?.[0].receivedByData?.find((ele) => ele?._id === stockInData?.[0]?.receivedBy)?.name }
                 : {}
             setSelectedUser(updatedUser)
 
-            const updatedSupplier = selectedStock?.supplierId ? { value: selectedStock?.supplierId, label: selectedStock.supplierData?.find((ele) => ele?._id === selectedStock?.supplierId)?.name }
+            const updatedSupplier = stockInData?.[0]?.supplierId ? { value: stockInData?.[0]?.supplierId, label: stockInData?.[0].supplierData?.find((ele) => ele?._id === stockInData?.[0]?.supplierId)?.name }
                 : {}
             setSelectedSupplier(updatedSupplier)
 
-            setValue('invoiceNumber', selectedStock?.invoiceNumber || '');
-            setValue('description', selectedStock?.description || '');
-            setValue('invoiceValue', selectedStock?.fright || '');
-            setValue('invoiceAttachment', selectedStock?.invoiceAttachment || '');
-            setAttachmentType(selectedStock?.invoiceAttachmentType || '');
-            setEditedQuantity(selectedStock?.productData?.stockInQty || '');
-            setProductId(selectedStock?.productData?._id)
+            setValue('invoiceNumber', stockInData?.[0]?.invoiceNumber || '');
+            setValue('description', stockInData?.[0]?.description || '');
+            setValue('invoiceValue', stockInData?.[0]?.fright || '');
+            setValue('invoiceAttachment', stockInData?.[0]?.invoiceAttachment || '');
+            setAttachmentType(stockInData?.[0]?.invoiceAttachmentType || '');
+            setEditedQuantity(stockInData?.[0]?.stockInProducts?.quantity || '');
+            setProductId(stockInData?.[0]?.productData?._id)
         }
 
-    }, [stockId, selectedStock])
+    }, [stockId, stockInData])
+
     console.log(selectedWarehouse, 'selectedWarehouse')
+
     const handleAccordionToggle = () => {
         setIsAccordionOpen(prevState => !prevState);
     };
@@ -190,7 +206,7 @@ const AddStockIn = () => {
     };
 
     const onSubmit = (data) => {
-console.log(data,'ouiyuttdfghjk',fileInputRef)
+        console.log(data, 'ouiyuttdfghjk', fileInputRef)
         const cleanedProducts = openingProducts.map(({ product, ...rest }) => rest);
         const formData = new FormData();
         if (data?.invoiceAttachment?.[0] instanceof File) {
@@ -218,7 +234,7 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
 
         if (stockId) {
             formData.append('quantity', stockId ? parseInt(editedQuantity) : JSON.stringify(cleanedProducts));
-        }else{
+        } else {
             formData.append('stockInQty', stockId ? parseInt(editedQuantity) : JSON.stringify(cleanedProducts));
 
         }
@@ -260,7 +276,7 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                                     <Button
                                         className="fw-bold custom-button me-2"
                                         onClick={handleShow}
-                                        // disabled={!isAccordionOpen}
+                                    // disabled={!isAccordionOpen}
                                     >
                                         <IoIosAdd className="fs-3" />&nbsp;Product
                                     </Button>
@@ -342,17 +358,17 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                                                 {attachmentType && (
                                                     <span className="text-capitalize"> ({attachmentType})</span>
                                                 )}
-                                                 {selectedStock?.invoiceAttachment && (
+                                                {stockInData?.[0]?.invoiceAttachment && (
                                                     <a
-                                                        href={selectedStock?.invoiceAttachment}
+                                                        href={stockInData?.[0]?.invoiceAttachment}
                                                         target="_blank"
                                                         title='Download Attachment'
                                                         rel="noopener noreferrer"
-                                                        // style={{position:'absolute', top:'20px'}}
+                                                    // style={{position:'absolute', top:'20px'}}
                                                     >
-                                                       <HiOutlineFolderDownload className='ms-1 fs-4'/>
+                                                        <HiOutlineFolderDownload className='ms-1 fs-4' />
                                                     </a>
-                                            )}
+                                                )}
                                                 {!stockId && <span className="text-danger"> *</span>}
                                             </Form.Label>
 
@@ -362,7 +378,7 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                                                     // defaultValue=""
                                                     value={attachmentType}
                                                     onChange={handleAttachmentTypeChange}
-                                                    
+
                                                 >
                                                     <option value="">Select Attachment Type</option>
                                                     <option value="Invoice">Invoice</option>
@@ -372,11 +388,11 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                                                 <div className="d-flex align-items-center gap-2">
                                                     <Form.Control
                                                         type="file"
+                                                        accept=".pdf,.docx,.jpg,.jpeg,.png"
                                                         placeholder="Upload file"
-                                                        // required={!stockId}
                                                         {...register("invoiceAttachment")}
-                                                        // ref={fileInputRef}
                                                     />
+
                                                     <CgCloseO
                                                         size={20}
                                                         className='text-danger'
@@ -386,8 +402,6 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                                                     />
                                                 </div>
                                             )}
-
-                                           
                                         </Form.Group>
                                     </Col>
                                     <Col sm={3}>
@@ -466,45 +480,50 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                                             </tr>
                                         )
                                     ) : (
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td className="text-uppercase fw-bold">
-                                                {selectedStock?.productData?.name || <span className="text-black">-</span>}
-                                            </td>
-                                            <td className="fw-bold">
-                                                {selectedStock?.modelData?.[0]?.name || <span className="text-black">-</span>}
-                                            </td>
-                                            <td className="fw-bold">
-                                                {selectedStock?.productData?.code || <span className="text-black">-</span>}
-                                            </td>
-                                            <td className="fw-bold">
-                                                {isEditing ? (
-                                                    <input
-                                                        ref={inputRef}
-                                                        type="number"  // or "text" depending on your needs
-                                                        value={editedQuantity}
-                                                        onChange={handleQuantityChange}
-                                                        onKeyPress={handleKeyPress}
-                                                        // autoFocus
-                                                        className="form-control form-control-md"
-                                                        style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
-                                                    />
-                                                ) : (
-                                                    <span onClick={handleEditClick} > {editedQuantity} <BsThreeDotsVertical className='table_header cursor' /></span>
-                                                )}
+                                        stockInData?.[0]?.stockInProducts?.map((data, index) => (
+                                            <tr key={index}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td className="text-uppercase fw-bold">
+                                                    {data?.productData?.name || <span className="text-black">-</span>}
+                                                </td>
+                                                <td className="fw-bold">
+                                                    {data?.productData?.modelData?.[0]?.name || <span className="text-black">-</span>}
+                                                </td>
+                                                <td className="fw-bold">
+                                                    {data?.productData?.code || <span className="text-black">-</span>}
+                                                </td>
+                                                <td className="fw-bold">
+                                                    {data?.quantity || <span className="text-black">-</span>}
 
-                                            </td>
-                                            <td></td>
-                                            <div className="icon-container d-flex pb-0">
-                                                <span
-                                                    className="icon-wrapper text-danger me-5 pe-3"
-                                                    title="Edit"
-                                                    onClick={handleEditClick}
-                                                >
-                                                    <AiOutlineEdit className="fs-4 text-danger" style={{ cursor: 'pointer' }} />
-                                                </span>
-                                            </div>
-                                        </tr>
+                                                    {/* {isEditing ? (
+                                                        <input
+                                                            ref={inputRef}
+                                                            type="number"
+                                                            min="0"
+                                                            value={editedQuantity}
+                                                            onChange={handleQuantityChange}
+                                                            onKeyPress={handleKeyPress}
+                                                            className="form-control form-control-md"
+                                                            style={{ width: '5vw', display: 'inline-block', marginTop: '-10px' }}
+                                                        />
+                                                    ) : (
+                                                        <span onClick={handleEditClick}>
+                                                            {editedQuantity} <BsThreeDotsVertical className="table_header cursor" />
+                                                        </span>
+                                                    )} */}
+                                                </td>
+                                                <td></td>
+                                                <div className="icon-container d-flex pb-0">
+                                                    <span
+                                                        className="icon-wrapper me-4"
+                                                        title="Edit"
+                                                        onClick={handleEditClick}
+                                                    >
+                                                        <AiOutlineEdit className="fs-4 text-black" style={{ cursor: 'pointer' }} />
+                                                    </span>
+                                                </div>
+                                            </tr>
+                                        ))
                                     )}
 
                                 </tbody>
@@ -521,7 +540,21 @@ console.log(data,'ouiyuttdfghjk',fileInputRef)
                             Cancel
                         </Button>
 
-                        <Button className="fw-bold custom-button" type='submit'>{stockId ? 'Update' : "Submit"}</Button>
+                        {/* <Button className="fw-bold custom-button" type='submit'>{stockId ? 'Update' : "Submit"}</Button> */}
+                        <Button
+                            type="submit"
+                            className="custom-button fw-bold"
+                            disabled={store?.createStockInReducer?.loading}
+                            style={{ width: '100px' }}
+                        >
+                            {store?.createStockInReducer?.loading ? (
+                                <ButtonLoading color="white" />
+                            ) : stockId ? (
+                                'Update'
+                            ) : (
+                                'Submit'
+                            )}
+                        </Button>
                     </div>
                 </div>
             </Form>

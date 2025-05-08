@@ -149,6 +149,70 @@ const createStockCheckReducer = (state = CREATE_STOCK_CHECK_INITIAL_STATE, actio
             }
         default: return state
     }
+} 
+
+const UPDATE_DISPATCH_PRODUCT_INITIAL_STATE = {
+    updateStockProduct: [],
+    loading: false
+}
+
+const updateDispatchProductReducer = (state = UPDATE_DISPATCH_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_LOADING:
+            return {
+                updateStockProduct: state.updateStockProduct,
+                loading: true
+            }
+        case DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_SUCCESS:
+            return {
+                updateStockProduct: action.payload,
+                loading: false
+            }
+        case DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_RESET:
+            return {
+                updateStockProduct: [],
+                loading: false,
+            };
+        case DispatchActionTypes.UPDATE_DISPATCH_PRODUCT_ERROR:
+            return {
+                updateStockProduct: action.payload,
+                loading: false
+            }
+        default: return state
+    }
+}
+
+const DELETE_DISPATCH_PRODUCT_INITIAL_STATE = {
+    deleteStockProduct: [],
+    loading: false
+}
+
+const deleteDispatchProductReducer = (state = DELETE_DISPATCH_PRODUCT_INITIAL_STATE, action) => {
+
+    switch (action.type) {
+        case DispatchActionTypes.DELETE_DISPATCH_PRODUCT_LOADING:
+            return {
+                deleteStockProduct: state.deleteStockProduct,
+                loading: true
+            }
+        case DispatchActionTypes.DELETE_DISPATCH_PRODUCT_SUCCESS:
+            return {
+                deleteStockProduct: action.payload,
+                loading: false
+            }
+        case DispatchActionTypes.DELETE_DISPATCH_PRODUCT_ERROR:
+            return {
+                deleteStockProduct: action.payload,
+                loading: false
+            }
+        case DispatchActionTypes.DELETE_DISPATCH_PRODUCT_RESET:
+            return {
+                deleteStockProduct: [],
+                loading: false
+            }
+        default: return state
+    }
 }
 
 export {
@@ -157,4 +221,7 @@ export {
     updateDispatchReducer,
     deleteDispatchReducer,
     createStockCheckReducer,
+    updateDispatchProductReducer,
+    deleteDispatchProductReducer,
+
 }

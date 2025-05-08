@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createStockActions, getStockListActions, getWarehouseListActions, updateStockActions } from '../../../../redux/actions';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ButtonLoading } from '../../../../helpers/loader/Loading';
 
 const AddOpeningStock = () => {
 
@@ -20,12 +21,12 @@ const AddOpeningStock = () => {
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     const store = useSelector((state) => state)
-    const [today,setToday] = useState(new Date().toISOString().split('T')[0]);
+    const [today, setToday] = useState(new Date().toISOString().split('T')[0]);
     const [searchParams] = useSearchParams();
     const stockId = searchParams.get('Id');
     const isEditMode = Boolean(stockId);
     const StockInData = store?.stockListReducer?.stockList?.response;
-console.log(StockInData,'1232232')
+    console.log(StockInData, '1232232')
     const Warehouse = store?.getWarehouseListReducer?.searchWarehouse?.response;
     const warehouseOptions = Warehouse?.map((warehouse) => ({
         value: warehouse._id,
@@ -44,10 +45,10 @@ console.log(StockInData,'1232232')
     // console.log(store?.createStockReducer, 'createResponse')
 
     useEffect(() => {
-            if (createResponse === 200) {
-                navigate("/shivay/openingStock");
-            }
-        }, [createResponse]);
+        if (createResponse === 200) {
+            navigate("/shivay/openingStock");
+        }
+    }, [createResponse]);
 
     const handleWarehouseChange = (selectedOption) => {
         setSelectedWarehouse(selectedOption);
@@ -80,14 +81,14 @@ console.log(StockInData,'1232232')
 
         const payload = {
             warehouseId: selectedWarehouse?.value,
-            ...(!stockId&&{productStock: cleanedProducts}),
+            ...(!stockId && { productStock: cleanedProducts }),
             description: data?.description,
             date: data?.date
         };
         if (stockId) {
-            dispatch(updateStockActions({ ...payload, _id:stockId, quantity: editedQuantity }));
+            dispatch(updateStockActions({ ...payload, _id: stockId, quantity: editedQuantity }));
         } else {
-        dispatch(createStockActions(payload));
+            dispatch(createStockActions(payload));
         }
     };
 
@@ -105,11 +106,11 @@ console.log(StockInData,'1232232')
                 : [];
 
             setSelectedWarehouse(updateWarehouses)
-            setToday(selectedStock?.date?new Date(selectedStock?.date).toISOString().split('T')[0]:'')
-console.log(selectedStock?.date,'selectedStock?.date')
+            setToday(selectedStock?.date ? new Date(selectedStock?.date).toISOString().split('T')[0] : '')
+            console.log(selectedStock?.date, 'selectedStock?.date')
 
-  
-              setValue('description', selectedStock?.description)
+
+            setValue('description', selectedStock?.description)
         }
     }, [selectedStock]);
     console.log(selectedStock, 'selectedStock')
@@ -167,25 +168,25 @@ console.log(selectedStock?.date,'selectedStock?.date')
                 <Row>
                     <Col sm={3}>
                         <Form.Group className="mb-1">
-                            <Form.Label className='mb-0'>Warehouse</Form.Label>
+                            <Form.Label className='mb-0'>Warehouse <span className='text-danger'>*</span></Form.Label>
                             <Select
                                 value={selectedWarehouse}
                                 onChange={handleWarehouseChange}
                                 options={warehouseOptions}
                                 placeholder="Select a warehouse"
-                                isClearable
+                                noOptionsMessage={() => "No warehouse found..."}
                                 required
                             />
                         </Form.Group>
                     </Col>
                     <Col sm={3}>
                         <Form.Group className="mb-1">
-                            <Form.Label className='mb-0'>Date Range</Form.Label>
+                            <Form.Label className='mb-0'>Date Range <span className='text-danger'>*</span></Form.Label>
                             <Form.Control
                                 type="date"
                                 value={today}
                                 {...register('date', { required: true })}
-                                onChange={(e) => setToday( e.target.value)}
+                                onChange={(e) => setToday(e.target.value)}
                                 required
                             />
                         </Form.Group>
@@ -197,7 +198,7 @@ console.log(selectedStock?.date,'selectedStock?.date')
                             <Form.Control
                                 as='textarea'
                                 rows={1}
-                                {...register('description', { required: true })}
+                                {...register('description')}
                                 placeholder='Enter Description'
                             />
                         </Form.Group>
@@ -301,7 +302,7 @@ console.log(selectedStock?.date,'selectedStock?.date')
                                             ) : (
                                                 <tr>
                                                     <td colSpan="6" className="text-center text-danger py-3">
-                                                       Note : No products added yet. Please add products to add opening stock.
+                                                        Note : No products added yet. Please add products to add opening stock.
                                                     </td>
                                                 </tr>
                                             )}
@@ -319,8 +320,19 @@ console.log(selectedStock?.date,'selectedStock?.date')
                         >
                             Cancel
                         </Button>
-                        <Button className="fw-bold custom-button" type='submit'>
-                            {isEditMode ? "Update" : "Submit"}
+                        <Button
+                            type="submit"
+                            className="custom-button fw-bold"
+                            disabled={store?.createStockReducer?.loading}
+                            style={{ width: '100px' }}
+                        >
+                            {store?.createStockReducer?.loading ? (
+                                <ButtonLoading color="white" />
+                            ) : isEditMode ? (
+                                'Update'
+                            ) : (
+                                'Submit'
+                            )}
                         </Button>
                     </div>
                 </div>

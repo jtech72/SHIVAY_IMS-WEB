@@ -30,10 +30,22 @@ function createStockCheckApi(params) {
     return api.create(URL.STOCK_CHECK, data);
 }
 
+function updateDispatchProductApi(params) {
+    const { data } = params
+    return api.update(URL.EDIT_DISPATCH_PRODUCT, data);
+}
+
+function deleteDispatchProductApi(params) {
+    const { data } = params
+    return api.create(URL.DELETE_DISPATCH_PRODUCT, data);
+}
+
 export {
     getDispatchListApi,
     createDispatchApi,
     updateDispatchApi,
     deleteDispatchApi,
-    createStockCheckApi
+    createStockCheckApi,
+    updateDispatchProductApi,
+    deleteDispatchProductApi
 };
